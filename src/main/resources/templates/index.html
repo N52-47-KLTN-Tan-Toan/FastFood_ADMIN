@@ -1,10 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment-header :: fm-head">
+    <title>Quản lý mặt hàng</title>
 </head>
-<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<div class="wrapper">
+
+    <header th:replace="fragment-header :: fm-header"></header>
+    <aside th:replace="fragment-leftmenu :: fm-leftmenu"></aside>
+
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+
+                    <div class="col-12">
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <button class="btn btn-lg bg-gradient-info mr-2" data-toggle="modal" data-target="#modal-xl">
+                                <i class="fas fa-plus"></i>
+                                Thêm mặt hàng</button>
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Hình ảnh</th>
+                                    <th>Mã mặt hàng</th>
+                                    <th>Tên mặt hàng</th>
+                                    <th>Mô tả</th>
+                                    <th>Đơn vị tính</th>
+                                    <th>Đơn giá</th>
+                                    <th>Loại mặt hàng</th>
+                                    <th class="text-center">Thao tác</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+</div>
+<!-- ./wrapper -->
+
+
+
+<div th:replace="fragment-modal :: fm-modal"></div>
+<div th:replace="fragment-header :: fm-script"></div>
 
 </body>
 </html>

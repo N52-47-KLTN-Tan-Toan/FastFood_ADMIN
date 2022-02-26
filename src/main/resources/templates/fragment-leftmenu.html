@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+</head>
+<body>
+
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4" th:fragment="fm-leftmenu">
+    <!-- Brand Logo -->
+    <a href="index3.html" class="brand-link">
+        <img
+                src="https://firebasestorage.googleapis.com/v0/b/n52-47-kltn-tan-toan.appspot.com/o/logo-admin.png?alt=media&token=c11d08cb-ffb9-4d6f-bfeb-ce4ed14db301"
+                alt="AdminLTE Logo" class="brand-image img-circle elevation-1" style="opacity: .8">
+        <span class="brand-text font-weight-light">Admin T&T</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <!-- Add icons to the links using the .nav-icon class
+                   with font-awesome or any other icon font library -->
+                <li class="nav-item menu-open">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon fas fa-book"></i>
+                        <p>
+                            Quản lý
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="index.html" class="nav-link active">
+                                <i class="fas fa-cube nav-icon"></i>
+                                <p>Mặt hàng</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="loaimathang.html" class="nav-link">
+                                <i class="fas fa-cubes nav-icon"></i>
+                                <p>Loại mặt hàng</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="khachhang.html" class="nav-link">
+                                <i class="fas fa-address-card nav-icon"></i>
+                                <p>Khách hàng</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="./index3.html" class="nav-link">
+                                <i class="fas fa-clipboard-list nav-icon"></i>
+                                <p>Đơn hàng</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item menu-open">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-chart-bar"></i>
+                        <p>
+                            Thống kê
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link doanhthu">
+                                <i class="fas fa-dollar-sign nav-icon"></i>
+                                <p>Doanh thu</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>
+
+</body>
+</html>
