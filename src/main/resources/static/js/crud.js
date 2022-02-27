@@ -18,23 +18,26 @@ $(document).ready(function () {
     //Hiển thị dữ liệu
     function assignDataToTable() {
         $("#example2").DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "pageLength": 5,
-            "ajax": {
-                "url": "http://localhost:8000/api/v1/mat-hang",
-                "type": "GET",
-                "contentType": "application/json",
-                "dataSrc": function (d) {
-                    return d
-                }
+            paging: true,
+            lengthChange: false,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true,
+            pageLength: 5,
+            fnCreatedRow: function (nRow, aData, iDataIndex) {
+                $(nRow).attr('id', 'tr_' + aData.maMH); // or whatever you choose to set as the id
             },
-            "columns": [{
+            ajax: {
+                url: "http://localhost:8000/api/v1/mat-hang",
+                type: "GET",
+                contentType: "application/json",
+                dataSrc: function (d) {
+                    return d
+                },
+            },
+            columns: [{
                 data: 'maMH'
             }, {
                 data: 'hinhAnh',
@@ -42,6 +45,7 @@ $(document).ready(function () {
                     return '<img id="img_' + row.maMH + '" src="' + data + '" width="50" height="50" />';
                 }
             }, {
+                class: 'td_tenMH',
                 data: 'tenMH'
             }, {
                 data: 'moTa'
@@ -62,7 +66,7 @@ $(document).ready(function () {
         });
     }
 
-    //Delete
+    //Xóa mặt hàng theo id và xóa dòng liên quan trên bảng
     $('table').on('click', 'button[id="delete"]', function (e) {
         var id = $(this).closest('tr').children('td:first').text();
 
