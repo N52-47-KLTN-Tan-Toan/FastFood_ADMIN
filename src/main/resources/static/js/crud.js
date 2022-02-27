@@ -48,12 +48,16 @@ $(document).ready(function () {
                 class: 'td_tenMH',
                 data: 'tenMH'
             }, {
+                class: 'td_moTa',
                 data: 'moTa'
             }, {
+                class: 'td_donViTinh',
                 data: 'donViTinh'
             }, {
+                class: 'td_donGia',
                 data: 'donGia'
             }, {
+                class: 'td_tenLMH',
                 data: 'loaiMatHang.tenLMH'
             }, {
                 data: 'maMH',
