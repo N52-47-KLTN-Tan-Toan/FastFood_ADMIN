@@ -57,7 +57,8 @@ $(document).ready(function () {
                 data: 'donViTinh'
             }, {
                 class: 'td_donGia',
-                data: 'donGia'
+                data: 'donGia',
+                render: $.fn.dataTable.render.number( ',', '.', 0, '', ' VND' )
             }, {
                 class: 'td_tenLMH',
                 data: 'loaiMatHang.tenLMH'
