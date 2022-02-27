@@ -84,7 +84,7 @@ $(document).ready(function () {
             type: "DELETE",
             url: "http://localhost:8000/api/v1/mat-hang/" + id,
             success: function (data) {
-                $('#example2').DataTable().ajax.reload();
+                $('#example2').DataTable().ajax.reload(null, false);
                 alert("Xóa thành công");
             },
             error: function (err) {
