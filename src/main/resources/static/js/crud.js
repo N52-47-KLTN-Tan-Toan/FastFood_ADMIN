@@ -12,9 +12,10 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 $(document).ready(function () {
+
     assignDataToTable();
 
-//Hiển thị dữ liệu
+    //Hiển thị dữ liệu
     function assignDataToTable() {
         $("#example2").DataTable({
             "paging": true,
@@ -60,4 +61,24 @@ $(document).ready(function () {
             }]
         });
     }
+
+    //Delete
+    $('table').on('click', 'button[id="delete"]', function (e) {
+        var id = $(this).closest('tr').children('td:first').text();
+
+        // deleteImageToStorageById(id);
+
+        //Delete Object by id
+        $.ajax({
+            type: "DELETE",
+            url: "http://localhost:8000/api/v1/mat-hang/" + id,
+            success: function (data) {
+                $('#example2').DataTable().ajax.reload();
+                alert("Xóa thành công");
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    })
 });
