@@ -65,8 +65,8 @@ $(document).ready(function () {
                 class: 'text-center',
                 data: 'maMH',
                 render: function (data) {
-                    return '<button id="edit" class="btn bg-gradient-warning"><i class="fas fa-edit mr-2"></i></button>' +
-                        ' <button id="delete" class="btn bg-gradient-danger"><i class="fas fa-trash-alt mr-2"></i></button>';
+                    return '<button id="edit" class="btn bg-gradient-warning"><i class="fas fa-marker"></i></button>' +
+                        ' <button id="delete" class="btn bg-gradient-danger"><i class="fas fa-trash-alt"></i></button>';
 
                 }
             }]
