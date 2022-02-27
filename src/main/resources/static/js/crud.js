@@ -38,8 +38,10 @@ $(document).ready(function () {
                 },
             },
             columns: [{
+                class: 'text-center',
                 data: 'maMH'
             }, {
+                class: 'text-center',
                 data: 'hinhAnh',
                 render: function (data, type, row, meta) {
                     return '<img id="img_' + row.maMH + '" src="' + data + '" width="50" height="50" />';
@@ -60,6 +62,7 @@ $(document).ready(function () {
                 class: 'td_tenLMH',
                 data: 'loaiMatHang.tenLMH'
             }, {
+                class: 'text-center',
                 data: 'maMH',
                 render: function (data) {
                     return '<button id="edit" class="btn bg-gradient-warning"><i class="fas fa-edit mr-2"></i>Sửa</button>' +
