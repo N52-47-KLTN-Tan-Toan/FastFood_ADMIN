@@ -100,6 +100,7 @@ $(document).ready(function () {
                 });
             },
             error: function (data) {
+                toastr.error('Lỗi tải dữ liệu. Vui lòng F5 vài giây sau!')
                 console.log(data);
             }
         });
@@ -108,6 +109,7 @@ $(document).ready(function () {
     //Xóa mặt hàng theo id và xóa dòng liên quan trên bảng
     $('table').on('click', 'button[id="delete"]', function (e) {
         var id = $(this).closest('tr').children('td:first').text();
+        var nameDel = $(this).closest('tr').children('td:nth-child(3)').text();
 
         deleteImageToStorageById(id);
 
@@ -117,10 +119,10 @@ $(document).ready(function () {
             url: "http://localhost:8000/api/v1/mat-hang/" + id,
             success: function (data) {
                 $('#example2').DataTable().ajax.reload(null, false);
-                alert("Xóa thành công");
+                toastr.success(nameDel + ' đã xóa ra khỏi danh sách.');
             },
             error: function (err) {
-                console.log(err);
+                toastr.error('Đã có lỗi xảy ra. Xóa thất bại');
             }
         });
     })
@@ -156,7 +158,14 @@ $(document).ready(function () {
 
         const ref = firebase.storage().ref();
         const file = document.querySelector("#file").files[0];
-        const name = +new Date() + "-" + file.name;
+
+        let name = "";
+        try {
+            name = +new Date() + "-" + file.name;
+        }catch (e) {
+            toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
+        }
+
         const metadata = {
             contentType: file.type
         };
