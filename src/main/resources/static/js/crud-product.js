@@ -13,6 +13,7 @@ firebase.initializeApp(firebaseConfig);
 
 $(document).ready(function () {
 
+    //Khai báo biến toast để hiển thị thông báo
     var Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -20,9 +21,127 @@ $(document).ready(function () {
         timer: 3000
     });
 
+    $('#loading-event').hide();
+    $('#loading-notification').hide();
+
     renderDataForLoaiMHOption();
 
     assignDataToTable();
+
+    //Tạo mới mặt hàng
+    $("#add-product").submit(function (evt) {
+        evt.preventDefault();
+
+        $('#loading-event').show();
+
+        const ref = firebase.storage().ref();
+        const file = document.querySelector("#file").files[0];
+
+        let name = "";
+        try {
+            name = +new Date() + "-" + file.name;
+        } catch (e) {
+            toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
+        }
+
+        const metadata = {
+            contentType: file.type
+        };
+        const task = ref.child(name).put(file, metadata);
+
+        task
+            .then(snapshot => snapshot.ref.getDownloadURL())
+            .then(url => {
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:8000/api/v1/mat-hang",
+                    data: JSON.stringify({
+                        tenMH: $("#ten-mat-hang").val(),
+                        moTa: $("#mo-ta-mat-hang").val(),
+                        donGia: $("#don-gia-mat-hang").val(),
+                        donViTinh: $("#don-vi-tinh").val(),
+                        hinhAnh: url,
+                        loaiMatHang: {
+                            maLMH: $("#op-loaimh option:selected").val()
+                        }
+                    }),
+                    contentType: "application/json",
+                    success: function (data) {
+                        $('#loading-event').hide();
+                        $('.modal').each(function () {
+                            $(this).modal('hide');
+                        });
+                        $('#example2').DataTable().ajax.reload(null, false);
+                        toastr.success(data.tenMH + ' đã được thêm vào.')
+                    },
+                    error: function (err) {
+                        toastr.error('Đã có lỗi xảy ra. Thêm thất bại!!!')
+                    }
+                });
+            })
+            .catch(console.error);
+    });
+
+    let id_del = 0;
+    let name_del = "";
+
+    //Hiển thị modal thông báo xóa mặt hàng
+    $('table').on('click', 'button[id="delete"]', function (e) {
+        id_del = $(this).closest('tr').children('td:first').text();
+        name_del = $(this).closest('tr').children('td:nth-child(3)').text();
+
+        $("#modal-overlay .modal-body").text("Xóa \"" + name_del.toUpperCase() + "\" ra khỏi danh sách?");
+    })
+
+    //Xóa mặt hàng theo id và xóa dòng liên quan trên bảng
+    $(document).on("click", "#modal-accept-btn", function () {
+
+        $('#loading-notification').show();
+
+        deleteImageToStorageById(id_del);
+
+        //Delete Object by id
+        $.ajax({
+            type: "DELETE",
+            url: "http://localhost:8000/api/v1/mat-hang/" + id_del,
+            success: function (data) {
+                $('#loading-notification').hide();
+                $('.modal').each(function () {
+                    $(this).modal('hide');
+                });
+                $('#example2').DataTable().ajax.reload(null, false);
+                toastr.success('\"' + name_del.toUpperCase() + '\" đã xóa ra khỏi danh sách.');
+            },
+            error: function (err) {
+                toastr.error('Đã có lỗi xảy ra. Xóa thất bại');
+            }
+        });
+    })
+
+    //Xóa hình ảnh trên firebase storage dựa trên tìm kiếm id của đối tượng
+    function deleteImageToStorageById(id) {
+
+        //Find Object by id
+        $.ajax({
+            type: 'GET',
+            contentType: "application/json",
+            url: 'http://localhost:8000/api/v1/mat-hang/' + id,
+            success: function (data) {
+                // Create a reference to the file to delete
+                var desertRef = firebase.storage().refFromURL(data.hinhAnh);
+
+                // Delete the file
+                desertRef.delete().then(function () {
+                    console.log("Delete file in firebase storage successfully");
+                }).catch(function (error) {
+                });
+            },
+            error: function (err) {
+                console.log(err);
+                alert("Error -> " + err);
+            }
+        });
+    }
 
     //Hiển thị dữ liệu
     function assignDataToTable() {
@@ -67,7 +186,7 @@ $(document).ready(function () {
             }, {
                 class: 'td_donGia',
                 data: 'donGia',
-                render: $.fn.dataTable.render.number( ',', '.', 0, '', ' VND' )
+                render: $.fn.dataTable.render.number(',', '.', 0, '', ' VND')
             }, {
                 class: 'td_tenLMH',
                 data: 'loaiMatHang.tenLMH'
@@ -76,7 +195,8 @@ $(document).ready(function () {
                 data: 'maMH',
                 render: function (data) {
                     return '<button id="edit" class="btn bg-gradient-warning"><i class="fas fa-marker"></i></button>' +
-                        ' <button id="delete" class="btn bg-gradient-danger"><i class="fas fa-trash-alt"></i></button>';
+                        ' <button id="delete" class="btn bg-gradient-danger" ' +
+                        'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>';
 
                 }
             }]
@@ -84,7 +204,7 @@ $(document).ready(function () {
     }
 
     //Hiển thị dữ liệu loại mặt hàng lên combobox
-    function renderDataForLoaiMHOption(){
+    function renderDataForLoaiMHOption() {
         $.ajax({
             type: "GET",
             contentType: "application/json",
@@ -106,100 +226,4 @@ $(document).ready(function () {
         });
     }
 
-    //Xóa mặt hàng theo id và xóa dòng liên quan trên bảng
-    $('table').on('click', 'button[id="delete"]', function (e) {
-        var id = $(this).closest('tr').children('td:first').text();
-        var nameDel = $(this).closest('tr').children('td:nth-child(3)').text();
-
-        deleteImageToStorageById(id);
-
-        //Delete Object by id
-        $.ajax({
-            type: "DELETE",
-            url: "http://localhost:8000/api/v1/mat-hang/" + id,
-            success: function (data) {
-                $('#example2').DataTable().ajax.reload(null, false);
-                toastr.success(nameDel + ' đã xóa ra khỏi danh sách.');
-            },
-            error: function (err) {
-                toastr.error('Đã có lỗi xảy ra. Xóa thất bại');
-            }
-        });
-    })
-
-    //Xóa hình ảnh trên firebase storage dựa trên tìm kiếm id của đối tượng
-    function deleteImageToStorageById(id) {
-
-        //Find Object by id
-        $.ajax({
-            type: 'GET',
-            contentType: "application/json",
-            url: 'http://localhost:8000/api/v1/mat-hang/' + id,
-            success: function (data) {
-                // Create a reference to the file to delete
-                var desertRef = firebase.storage().refFromURL(data.hinhAnh);
-
-                // Delete the file
-                desertRef.delete().then(function () {
-                    console.log("Delete file in firebase storage successfully");
-                }).catch(function (error) {
-                });
-            },
-            error: function (err) {
-                console.log(err);
-                alert("Error -> " + err);
-            }
-        });
-    }
-
-    //Tạo mới mặt hàng
-    $("#add-product").submit(function (evt) {
-        evt.preventDefault();
-
-        const ref = firebase.storage().ref();
-        const file = document.querySelector("#file").files[0];
-
-        let name = "";
-        try {
-            name = +new Date() + "-" + file.name;
-        }catch (e) {
-            toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
-        }
-
-        const metadata = {
-            contentType: file.type
-        };
-        const task = ref.child(name).put(file, metadata);
-
-        task
-            .then(snapshot => snapshot.ref.getDownloadURL())
-            .then(url => {
-                $.ajax({
-                    type: "POST",
-                    url: "http://localhost:8000/api/v1/mat-hang",
-                    data: JSON.stringify({
-                        tenMH: $("#ten-mat-hang").val(),
-                        moTa: $("#mo-ta-mat-hang").val(),
-                        donGia: $("#don-gia-mat-hang").val(),
-                        donViTinh: $("#don-vi-tinh").val(),
-                        hinhAnh: url,
-                        loaiMatHang: {
-                            maLMH: $("#op-loaimh option:selected").val()
-                        }
-                    }),
-                    contentType: "application/json",
-                    success: function (data) {
-                        $('#example2').DataTable().ajax.reload(null, false);
-                        $('.modal').each(function(){
-                            $(this).modal('hide');
-                        });
-                        toastr.success(data.tenMH + ' đã được thêm vào.')
-                    },
-                    error: function (err) {
-                        toastr.error('Đã có lỗi xảy ra. Thêm thất bại!!!')
-                    }
-                });
-            })
-            .catch(console.error);
-    });
 });
