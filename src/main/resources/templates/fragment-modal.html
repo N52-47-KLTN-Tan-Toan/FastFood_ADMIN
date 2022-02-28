@@ -7,59 +7,67 @@
 
 <div class="modal fade" id="modal-xl" th:fragment="fm-modal">
     <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="overlay" id="loading-event"><i class="fas fa-3x fa-sync-alt fa-spin"></i>
-                <div class="text-bold pt-2"></div>
-            </div>
-            <div class="modal-header">
-                <h4 class="modal-title">Thông tin mặt hàng</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="add-product">
-                <div class="modal-body">
-                    <div class="col-lg-6 float-right">
-                        <div class="text-center profile-pic-div">
-                            <img src="https://cdn-icons-png.flaticon.com/512/1040/1040241.png"
-                                 class="img-circle elevation-2" alt="User Image" id="image-upload-firebase">
-                            <input type="file" id="file-upload-firebase">
-                            <label for="file-upload-firebase" id="image-upload-btn">Chọn hình ảnh</label>
-                        </div>
-                    </div>
+        <form id="add-product">
+            <div class="modal-content">
+                <div class="overlay" id="loading-event"><i class="fas fa-3x fa-sync-alt fa-spin"></i>
+                    <div class="text-bold pt-2"></div>
+                </div>
+                <div class="modal-header">
+                    <h4 class="modal-title">Thông tin mặt hàng</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
 
-                    <div class="col-lg-6">
-                        <label for="ma-mat-hang">Mã mặt hàng</label>
-                        <input id="ma-mat-hang" type="text" class="form-control" readonly>
+                <div class="modal-body">
+                    <div class="profile-pic-div">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1040/1040241.png"
+                             class="img-circle elevation-2" alt="User Image" id="image-upload-firebase">
+                        <input type="file" id="file-upload-firebase">
+                        <label for="file-upload-firebase" id="image-upload-btn">Chọn hình ảnh</label>
                     </div>
-                    <div class="col-lg-6">
-                        <label for="ten-mat-hang">Tên mặt hàng</label>
-                        <input id="ten-mat-hang" type="text" class="form-control" placeholder="VD: Bánh mì" required>
-                    </div>
-                    <div class="col-lg-6">
-                        <label for="mo-ta-mat-hang">Mô tả</label>
-                        <input id="mo-ta-mat-hang" type="text" class="form-control"
-                               placeholder="VD: Bánh mì kẹp thịt heo quay, dưa leo" required>
-                    </div>
-                    <div class="col-lg-6">
-                        <label for="don-vi-tinh">Đơn vị tính</label>
-                        <input id="don-vi-tinh" type="text" class="form-control" placeholder="VD: ổ" required>
-                    </div>
-                    <div class="col-lg-6">
-                        <label for="don-gia-mat-hang">Đơn giá</label>
-                        <input id="don-gia-mat-hang" type="text" class="form-control" placeholder="VD: 15000" required>
-                    </div>
-                    <div class="col-lg-6">
-                        <label for="op-loaimh">Loại mặt hàng</label>
-                        <select name="" id="op-loaimh" class="form-control" required></select>
+                    <div style="margin-top: -80px;">
+                        <div class="col-lg-12">
+                            <div class="col-lg-6 float-left">
+                                <label for="ma-mat-hang">Mã mặt hàng</label>
+                                <input id="ma-mat-hang" type="text" class="form-control" readonly>
+                            </div>
+                            <div class="col-lg-6 float-right">
+                                <label for="ten-mat-hang">Tên mặt hàng</label>
+                                <input id="ten-mat-hang" type="text" class="form-control" placeholder="VD: Bánh mì"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="col-lg-6 float-left">
+                                <label for="mo-ta-mat-hang">Mô tả</label>
+                                <input id="mo-ta-mat-hang" type="text" class="form-control"
+                                       placeholder="VD: Bánh mì kẹp thịt heo quay, dưa leo" required>
+                            </div>
+                            <div class="col-lg-6 float-right">
+                                <label for="don-vi-tinh">Đơn vị tính</label>
+                                <input id="don-vi-tinh" type="text" class="form-control" placeholder="VD: ổ" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="col-lg-6 float-left">
+                                <label for="don-gia-mat-hang">Đơn giá</label>
+                                <input id="don-gia-mat-hang" type="text" class="form-control" placeholder="VD: 15000"
+                                       required>
+                            </div>
+                            <div class="col-lg-6 float-right">
+                                <label for="op-loaimh">Loại mặt hàng</label>
+                                <select name="" id="op-loaimh" class="form-control" required></select>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
                     <button id="btn-luu-mat-hang" type="submit" class="btn btn-primary">Lưu thông tin</button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->

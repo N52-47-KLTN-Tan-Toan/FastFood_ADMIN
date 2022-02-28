@@ -7,15 +7,15 @@ const uploadBtn = document.querySelector('#image-upload-btn');
 
 //if user hover on img div 
 
-imgDiv.addEventListener('mouseenter', function(){
-    uploadBtn.style.display = "block";
-});
+// imgDiv.addEventListener('mouseenter', function(){
+//     uploadBtn.style.display = "block";
+// });
 
 //if we hover out from img div
 
-imgDiv.addEventListener('mouseleave', function(){
-    uploadBtn.style.display = "none";
-});
+// imgDiv.addEventListener('mouseleave', function(){
+//     uploadBtn.style.display = "none";
+// });
 
 //lets work for image showing functionality when we choose an image to upload
 

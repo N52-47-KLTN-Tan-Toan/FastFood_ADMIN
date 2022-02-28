@@ -37,21 +37,23 @@ $(document).ready(function () {
         $("#image-upload-firebase").attr("src", "https://cdn-icons-png.flaticon.com/512/1040/1040241.png");
         $("#don-gia-mat-hang").val('');
         $("#op-loaimh").val('');
+        $("#file-upload-firebase").val('');
     })
 
-    //Cập nhật, chỉnh sửa đối tượng
-    $('table').on('click', 'button[id="edit"]', function (e) {
+    let id_edit = 0;
+    //Lấy dữ liệu đối tượng từ nút edit
+    $('table').on('click', '.edit-btn', function (e) {
 
-        //Lấy dữ liệu từ bảng
-        var maMH = $(this).closest('tr').children('td:first').text();
+        let btn_id = this.id;
+        id_edit = btn_id.split("_")[2];
 
         //Find Object by id
         $.ajax({
             type: 'GET',
             contentType: "application/json",
-            url: 'http://localhost:8000/api/v1/mat-hang/' + maMH,
+            url: 'http://localhost:8000/api/v1/mat-hang/' + id_edit,
             success: function (data) {
-                $("#ma-mat-hang").val(maMH);
+                $("#ma-mat-hang").val(id_edit);
                 $("#ten-mat-hang").val(data.tenMH);
                 $("#mo-ta-mat-hang").val(data.moTa);
                 $("#don-vi-tinh").val(data.donViTinh);
@@ -150,7 +152,7 @@ $(document).ready(function () {
             }
         }
 
-        function updateProduct(url){
+        function updateProduct(url) {
             $.ajax({
                 type: "PUT",
                 data: JSON.stringify({
@@ -186,14 +188,13 @@ $(document).ready(function () {
     });
 
     let id_del = 0;
-    let name_del = "";
 
     //Hiển thị modal thông báo xóa mặt hàng
-    $('table').on('click', 'button[id="delete"]', function (e) {
-        id_del = $(this).closest('tr').children('td:first').text();
-        name_del = $(this).closest('tr').children('td:nth-child(3)').text();
+    $('table').on('click', '.delete-btn', function() {
+        let btn_id = this.id;
+        id_del = btn_id.split("_")[2];
 
-        $("#modal-overlay .modal-body").text("Xóa \"" + name_del.toUpperCase() + "\" ra khỏi danh sách?");
+        $("#modal-overlay .modal-body").text("Xóa mặt hàng \"" + id_del + "\" ra khỏi danh sách?");
     })
 
     //Xóa mặt hàng theo id và xóa dòng liên quan trên bảng
@@ -213,7 +214,7 @@ $(document).ready(function () {
                     $(this).modal('hide');
                 });
                 $('#example2').DataTable().ajax.reload(null, false);
-                toastr.success('\"' + name_del.toUpperCase() + '\" đã xóa ra khỏi danh sách.');
+                toastr.success('Mặt hàng \"' + id_del + '\" đã xóa ra khỏi danh sách.');
             },
             error: function (err) {
                 $('#loading-event').hide();
@@ -254,9 +255,11 @@ $(document).ready(function () {
             lengthChange: false,
             searching: true,
             ordering: true,
-            info: false,
+            info: true,
             autoWidth: false,
-            responsive: false,
+            responsive: true,
+            // fixedHeader: true,
+            // scrollX: 200,
             pageLength: 5,
             fnCreatedRow: function (nRow, aData, iDataIndex) {
                 $(nRow).attr('id', 'tr_' + aData.maMH); // or whatever you choose to set as the id
@@ -300,10 +303,10 @@ $(document).ready(function () {
             }, {
                 class: 'text-center',
                 data: 'maMH',
-                render: function (data) {
-                    return '<button id="edit" class="btn bg-gradient-warning" ' +
+                render: function (data, type, row, meta) {
+                    return '<button id="btn_edit_' + row.maMH + '" class="btn bg-gradient-warning edit-btn" ' +
                         'data-toggle="modal" data-target="#modal-xl"><i class="fas fa-marker"></i></button>' +
-                        ' <button id="delete" class="btn bg-gradient-danger" ' +
+                        ' <button id="btn_delete_' + row.maMH + '" class="btn bg-gradient-danger delete-btn" ' +
                         'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>';
 
                 }
