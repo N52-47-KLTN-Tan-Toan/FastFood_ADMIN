@@ -34,7 +34,7 @@ $(document).ready(function () {
         $("#ten-mat-hang").val('');
         $("#mo-ta-mat-hang").val('');
         $("#don-vi-tinh").val('');
-        $("#photo").attr("src", "https://cdn-icons-png.flaticon.com/512/1040/1040241.png");
+        $("#image-upload-firebase").attr("src", "https://cdn-icons-png.flaticon.com/512/1040/1040241.png");
         $("#don-gia-mat-hang").val('');
         $("#op-loaimh").val('');
     })
@@ -42,26 +42,24 @@ $(document).ready(function () {
     //Cập nhật, chỉnh sửa đối tượng
     $('table').on('click', 'button[id="edit"]', function (e) {
 
-        //Lấy id từ bảng
+        //Lấy dữ liệu từ bảng
         var maMH = $(this).closest('tr').children('td:first').text();
 
-        //Tìm kiếm đối tượng theo id
+        //Find Object by id
         $.ajax({
             type: 'GET',
             contentType: "application/json",
             url: 'http://localhost:8000/api/v1/mat-hang/' + maMH,
             success: function (data) {
-                //Set dữ liệu dưới modal
                 $("#ma-mat-hang").val(maMH);
                 $("#ten-mat-hang").val(data.tenMH);
                 $("#mo-ta-mat-hang").val(data.moTa);
                 $("#don-vi-tinh").val(data.donViTinh);
-                $("#photo").attr("src", data.hinhAnh);
+                $("#image-upload-firebase").attr("src", data.hinhAnh);
                 $("#don-gia-mat-hang").val(data.donGia);
                 $("#op-loaimh").val(data.loaiMatHang.maLMH);
             },
             error: function (err) {
-                console.log(err);
                 alert("Error -> " + err);
             }
         });
@@ -72,7 +70,7 @@ $(document).ready(function () {
         evt.preventDefault();
 
         const ref = firebase.storage().ref();
-        const file = document.querySelector("#file").files[0];
+        const file = document.querySelector("#file-upload-firebase").files[0];
         var id = $("#ma-mat-hang").val();
         let name;
         let task;
@@ -122,7 +120,7 @@ $(document).ready(function () {
                 .catch(console.error);
         } else if (id > 0) {
             //Cập nhật thông tin đối tượng
-            if ($('#file').val() == "") {
+            if ($('#file-upload-firebase').val() == "") {
                 //không có cập nhật ảnh
                 const url = $('#img_' + id).prop('src');
                 $('#loading-event').show();
@@ -172,6 +170,7 @@ $(document).ready(function () {
                     toastr.success('Mặt hàng ' + data.maMH + ' đã được chỉnh sửa.')
                 },
                 error: function (err) {
+                    $('#loading-event').hide();
                     toastr.error('Đã có lỗi xảy ra. Cập nhật thất bại!!!')
                 }
             });
@@ -217,6 +216,7 @@ $(document).ready(function () {
                 toastr.success('\"' + name_del.toUpperCase() + '\" đã xóa ra khỏi danh sách.');
             },
             error: function (err) {
+                $('#loading-event').hide();
                 toastr.error('Đã có lỗi xảy ra. Xóa thất bại');
             }
         });
@@ -254,9 +254,9 @@ $(document).ready(function () {
             lengthChange: false,
             searching: true,
             ordering: true,
-            info: true,
+            info: false,
             autoWidth: false,
-            responsive: true,
+            responsive: false,
             pageLength: 5,
             fnCreatedRow: function (nRow, aData, iDataIndex) {
                 $(nRow).attr('id', 'tr_' + aData.maMH); // or whatever you choose to set as the id
@@ -293,7 +293,10 @@ $(document).ready(function () {
                 render: $.fn.dataTable.render.number(',', '.', 0, '', ' VND')
             }, {
                 class: 'td_tenLMH',
-                data: 'loaiMatHang.tenLMH'
+                data: 'loaiMatHang.tenLMH',
+                render: function (data, type, row, meta) {
+                    return '<span id="' + row.loaiMatHang.maLMH + '">' + row.loaiMatHang.tenLMH + '</span>';
+                }
             }, {
                 class: 'text-center',
                 data: 'maMH',
