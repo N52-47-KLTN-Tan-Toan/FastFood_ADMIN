@@ -81,45 +81,45 @@ $(document).ready(function () {
             //convert hình ảnh upload
             try {
                 name = +new Date() + "-" + file.name;
-                const metadata = {
-                    contentType: file.type
-                };
-
-                task = ref.child(name).put(file, metadata);
-
-                //Thêm mới đối tượng
-                $('#loading-event').show();
-                task
-                    .then(snapshot => snapshot.ref.getDownloadURL())
-                    .then(url => {
-                        $.ajax({
-                            type: "POST",
-                            url: "http://localhost:8000/api/v1/mat-hang",
-                            data: JSON.stringify({
-                                tenMH: $("#ten-mat-hang").val(),
-                                moTa: $("#mo-ta-mat-hang").val(),
-                                donGia: $("#don-gia-mat-hang").val(),
-                                donViTinh: $("#don-vi-tinh").val(),
-                                hinhAnh: url,
-                                loaiMatHang: {
-                                    maLMH: $("#op-loaimh option:selected").val()
-                                }
-                            }),
-                            contentType: "application/json",
-                            success: function (data) {
-                                loadingModalAndRefreshTable();
-                                toastr.success(data.tenMH + ' đã được thêm vào.')
-                            },
-                            error: function (err) {
-                                toastr.error('Đã có lỗi xảy ra. Thêm thất bại!!!')
-                            }
-                        });
-                    })
-                    .catch(console.error);
             } catch (e) {
                 toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
                 return false;
             }
+            const metadata = {
+                contentType: file.type
+            };
+
+            task = ref.child(name).put(file, metadata);
+
+            //Thêm mới đối tượng
+            $('#loading-event').show();
+            task
+                .then(snapshot => snapshot.ref.getDownloadURL())
+                .then(url => {
+                    $.ajax({
+                        type: "POST",
+                        url: "http://localhost:8000/api/v1/mat-hang",
+                        data: JSON.stringify({
+                            tenMH: $("#ten-mat-hang").val(),
+                            moTa: $("#mo-ta-mat-hang").val(),
+                            donGia: $("#don-gia-mat-hang").val(),
+                            donViTinh: $("#don-vi-tinh").val(),
+                            hinhAnh: url,
+                            loaiMatHang: {
+                                maLMH: $("#op-loaimh option:selected").val()
+                            }
+                        }),
+                        contentType: "application/json",
+                        success: function (data) {
+                            loadingModalAndRefreshTable();
+                            toastr.success(data.tenMH + ' đã được thêm vào.')
+                        },
+                        error: function (err) {
+                            toastr.error('Đã có lỗi xảy ra. Thêm thất bại!!!')
+                        }
+                    });
+                })
+                .catch(console.error);
         } else if (id > 0) {
             //Cập nhật thông tin đối tượng
             if ($('#file').val() == "") {
@@ -131,29 +131,28 @@ $(document).ready(function () {
                 //convert hình ảnh upload
                 try {
                     name = +new Date() + "-" + file.name;
-
-                    const metadata = {
-                        contentType: file.type
-                    };
-                    task = ref.child(name).put(file, metadata);
-
-                    //có cập nhật ảnh
-                    $('#loading-event').show();
-                    deleteImageToStorageById(id);
-                    task
-                        .then(snapshot => snapshot.ref.getDownloadURL())
-                        .then(url => {
-                            updateProduct(url);
-                        })
-                        .catch(console.error);
                 } catch (e) {
                     toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
                     return false;
                 }
+                const metadata = {
+                    contentType: file.type
+                };
+                const task = ref.child(name).put(file, metadata);
+
+                //có cập nhật ảnh
+                $('#loading-event').show();
+                deleteImageToStorageById(id);
+                task
+                    .then(snapshot => snapshot.ref.getDownloadURL())
+                    .then(url => {
+                        updateProduct(url);
+                    })
+                    .catch(console.error);
             }
         }
 
-        function updateProduct(url) {
+        function updateProduct(url){
             $.ajax({
                 type: "PUT",
                 data: JSON.stringify({
