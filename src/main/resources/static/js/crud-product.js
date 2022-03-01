@@ -254,7 +254,7 @@ $(document).ready(function () {
 
     //Hiển thị dữ liệu
     function assignDataToTable() {
-        $("#example2").DataTable({
+        var t = $("#example2").DataTable({
             paging: true,
             lengthChange: true,
             searching: true,
@@ -299,7 +299,7 @@ $(document).ready(function () {
             },
             columns: [{
                 class: 'text-center',
-                data: 'maMH'
+                data: 'maMH',
             }, {
                 class: 'text-center',
                 data: 'hinhAnh',
@@ -323,7 +323,7 @@ $(document).ready(function () {
                 class: 'td_tenLMH',
                 data: 'loaiMatHang.tenLMH',
                 render: function (data, type, row, meta) {
-                    return '<span id="' + row.loaiMatHang.maLMH + '">' + row.loaiMatHang.tenLMH + '</span>';
+                    return '<span id="' + row.loaiMatHang.maLMH + '">' + data + '</span>';
                 }
             }, {
                 class: 'text-center',
@@ -337,6 +337,13 @@ $(document).ready(function () {
                 }
             }]
         });
+
+        //Tạo số thứ tự bắt đầu từ 1 vào cột mã
+        t.on('order.dt search.dt', function () {
+            t.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
     }
 
     //Hiển thị dữ liệu loại mặt hàng lên combobox
