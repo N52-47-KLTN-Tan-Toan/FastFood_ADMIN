@@ -13,20 +13,27 @@
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
                     <div class="pl-4 pt-4">
-                        <button id="add-btn" class="btn bg-gradient-info mr-2" data-toggle="modal" data-target="#modal-xl">
+                        <button id="add-btn" class="btn bg-gradient-info mr-2" data-toggle="modal"
+                                data-target="#modal-xl">
                             <i class="fas fa-plus"></i>
-                            Thêm mặt hàng
+                            <span class="pl-2">Thêm mặt hàng</span>
                         </button>
                     </div>
                     <div class="col-12">
-                        <!-- /.card-header -->
                         <div class="card-body">
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label><b>Loại mặt hàng</b></label>
+                                    <select class="form-control select2" id="select-lmh">
+                                        <option value="">Tất cả</option>
+                                    </select>
+                                </div>
+                            </div>
                             <table id="example2" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
