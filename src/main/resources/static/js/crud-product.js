@@ -252,7 +252,7 @@ $(document).ready(function () {
     function assignDataToTable() {
         $("#example2").DataTable({
             paging: true,
-            lengthChange: false,
+            lengthChange: true,
             searching: true,
             ordering: true,
             info: true,
@@ -271,6 +271,23 @@ $(document).ready(function () {
                 dataSrc: function (d) {
                     return d
                 },
+            },
+            lengthMenu: [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, "All"]
+            ],
+            initComplete: function() {
+                var column = this.api().column(6);
+
+                var select = $('#select-lmh')
+                    .on('change', function() {
+                        var val = $(this).val();
+                        column.search(val ? '^' + $(this).val() + '$' : val, true, false).draw();
+                    });
+
+                column.data().unique().sort().each(function(d, j) {
+                    select.append('<option value="' + d + '">' + d + '</option>');
+                });
             },
             columns: [{
                 class: 'text-center',
