@@ -73,6 +73,7 @@ $(document).ready(function () {
 
         const ref = firebase.storage().ref();
         const file = document.querySelector("#file-upload-firebase").files[0];
+
         var id = $("#ma-mat-hang").val();
         let name;
         let task;
@@ -121,9 +122,9 @@ $(document).ready(function () {
                 })
                 .catch(console.error);
         } else if (id > 0) {
-            //Cập nhật thông tin đối tượng
+            //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
             if ($('#file-upload-firebase').val() == "") {
-                //không có cập nhật ảnh
+                //Không có cập nhật ảnh
                 const url = $('#img_' + id).prop('src');
                 $('#loading-event').show();
                 updateProduct(url);
@@ -140,7 +141,7 @@ $(document).ready(function () {
                 };
                 const task = ref.child(name).put(file, metadata);
 
-                //có cập nhật ảnh
+                //Có cập nhật ảnh
                 $('#loading-event').show();
                 deleteImageToStorageById(id);
                 task
@@ -152,6 +153,7 @@ $(document).ready(function () {
             }
         }
 
+        //Hàm cập nhật mặt hàng
         function updateProduct(url) {
             $.ajax({
                 type: "PUT",
@@ -178,6 +180,7 @@ $(document).ready(function () {
             });
         }
 
+        //Hàm hiển thị loading trên modal, đóng modal và load lại table
         function loadingModalAndRefreshTable() {
             $('#loading-event').hide();
             $('.modal').each(function () {
@@ -190,7 +193,7 @@ $(document).ready(function () {
     let id_del = 0;
 
     //Hiển thị modal thông báo xóa mặt hàng
-    $('table').on('click', '.delete-btn', function() {
+    $('table').on('click', '.delete-btn', function () {
         let btn_id = this.id;
         id_del = btn_id.split("_")[2];
 
@@ -239,6 +242,7 @@ $(document).ready(function () {
                 desertRef.delete().then(function () {
                     // console.log("Delete file in firebase storage successfully");
                 }).catch(function (error) {
+
                 });
             },
             error: function (err) {
@@ -261,6 +265,8 @@ $(document).ready(function () {
             // fixedHeader: true,
             // scrollX: 200,
             pageLength: 5,
+
+            //Tạo id cho mỗi thẻ tr
             fnCreatedRow: function (nRow, aData, iDataIndex) {
                 $(nRow).attr('id', 'tr_' + aData.maMH); // or whatever you choose to set as the id
             },
@@ -272,20 +278,22 @@ $(document).ready(function () {
                     return d
                 },
             },
+
+            // Hàm render filter option cho loại mặt hàng
             lengthMenu: [
                 [10, 25, 50, 100, -1],
                 [10, 25, 50, 100, "All"]
             ],
-            initComplete: function() {
+            initComplete: function () {
                 var column = this.api().column(6);
 
                 var select = $('#select-lmh')
-                    .on('change', function() {
+                    .on('change', function () {
                         var val = $(this).val();
                         column.search(val ? '^' + $(this).val() + '$' : val, true, false).draw();
                     });
 
-                column.data().unique().sort().each(function(d, j) {
+                column.data().unique().sort().each(function (d, j) {
                     select.append('<option value="' + d + '">' + d + '</option>');
                 });
             },
