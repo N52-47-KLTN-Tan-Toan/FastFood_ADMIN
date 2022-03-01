@@ -67,7 +67,7 @@ $(document).ready(function () {
         });
     })
 
-    //Tạo mới mặt hàng
+    //Tạo mới mặt hàng và cập nhật mặt hàng
     $("#add-product").submit(function (evt) {
         evt.preventDefault();
 
