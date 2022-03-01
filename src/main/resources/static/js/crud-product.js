@@ -68,7 +68,7 @@ $(document).ready(function () {
     })
 
     //Tạo mới mặt hàng và cập nhật mặt hàng
-    $("#add-product").submit(function (evt) {
+    $("#create-update-product").submit(function (evt) {
         evt.preventDefault();
 
         const ref = firebase.storage().ref();
