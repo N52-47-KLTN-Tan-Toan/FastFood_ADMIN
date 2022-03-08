@@ -1,12 +1,24 @@
+// var firebaseConfig = {
+//     apiKey: "AIzaSyBSLLi7jGwomqntt2Ky0RnmIdk_wM0YGL0",
+//     authDomain: "n52-47-kltn-tan-toan.firebaseapp.com",
+//     projectId: "n52-47-kltn-tan-toan",
+//     storageBucket: "n52-47-kltn-tan-toan.appspot.com",
+//     messagingSenderId: "601210556956",
+//     appId: "1:601210556956:web:dc4df16ecb002d447085d9",
+//     measurementId: "G-J68P4KMT72"
+// };
+
 var firebaseConfig = {
-    apiKey: "AIzaSyBSLLi7jGwomqntt2Ky0RnmIdk_wM0YGL0",
-    authDomain: "n52-47-kltn-tan-toan.firebaseapp.com",
-    projectId: "n52-47-kltn-tan-toan",
-    storageBucket: "n52-47-kltn-tan-toan.appspot.com",
-    messagingSenderId: "601210556956",
-    appId: "1:601210556956:web:dc4df16ecb002d447085d9",
-    measurementId: "G-J68P4KMT72"
+    apiKey: "AIzaSyDNvq0eJPKyc__OONXxrzJAm6mWAhwr9fQ",
+    authDomain: "utopian-pilot-329813.firebaseapp.com",
+    projectId: "utopian-pilot-329813",
+    storageBucket: "utopian-pilot-329813.appspot.com",
+    messagingSenderId: "1025160710817",
+    appId: "1:1025160710817:web:73bf3b10d10e4d559c7ee0",
+    measurementId: "G-44XTC5N9LW",
+    databaseURL: "https://utopian-pilot-329813-default-rtdb.firebaseio.com"
 };
+
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
@@ -21,22 +33,21 @@ $(document).ready(function () {
         timer: 5000
     });
 
-    $('#loading-event').hide();
+    $('#loading-event-khach-hang').hide();
     $('#loading-notification').hide();
 
-    renderDataForLoaiMHOption();
 
     assignDataToTable();
 
-    //Trả dữ liệu modal thêm mặt hàng về rỗng
+    //Trả dữ liệu modal thêm khách hàng về rỗng
     $(document).on('click', '#add-btn', function () {
-        $("#ma-mat-hang").val(0);
-        $("#ten-mat-hang").val('');
-        $("#mo-ta-mat-hang").val('');
-        $("#don-vi-tinh").val('');
+        $("#ma-khach-hang").val(0);
+        $("#ten-khach-hang").val('');
+        $("#ngay-sinh").val('');
+        $("#sdt").val('');
         $("#image-upload-firebase").attr("src", "https://cdn-icons-png.flaticon.com/512/1040/1040241.png");
-        $("#don-gia-mat-hang").val('');
-        $("#op-loaimh").val('');
+        $("#email").val('');
+        $("#dia-chi").val('');
         $("#file-upload-firebase").val('');
     })
 
@@ -51,15 +62,20 @@ $(document).ready(function () {
         $.ajax({
             type: 'GET',
             contentType: "application/json",
-            url: 'http://localhost:8000/api/v1/mat-hang/' + id_edit,
+            url: 'http://localhost:8000/api/v1/khach-hang/' + id_edit,
             success: function (data) {
-                $("#ma-mat-hang").val(id_edit);
-                $("#ten-mat-hang").val(data.tenMH);
-                $("#mo-ta-mat-hang").val(data.moTa);
-                $("#don-vi-tinh").val(data.donViTinh);
-                $("#image-upload-firebase").attr("src", data.hinhAnh);
-                $("#don-gia-mat-hang").val(data.donGia);
-                $("#op-loaimh").val(data.loaiMatHang.maLMH);
+                $("#ma-khach-hang").val(id_edit);
+                $("#ten-khach-hang").val(data.name);
+                $("#ngay-sinh").val(data.birthDate);
+                $("#sdt").val(data.phone);
+                $("#image-upload-firebase").attr("src", data.avatar);
+                $("#email").val(data.email);
+                $("#dia-chi").val(data.address);
+                if (data.gender == true) {
+                    $('#gender-male').prop("checked", true);
+                } else {
+                    $('#gender-female').prop("checked", true);
+                }
             },
             error: function (err) {
                 alert("Error -> " + err);
@@ -67,14 +83,14 @@ $(document).ready(function () {
         });
     })
 
-    //Tạo mới mặt hàng và cập nhật mặt hàng
-    $("#create-update-product").submit(function (evt) {
+    //Tạo mới khách hàng và cập nhật khách hàng
+    $("#create-update-khach-hang").submit(function (evt) {
         evt.preventDefault();
 
         const ref = firebase.storage().ref();
         const file = document.querySelector("#file-upload-firebase").files[0];
 
-        var id = $("#ma-mat-hang").val();
+        var id = $("#ma-khach-hang").val();
         let name;
         let task;
 
@@ -91,42 +107,44 @@ $(document).ready(function () {
             };
 
             task = ref.child(name).put(file, metadata);
-
+            console.log("Giới tính " + $(".rad-gender:checked").val());
             //Thêm mới đối tượng
-            $('#loading-event').show();
+            $('#loading-event-khach-hang').show();
             task
                 .then(snapshot => snapshot.ref.getDownloadURL())
                 .then(url => {
                     $.ajax({
                         type: "POST",
-                        url: "http://localhost:8000/api/v1/mat-hang",
+                        url: "http://localhost:8000/api/v1/khach-hang",
                         data: JSON.stringify({
-                            tenMH: $("#ten-mat-hang").val(),
-                            moTa: $("#mo-ta-mat-hang").val(),
-                            donGia: $("#don-gia-mat-hang").val(),
-                            donViTinh: $("#don-vi-tinh").val(),
-                            hinhAnh: url,
-                            loaiMatHang: {
-                                maLMH: $("#op-loaimh option:selected").val()
-                            }
+                            name: $("#ten-khach-hang").val(),
+                            birthDate: $("#ngay-sinh").val(),
+                            phone: $("#sdt").val(),
+                            email: $("#email").val(),
+                            address: $("#dia-chi").val(),
+                            gender: $(".rad-gender:checked").val() == 1 ? true : false,
+                            avatar: url,
+
                         }),
+
                         contentType: "application/json",
                         success: function (data) {
                             loadingModalAndRefreshTable();
-                            toastr.success(data.tenMH + ' đã được thêm vào.')
+                            toastr.success(data.name + ' đã được thêm vào.')
                         },
                         error: function (err) {
+                            loadingModalAndRefreshTable();
                             toastr.error('Đã có lỗi xảy ra. Thêm thất bại!!!')
                         }
                     });
                 })
                 .catch(console.error);
-        } else if (id > 0) {
+        } else if (id != 0) {
             //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
             if ($('#file-upload-firebase').val() == "") {
                 //Không có cập nhật ảnh
                 const url = $('#img_' + id).prop('src');
-                $('#loading-event').show();
+                $('#loading-event-khach-hang').show();
                 updateProduct(url);
             } else {
                 //convert hình ảnh upload
@@ -142,7 +160,7 @@ $(document).ready(function () {
                 const task = ref.child(name).put(file, metadata);
 
                 //Có cập nhật ảnh
-                $('#loading-event').show();
+                $('#loading-event-khach-hang').show();
                 deleteImageToStorageById(id);
                 task
                     .then(snapshot => snapshot.ref.getDownloadURL())
@@ -153,28 +171,27 @@ $(document).ready(function () {
             }
         }
 
-        //Hàm cập nhật mặt hàng
+        //Hàm cập nhật khách hàng
         function updateProduct(url) {
             $.ajax({
                 type: "PUT",
                 data: JSON.stringify({
-                    tenMH: $("#ten-mat-hang").val(),
-                    moTa: $("#mo-ta-mat-hang").val(),
-                    donGia: $("#don-gia-mat-hang").val(),
-                    donViTinh: $("#don-vi-tinh").val(),
-                    hinhAnh: url,
-                    loaiMatHang: {
-                        maLMH: $("#op-loaimh option:selected").val()
-                    }
+                    name: $("#ten-khach-hang").val(),
+                    birthDate: $("#ngay-sinh").val(),
+                    phone: $("#sdt").val(),
+                    email: $("#email").val(),
+                    address: $("#dia-chi").val(),
+                    gender: $(".rad-gender:checked").val() == 1 ? true : false,
+                    avatar: url,
                 }),
                 contentType: "application/json",
-                url: "http://localhost:8000/api/v1/mat-hang/" + id,
+                url: "http://localhost:8000/api/v1/khach-hang/" + id,
                 success: function (data) {
                     loadingModalAndRefreshTable();
-                    toastr.success('Mặt hàng ' + data.maMH + ' đã được chỉnh sửa.')
+                    toastr.success('Khách hàng ' + data.userId + ' đã được chỉnh sửa.')
                 },
                 error: function (err) {
-                    $('#loading-event').hide();
+                    $('#loading-event-khach-hang').hide();
                     toastr.error('Đã có lỗi xảy ra. Cập nhật thất bại!!!')
                 }
             });
@@ -182,7 +199,7 @@ $(document).ready(function () {
 
         //Hàm hiển thị loading trên modal, đóng modal và load lại table
         function loadingModalAndRefreshTable() {
-            $('#loading-event').hide();
+            $('#loading-event-khach-hang').hide();
             $('.modal').each(function () {
                 $(this).modal('hide');
             });
@@ -192,15 +209,25 @@ $(document).ready(function () {
 
     let id_del = 0;
 
-    //Hiển thị modal thông báo xóa mặt hàng
+    //Hiển thị modal thông báo xóa khách hàng
     $('table').on('click', '.delete-btn', function () {
         let btn_id = this.id;
         id_del = btn_id.split("_")[2];
+        $.ajax({
+            type: 'GET',
+            contentType: "application/json",
+            url: 'http://localhost:8000/api/v1/khach-hang/' + id_del,
+            success: function (data) {
+                $("#modal-overlay .modal-body").text("Xóa khách hàng \"" + data.name + "\" ra khỏi danh sách?");
+            },
+            error: function (err) {
+                alert("Error -> " + err);
+            }
+        });
 
-        $("#modal-overlay .modal-body").text("Xóa mặt hàng \"" + id_del + "\" ra khỏi danh sách?");
     })
 
-    //Xóa mặt hàng theo id và xóa dòng liên quan trên bảng
+    //Xóa khách hàng theo id và xóa dòng liên quan trên bảng
     $(document).on("click", "#modal-accept-btn", function () {
 
         $('#loading-notification').show();
@@ -210,17 +237,17 @@ $(document).ready(function () {
         //Delete Object by id
         $.ajax({
             type: "DELETE",
-            url: "http://localhost:8000/api/v1/mat-hang/" + id_del,
+            url: "http://localhost:8000/api/v1/khach-hang/" + id_del,
             success: function (data) {
                 $('#loading-notification').hide();
                 $('.modal').each(function () {
                     $(this).modal('hide');
                 });
                 $('#example2').DataTable().ajax.reload(null, false);
-                toastr.success('Mặt hàng \"' + id_del + '\" đã xóa ra khỏi danh sách.');
+                toastr.success('Khách hàng \"' + id_del + '\" đã xóa ra khỏi danh sách.');
             },
             error: function (err) {
-                $('#loading-event').hide();
+                $('#loading-event-khach-hang').hide();
                 toastr.error('Đã có lỗi xảy ra. Xóa thất bại');
             }
         });
@@ -233,10 +260,10 @@ $(document).ready(function () {
         $.ajax({
             type: 'GET',
             contentType: "application/json",
-            url: 'http://localhost:8000/api/v1/mat-hang/' + id,
+            url: 'http://localhost:8000/api/v1/khach-hang/' + id,
             success: function (data) {
                 // Create a reference to the file to delete
-                var desertRef = firebase.storage().refFromURL(data.hinhAnh);
+                var desertRef = firebase.storage().refFromURL(data.avatar);
 
                 // Delete the file
                 desertRef.delete().then(function () {
@@ -268,10 +295,10 @@ $(document).ready(function () {
 
             //Tạo id cho mỗi thẻ tr
             fnCreatedRow: function (nRow, aData, iDataIndex) {
-                $(nRow).attr('id', 'tr_' + aData.maMH); // or whatever you choose to set as the id
+                $(nRow).attr('id', 'tr_' + aData.userId); // or whatever you choose to set as the id
             },
             ajax: {
-                url: "http://localhost:8000/api/v1/mat-hang",
+                url: "http://localhost:8000/api/v1/khach-hang",
                 type: "GET",
                 contentType: "application/json",
                 dataSrc: function (d) {
@@ -279,63 +306,48 @@ $(document).ready(function () {
                 },
             },
 
-            // Hàm render filter option cho loại mặt hàng
-            lengthMenu: [
-                [10, 25, 50, 100, -1],
-                [10, 25, 50, 100, "All"]
-            ],
-            initComplete: function () {
-                var column = this.api().column(6);
-
-                var select = $('#select-lmh')
-                    .on('change', function () {
-                        var val = $(this).val();
-                        column.search(val ? '^' + $(this).val() + '$' : val, true, false).draw();
-                    });
-
-                column.data().unique().sort().each(function (d, j) {
-                    select.append('<option value="' + d + '">' + d + '</option>');
-                });
-            },
             columns: [{
                 class: 'text-center',
-                data: 'maMH',
+                data: 'userId',
             }, {
                 class: 'text-center',
-                data: 'hinhAnh',
+                data: 'avatar',
                 render: function (data, type, row, meta) {
-                    return '<img id="img_' + row.maMH + '" src="' + data + '" width="50" height="50" />';
+                    return '<img id="img_' + row.userId + '" src="' + data + '" width="50" height="50" />';
                 }
             }, {
-                class: 'td_tenMH',
-                data: 'tenMH'
+                class: 'td_name',
+                data: 'name'
             }, {
-                class: 'td_moTa',
-                data: 'moTa'
+                class: 'td_address',
+                data: 'address'
             }, {
-                class: 'td_donViTinh',
-                data: 'donViTinh'
-            }, {
-                class: 'td_donGia',
-                data: 'donGia',
-                render: $.fn.dataTable.render.number(',', '.', 0, '', ' VND')
-            }, {
-                class: 'td_tenLMH',
-                data: 'loaiMatHang.tenLMH',
-                render: function (data, type, row, meta) {
-                    return '<span id="' + row.loaiMatHang.maLMH + '">' + data + '</span>';
+                class: 'td_gender',
+                data: 'gender',
+                render: function (data) {
+                    return data ? 'Nam' : 'Nữ'
                 }
             }, {
-                class: 'text-center',
-                data: 'maMH',
-                render: function (data, type, row, meta) {
-                    return '<button id="btn_edit_' + row.maMH + '" class="btn bg-gradient-warning edit-btn" ' +
-                        'data-toggle="modal" data-target="#modal-xl"><i class="fas fa-marker"></i></button>' +
-                        '  <button id="btn_delete_' + row.maMH + '" class="btn bg-gradient-danger delete-btn" ' +
-                        'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>';
+                class: 'td_email',
+                data: 'email'
+            }, {
+                class: 'td_birthDate',
+                data: 'birthDate',
+            }, {
+                class: 'td_phone',
+                data: 'phone',
+            },
+                {
+                    class: 'text-center',
+                    data: 'userId',
+                    render: function (data, type, row, meta) {
+                        return '<button id="btn_edit_' + row.userId + '" class="btn bg-gradient-warning edit-btn" ' +
+                            'data-toggle="modal" data-target="#modal-xl"><i class="fas fa-marker"></i></button>' +
+                            '  <button id="btn_delete_' + row.userId + '" class="btn bg-gradient-danger delete-btn" ' +
+                            'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>';
 
-                }
-            }]
+                    }
+                }]
         });
 
         //Tạo số thứ tự bắt đầu từ 1 vào cột mã
@@ -344,29 +356,6 @@ $(document).ready(function () {
                 cell.innerHTML = i + 1;
             });
         }).draw();
-    }
-
-    //Hiển thị dữ liệu loại mặt hàng lên combobox
-    function renderDataForLoaiMHOption() {
-        $.ajax({
-            type: "GET",
-            contentType: "application/json",
-            url: "http://localhost:8000/api/v1/loai-mat-hang",
-            success: function (data) {
-                $('#op-loaimh').append("<option value=''>Chọn loại mặt hàng</option>");
-                $.each(data, (index, value) => {
-                    $('<option>',
-                        {
-                            value: value.maLMH,
-                            text: value.tenLMH
-                        }).html(value.tenLMH).appendTo("#op-loaimh");
-                });
-            },
-            error: function (data) {
-                toastr.error('Lỗi tải dữ liệu. Vui lòng F5 vài giây sau!')
-                console.log(data);
-            }
-        });
     }
 
 });

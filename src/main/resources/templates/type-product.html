@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragment-header :: fm-head">
-    <title>Quản lý mặt hàng</title>
+    <title>Quản lý loại mặt hàng</title>
 </head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
@@ -18,10 +18,10 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="pl-4 pt-4">
-                        <button id="add-btn" class="btn bg-gradient-info mr-2" data-toggle="modal"
-                                data-target="#modal-xl">
+                        <button id="add-btn-type" class="btn bg-gradient-info mr-2" data-toggle="modal"
+                                data-target="#modal-lg">
                             <i class="fas fa-plus"></i>
-                            <span class="pl-2">Thêm mặt hàng</span>
+                            <span class="pl-2">Thêm loại mặt hàng</span>
                         </button>
                     </div>
                     <div class="col-12">
@@ -37,13 +37,8 @@
                             <table id="example2" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>Mã</th>
-                                    <th>Hình ảnh</th>
-                                    <th>Tên</th>
-                                    <th>Mô tả</th>
-                                    <th>Đơn vị tính</th>
-                                    <th>Đơn giá</th>
-                                    <th>Loại mặt hàng</th>
+                                    <th>Mã loại mặt hàng</th>
+                                    <th>Tên loại mặt hàng</th>
                                     <th>Thao tác</th>
                                 </tr>
                                 </thead>
@@ -62,10 +57,9 @@
 </div>
 <!-- ./wrapper -->
 
-<div th:replace="fragment-modal :: fm-modal"></div>
+<div th:replace="fragment-modal :: fm-modal-type"></div>
 <div th:replace="fragment-modal :: fm-modal-notification"></div>
 <div th:replace="fragment-header :: fm-script"></div>
-<script src="../../js/crud-product.js"></script>
+<script src="../../js/crud-type-product.js"></script>
 </body>
-
 </html>
