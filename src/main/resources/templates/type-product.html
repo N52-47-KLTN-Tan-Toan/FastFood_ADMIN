@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment-header :: fm-head">
-    <title>Quản lý loại mặt hàng</title>
-</head>
+
+<head th:replace="fragment-header :: fm-head"></head>
+
+<head><title>Quản lý loại mặt hàng</title></head>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
 
     <header th:replace="fragment-header :: fm-header"></header>
     <aside th:replace="fragment-leftmenu :: fm-leftmenu"></aside>
-
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -26,14 +27,6 @@
                     </div>
                     <div class="col-12">
                         <div class="card-body">
-                            <div class="col-sm-2">
-                                <div class="form-group">
-                                    <label><b>Loại mặt hàng</b></label>
-                                    <select class="form-control select2" id="select-lmh">
-                                        <option value="">Tất cả</option>
-                                    </select>
-                                </div>
-                            </div>
                             <table id="example2" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>

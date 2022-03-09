@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment-header :: fm-head">
-    <title>Quản lý đơn đặt hàng</title>
-</head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<head th:replace="fragment-header :: fm-head"></head>
+
+<head><title>Quản lý đơn đặt hàng</title></head>
+
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
 
@@ -28,25 +29,27 @@
                         <div class="card-body">
                             <div class="col-sm-2">
                                 <div class="form-group">
-                                    <label><b>Đơn đặt hàng</b></label>
-                                    <select class="form-control select2" id="select-lmh">
+                                    <label><b>Trạng thái đơn</b></label>
+                                    <select class="form-control select2" id="select-trangthai">
                                         <option value="">Tất cả</option>
                                     </select>
                                 </div>
                             </div>
-                            <table id="example2" class="table table-bordered table-striped">
-                                <thead>
-                                <tr>
-                                    <th>Mã đơn đặt hàng</th>
-                                    <th>Tên khách hàng</th>
-                                    <th>Ngày đặt hàng</th>
-                                    <th>Trạng thái</th>
-                                    <th>Địa chỉ giao hàng</th>
-                                    <th>Thao tác</th>
-                                    <th>Chi tiết đơn hàng</th>
-                                </tr>
-                                </thead>
-                            </table>
+                            <div class="col-sm-12">
+                                <table id="example2" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Mã đơn đặt hàng</th>
+                                        <th>Tên khách hàng</th>
+                                        <th>Ngày đặt hàng</th>
+                                        <th>Trạng thái</th>
+                                        <th>Hình thức</th>
+                                        <th>Địa chỉ giao hàng</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
                         <!-- /.card-body -->
                     </div>
@@ -60,8 +63,6 @@
     </div>
 </div>
 <!-- ./wrapper -->
-
-
 
 
 <div th:replace="fragment-modal-order :: fm-modal-order"></div>

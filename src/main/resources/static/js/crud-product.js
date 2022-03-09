@@ -1,25 +1,7 @@
-var firebaseConfig = {
-    apiKey: "AIzaSyBSLLi7jGwomqntt2Ky0RnmIdk_wM0YGL0",
-    authDomain: "n52-47-kltn-tan-toan.firebaseapp.com",
-    projectId: "n52-47-kltn-tan-toan",
-    storageBucket: "n52-47-kltn-tan-toan.appspot.com",
-    messagingSenderId: "601210556956",
-    appId: "1:601210556956:web:dc4df16ecb002d447085d9",
-    measurementId: "G-J68P4KMT72"
-};
-
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
 $(document).ready(function () {
-
-    //Khai báo biến toast để hiển thị thông báo
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 5000
-    });
 
     $('#loading-event').hide();
     $('#loading-notification').hide();
@@ -43,17 +25,15 @@ $(document).ready(function () {
     let id_edit = 0;
     //Lấy dữ liệu đối tượng từ nút edit
     $('table').on('click', '.edit-btn', function (e) {
-
-        let btn_id = this.id;
-        id_edit = btn_id.split("_")[2];
+        let btn_id = this.id.split("_")[2];
 
         //Find Object by id
         $.ajax({
             type: 'GET',
             contentType: "application/json",
-            url: 'http://localhost:8000/api/v1/mat-hang/' + id_edit,
+            url: url_api_product + '/' + btn_id,
             success: function (data) {
-                $("#ma-mat-hang").val(id_edit);
+                $("#ma-mat-hang").val(btn_id);
                 $("#ten-mat-hang").val(data.tenMH);
                 $("#mo-ta-mat-hang").val(data.moTa);
                 $("#don-vi-tinh").val(data.donViTinh);
@@ -99,7 +79,7 @@ $(document).ready(function () {
                 .then(url => {
                     $.ajax({
                         type: "POST",
-                        url: "http://localhost:8000/api/v1/mat-hang",
+                        url: url_api_product,
                         data: JSON.stringify({
                             tenMH: $("#ten-mat-hang").val(),
                             moTa: $("#mo-ta-mat-hang").val(),
@@ -112,11 +92,12 @@ $(document).ready(function () {
                         }),
                         contentType: "application/json",
                         success: function (data) {
-                            loadingModalAndRefreshTable();
+                            loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
                             toastr.success(data.tenMH + ' đã được thêm vào.')
                         },
                         error: function (err) {
-                            toastr.error('Đã có lỗi xảy ra. Thêm thất bại!!!')
+                            loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
+                            toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                         }
                     });
                 })
@@ -143,7 +124,7 @@ $(document).ready(function () {
 
                 //Có cập nhật ảnh
                 $('#loading-event').show();
-                deleteImageToStorageById(id);
+                deleteImageToStorageById(id, url_api_product);
                 task
                     .then(snapshot => snapshot.ref.getDownloadURL())
                     .then(url => {
@@ -168,25 +149,16 @@ $(document).ready(function () {
                     }
                 }),
                 contentType: "application/json",
-                url: "http://localhost:8000/api/v1/mat-hang/" + id,
+                url: url_api_product + '/' + id,
                 success: function (data) {
-                    loadingModalAndRefreshTable();
+                    loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
                     toastr.success('Mặt hàng ' + data.maMH + ' đã được chỉnh sửa.')
                 },
                 error: function (err) {
-                    $('#loading-event').hide();
-                    toastr.error('Đã có lỗi xảy ra. Cập nhật thất bại!!!')
+                    loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
+                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                 }
             });
-        }
-
-        //Hàm hiển thị loading trên modal, đóng modal và load lại table
-        function loadingModalAndRefreshTable() {
-            $('#loading-event').hide();
-            $('.modal').each(function () {
-                $(this).modal('hide');
-            });
-            $('#example2').DataTable().ajax.reload(null, false);
         }
     });
 
@@ -194,10 +166,9 @@ $(document).ready(function () {
 
     //Hiển thị modal thông báo xóa mặt hàng
     $('table').on('click', '.delete-btn', function () {
-        let btn_id = this.id;
-        id_del = btn_id.split("_")[2];
-
-        $("#modal-overlay .modal-body").text("Xóa mặt hàng \"" + id_del + "\" ra khỏi danh sách?");
+        let btn_id = this.id
+        id_del = btn_id.split("_")[2]
+        $("#modal-overlay .modal-body").text("Xóa mặt hàng \"" + id_del + "\" ra khỏi danh sách?")
     })
 
     //Xóa mặt hàng theo id và xóa dòng liên quan trên bảng
@@ -205,52 +176,22 @@ $(document).ready(function () {
 
         $('#loading-notification').show();
 
-        deleteImageToStorageById(id_del);
+        deleteImageToStorageById(url_api_product, id_del);
 
         //Delete Object by id
         $.ajax({
             type: "DELETE",
-            url: "http://localhost:8000/api/v1/mat-hang/" + id_del,
+            url: url_api_product + '/' + id_del,
             success: function (data) {
-                $('#loading-notification').hide();
-                $('.modal').each(function () {
-                    $(this).modal('hide');
-                });
-                $('#example2').DataTable().ajax.reload(null, false);
-                toastr.success('Mặt hàng \"' + id_del + '\" đã xóa ra khỏi danh sách.');
+                loadingModalAndRefreshTable( $('#loading-notification'),$('#example2'))
+                toastr.success('Mặt hàng \"' + id_del + '\" đã xóa ra khỏi danh sách.')
             },
             error: function (err) {
-                $('#loading-event').hide();
-                toastr.error('Đã có lỗi xảy ra. Xóa thất bại');
+                loadingModalAndRefreshTable( $('#loading-notification'),$('#example2'))
+                toastr.error('Mặt hàng này đang được bán. Không thể xóa')
             }
         });
     })
-
-    //Xóa hình ảnh trên firebase storage dựa trên tìm kiếm id của đối tượng
-    function deleteImageToStorageById(id) {
-
-        //Find Object by id
-        $.ajax({
-            type: 'GET',
-            contentType: "application/json",
-            url: 'http://localhost:8000/api/v1/mat-hang/' + id,
-            success: function (data) {
-                // Create a reference to the file to delete
-                var desertRef = firebase.storage().refFromURL(data.hinhAnh);
-
-                // Delete the file
-                desertRef.delete().then(function () {
-                    // console.log("Delete file in firebase storage successfully");
-                }).catch(function (error) {
-
-                });
-            },
-            error: function (err) {
-                // console.log(err);
-                alert("Error -> " + err);
-            }
-        });
-    }
 
     //Hiển thị dữ liệu
     function assignDataToTable() {
@@ -262,16 +203,13 @@ $(document).ready(function () {
             info: true,
             autoWidth: false,
             responsive: true,
-            // fixedHeader: true,
-            // scrollX: 200,
-            pageLength: 5,
 
             //Tạo id cho mỗi thẻ tr
             fnCreatedRow: function (nRow, aData, iDataIndex) {
                 $(nRow).attr('id', 'tr_' + aData.maMH); // or whatever you choose to set as the id
             },
             ajax: {
-                url: "http://localhost:8000/api/v1/mat-hang",
+                url: url_api_product,
                 type: "GET",
                 contentType: "application/json",
                 dataSrc: function (d) {
@@ -323,7 +261,7 @@ $(document).ready(function () {
                 class: 'td_tenLMH',
                 data: 'loaiMatHang.tenLMH',
                 render: function (data, type, row, meta) {
-                    return '<span id="' + row.loaiMatHang.maLMH + '">' + data + '</span>';
+                    return '<span id="' + row.loaiMatHang.maLMH + '">' + data + '</span>'
                 }
             }, {
                 class: 'text-center',
@@ -332,18 +270,10 @@ $(document).ready(function () {
                     return '<button id="btn_edit_' + row.maMH + '" class="btn bg-gradient-warning edit-btn" ' +
                         'data-toggle="modal" data-target="#modal-xl"><i class="fas fa-marker"></i></button>' +
                         '  <button id="btn_delete_' + row.maMH + '" class="btn bg-gradient-danger delete-btn" ' +
-                        'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>';
-
+                        'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>'
                 }
             }]
         });
-
-        //Tạo số thứ tự bắt đầu từ 1 vào cột mã
-        t.on('order.dt search.dt', function () {
-            t.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
-                cell.innerHTML = i + 1;
-            });
-        }).draw();
     }
 
     //Hiển thị dữ liệu loại mặt hàng lên combobox
@@ -351,20 +281,19 @@ $(document).ready(function () {
         $.ajax({
             type: "GET",
             contentType: "application/json",
-            url: "http://localhost:8000/api/v1/loai-mat-hang",
+            url: url_api_categories,
             success: function (data) {
-                $('#op-loaimh').append("<option value=''>Chọn loại mặt hàng</option>");
+                $('#op-loaimh').append("<option value=''>Chọn loại mặt hàng</option>")
                 $.each(data, (index, value) => {
                     $('<option>',
                         {
                             value: value.maLMH,
                             text: value.tenLMH
-                        }).html(value.tenLMH).appendTo("#op-loaimh");
+                        }).html(value.tenLMH).appendTo("#op-loaimh")
                 });
             },
             error: function (data) {
                 toastr.error('Lỗi tải dữ liệu. Vui lòng F5 vài giây sau!')
-                console.log(data);
             }
         });
     }
