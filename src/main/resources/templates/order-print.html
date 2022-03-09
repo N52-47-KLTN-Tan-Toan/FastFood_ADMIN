@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>In hóa đơn</title>
+
+    <link rel="icon" type="image/png"
+          href="https://firebasestorage.googleapis.com/v0/b/n52-47-kltn-tan-toan.appspot.com/o/logo-admin2.png?alt=media&token=c566066a-8f66-49e1-ba6d-2067b3d2eda1"/>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+</head>
+<body>
+<div class="wrapper">
+    <!-- Main content -->
+    <section class="invoice">
+        <!-- title row -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="page-header">
+                    <img src="https://firebasestorage.googleapis.com/v0/b/n52-47-kltn-tan-toan.appspot.com/o/logo-admin2.png?alt=media&token=c566066a-8f66-49e1-ba6d-2067b3d2eda1"
+                         alt="T&T Logo" class="brand-image" style="opacity: .8">
+                    <small class="float-right"
+                           th:text="'Ngày lập hóa đơn: ' + ${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></small>
+                </h2>
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- info row -->
+        <div class="row invoice-info">
+            <div class="col-sm-4 invoice-col">
+                Người bán hàng:
+                <address><strong>Admin</strong></address>
+            </div>
+            <!-- /.col -->
+            <div class="col-sm-4 invoice-col">
+                Khách hàng:
+                <address>
+                    <strong th:text="${donDatHang.khachHang.name}"></strong><br>
+                    Điện thoại: <span th:text="${donDatHang.khachHang.phone}"></span><br>
+                    Nơi giao món: <span th:text="${donDatHang.diaChiGiaoHang}"></span>
+                </address>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <!-- Table row -->
+        <div class="row">
+            <div class="col-12 table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mặt hàng</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="data, value: ${chiTietDonDatHang}">
+                        <td th:text="${value.index + 1}"></td>
+                        <td th:text="${data.matHang.tenMH}"></td>
+                        <td th:text="${data.soLuongDat}"></td>
+                        <td th:text="${#numbers.formatDecimal(data.donGia, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+
+        <div class="row">
+            <!-- /.col -->
+            <div class="col-6">
+                <p class="lead"
+                   th:text="'Ngày đặt hàng ' + ${donDatHang.ngayDatHang.getDayOfMonth()} + '/'
+                   + ${donDatHang.ngayDatHang.getMonth().value} + '/' + ${donDatHang.ngayDatHang.getYear()}"></p>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th style="width:50%">Subtotal:</th>
+                            <td th:text="${#numbers.formatDecimal(donDatHang.tongTien - 15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                        </tr>
+                        <tr>
+                            <th>Shipping:</th>
+                            <td th:text="${#numbers.formatDecimal(15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                        </tr>
+                        <tr>
+                            <th>Total:</th>
+                            <td th:text="${#numbers.formatDecimal(donDatHang.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- ./wrapper -->
+<!-- Page specific script -->
+<script>
+    window.addEventListener("load", window.print());
+</script>
+
+</body>
+</html>

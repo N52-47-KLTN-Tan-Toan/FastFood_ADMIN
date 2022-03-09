@@ -18,36 +18,39 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="pl-4 pt-4">
-                        <button id="add-btn-order" class="btn bg-gradient-info mr-2" data-toggle="modal"
-                                data-target="#modal-xl">
-                            <i class="fas fa-plus"></i>
-                            <span class="pl-2">Lập hóa đơn</span>
-                        </button>
-                    </div>
                     <div class="col-12">
                         <div class="card-body">
-                            <div class="col-sm-2">
-                                <div class="form-group">
-                                    <label><b>Trạng thái đơn</b></label>
-                                    <select class="form-control select2" id="select-trangthai">
-                                        <option value="">Tất cả</option>
-                                    </select>
-                                </div>
-                            </div>
+<!--                            <div class="col-sm-2 pb-2">-->
+<!--                                <button id="add-btn-order" class="btn bg-gradient-info mr-2" data-toggle="modal"-->
+<!--                                        data-target="#modal-xl">-->
+<!--                                    <i class="fas fa-plus"></i>-->
+<!--                                    <span class="pl-2">Lập hóa đơn</span>-->
+<!--                                </button>-->
+<!--                            </div>-->
                             <div class="col-sm-12">
                                 <table id="example2" class="table table-bordered table-striped">
                                     <thead>
                                     <tr>
-                                        <th>Mã đơn đặt hàng</th>
+                                        <th>Mã đơn</th>
+                                        <th>Số điện thoại</th>
                                         <th>Tên khách hàng</th>
                                         <th>Ngày đặt hàng</th>
                                         <th>Trạng thái</th>
                                         <th>Hình thức</th>
                                         <th>Địa chỉ giao hàng</th>
-                                        <th>Thao tác</th>
+                                        <th>Sửa</th>
+                                        <th>Xóa</th>
+                                        <th>In</th>
                                     </tr>
                                     </thead>
+                                    <tfoot>
+                                    <tr>
+                                        <th colspan="4">Lọc theo trạng thái và hình thức</th>
+                                        <th>Trạng thái</th>
+                                        <th>Hình thức</th>
+                                        <th colspan="4">(Có thể lọc cả 2)</th>
+                                    </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>
