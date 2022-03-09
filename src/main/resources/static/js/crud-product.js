@@ -203,7 +203,21 @@ $(document).ready(function () {
             info: true,
             autoWidth: false,
             responsive: true,
-
+            //Thay đổi ngôn ngữ của bảng
+            oLanguage: {
+                sLengthMenu: 'Hiển thị _MENU_ đơn hàng',
+                sSearch: 'Tìm kiếm',
+                sInfo: 'Đang hiển thị Trang _START_ | _END_ trên _TOTAL_ đơn hàng.',
+                sEmptyTable: 'Không có dữ liệu để hiển thị',
+                sProcessing: "Đang tải dữ liệu...",
+                oPaginate: {
+                    sFirst: 'Đầu',
+                    sLast: 'Cuối',
+                    sNext: '>',
+                    sPrevious: '<'
+                },
+            },
+            pagingType: 'full_numbers',
             //Tạo id cho mỗi thẻ tr
             fnCreatedRow: function (nRow, aData, iDataIndex) {
                 $(nRow).attr('id', 'tr_' + aData.maMH); // or whatever you choose to set as the id
@@ -268,8 +282,13 @@ $(document).ready(function () {
                 data: 'maMH',
                 render: function (data, type, row, meta) {
                     return '<button id="btn_edit_' + row.maMH + '" class="btn bg-gradient-warning edit-btn" ' +
-                        'data-toggle="modal" data-target="#modal-xl"><i class="fas fa-marker"></i></button>' +
-                        '  <button id="btn_delete_' + row.maMH + '" class="btn bg-gradient-danger delete-btn" ' +
+                        'data-toggle="modal" data-target="#modal-xl"><i class="fas fa-marker"></i></button>'
+                }
+            }, {
+                class: 'text-center',
+                data: 'maMH',
+                render: function (data, type, row, meta) {
+                    return '  <button id="btn_delete_' + row.maMH + '" class="btn bg-gradient-danger delete-btn" ' +
                         'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>'
                 }
             }]
