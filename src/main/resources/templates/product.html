@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment-header :: fm-head">
-    <title>Quản lý mặt hàng</title>
-</head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<head th:replace="fragment-header :: fm-head"></head>
+
+<head><title>Quản lý mặt hàng</title></head>
+
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
 
@@ -34,20 +34,22 @@
                                     </select>
                                 </div>
                             </div>
-                            <table id="example2" class="table table-bordered table-striped">
-                                <thead>
-                                <tr>
-                                    <th>Mã</th>
-                                    <th>Hình ảnh</th>
-                                    <th>Tên</th>
-                                    <th>Mô tả</th>
-                                    <th>Đơn vị tính</th>
-                                    <th>Đơn giá</th>
-                                    <th>Loại mặt hàng</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                                </thead>
-                            </table>
+                            <div class="col-sm-12">
+                                <table id="example2" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Mã mặt hàng</th>
+                                        <th>Hình ảnh</th>
+                                        <th>Tên</th>
+                                        <th>Mô tả</th>
+                                        <th>Đơn vị tính</th>
+                                        <th>Đơn giá</th>
+                                        <th>Loại mặt hàng</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
                         <!-- /.card-body -->
                     </div>
@@ -65,6 +67,8 @@
 <div th:replace="fragment-modal :: fm-modal"></div>
 <div th:replace="fragment-modal :: fm-modal-notification"></div>
 <div th:replace="fragment-header :: fm-script"></div>
+
+<!-- CRUD mặt hàng -->
 <script src="../../js/crud-product.js"></script>
 </body>
 

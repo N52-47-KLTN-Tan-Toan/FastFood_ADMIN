@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment-header :: fm-head">
-    <title>Quản lý khách hàng</title>
-</head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<head th:replace="fragment-header :: fm-head"></head>
+
+<head><title>Quản lý khách hàng</title></head>
+
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
 
     <header th:replace="fragment-header :: fm-header"></header>
     <aside th:replace="fragment-leftmenu :: fm-leftmenu"></aside>
-
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -26,18 +26,10 @@
                     </div>
                     <div class="col-12">
                         <div class="card-body">
-                            <div class="col-sm-2">
-                                <div class="form-group">
-                                    <label><b>Khách hàng</b></label>
-                                    <select class="form-control select2" id="select-lmh">
-                                        <option value="">Tất cả</option>
-                                    </select>
-                                </div>
-                            </div>
                             <table id="example2" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>Mã khách hàng</th>
+                                    <th>STT</th>
                                     <th>Hình ảnh</th>
                                     <th>Tên khách hàng</th>
                                     <th>Địa chỉ</th>
@@ -66,7 +58,10 @@
 <div th:replace="fragment-modal-khach-hang :: fm-modal-khach-hang"></div>
 <div th:replace="fragment-modal :: fm-modal-notification"></div>
 <div th:replace="fragment-header :: fm-script"></div>
+
+<!-- CRUD khách hàng -->
 <script src="../../js/crud-khach-hang.js"></script>
+
 </body>
 
 </html>

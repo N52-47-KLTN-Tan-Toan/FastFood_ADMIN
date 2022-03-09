@@ -60,8 +60,8 @@
         <ul class="navbar-nav ml-auto">
             <!-- Notifications Dropdown Menu -->
             <li class="nav-item dropdown">
-                <div data-toggle="dropdown">
-                    <img src="https://scontent.fsgn13-1.fna.fbcdn.net/v/t39.30808-6/238112761_1210485386091932_2892206138907628724_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=x3p78c9gUWQAX_NUpjl&_nc_ht=scontent.fsgn13-1.fna&oh=00_AT_VLvvm2jdudrw21Ce952pvuIWAUI2ZA9XCfEX_jC0kwg&oe=621C114B"
+                <div data-toggle="dropdown" style="cursor: pointer">
+                    <img src="https://firebasestorage.googleapis.com/v0/b/n52-47-kltn-tan-toan.appspot.com/o/logo-admin2.png?alt=media&token=c566066a-8f66-49e1-ba6d-2067b3d2eda1"
                          class="img-circle elevation-2" alt="User Image" height="40" width="40">
                     &nbsp;
                     <span class="text-muted">Admin</span>
@@ -92,6 +92,8 @@
 </header>
 
 <div th:fragment="fm-script">
+    <!-- Ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- App -->
     <script src="./app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
@@ -125,6 +127,8 @@
     <script src="../../plugins/datatables-buttons/js/buttons.html5.min.js"></script>
     <script src="../../plugins/datatables-buttons/js/buttons.print.min.js"></script>
     <script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.21/dataRender/datetime.js"></script>
     <!-- AdminLTE App -->
     <script src="../../dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
@@ -154,6 +158,8 @@
     <script src="../../plugins/sweetalert2/sweetalert2.min.js"></script>
     <!-- Toastr -->
     <script src="../../plugins/toastr/toastr.min.js"></script>
+    <!-- Khai báo hằng URL và các biến xài chung -->
+    <script src="../../js/url-declared.js"></script>
     <script>
         $(function () {
             //Initialize Select2 Elements

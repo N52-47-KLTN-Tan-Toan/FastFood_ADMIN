@@ -1,24 +1,14 @@
 $(document).ready(function () {
 
-    //Khai báo biến toast để hiển thị thông báo
-    var Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 5000
-    });
-
     $('#loading-event-type').hide();
     $('#loading-notification').hide();
 
     assignDataToTable1();
 
-
     //Trả dữ liệu modal thêm mặt hàng về rỗng
     $(document).on('click', '#add-btn-type', function () {
         $("#ma-loai-mat-hang").val(0);
         $("#ten-loai-mat-hang").val('');
-
     })
 
     let id_edit = 0;
@@ -32,7 +22,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'GET',
             contentType: "application/json",
-            url: 'http://localhost:8000/api/v1/loai-mat-hang/' + id_edit,
+            url: url_api_categories + '/' + id_edit,
             success: function (data) {
                 $("#ma-loai-mat-hang").val(id_edit);
                 $("#ten-loai-mat-hang").val(data.tenLMH);
@@ -55,17 +45,18 @@ $(document).ready(function () {
             //Thêm mới đối tượng
             $.ajax({
                 type: "POST",
-                url: "http://localhost:8000/api/v1/loai-mat-hang",
+                url: url_api_categories,
                 data: JSON.stringify({
                     tenLMH: $("#ten-loai-mat-hang").val(),
                 }),
                 contentType: "application/json",
                 success: function (data) {
-                    loadingModalAndRefreshTable();
+                    loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'));
                     toastr.success(data.tenLMH + ' đã được thêm vào.')
                 },
                 error: function (err) {
-                    toastr.error('Đã có lỗi xảy ra. Thêm thất bại!!!')
+                    loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'));
+                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                 }
             });
         } else if (id > 0) {
@@ -83,29 +74,19 @@ $(document).ready(function () {
                         tenLMH: $("#ten-loai-mat-hang").val(),
                     }),
                     contentType: "application/json",
-                    url: "http://localhost:8000/api/v1/loai-mat-hang/" + id,
+                    url: url_api_categories + '/' + id,
                     success: function (data) {
-                        loadingModalAndRefreshTable();
+                        loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'))
                         toastr.success('Loại mặt hàng ' + data.maLMH + ' đã được chỉnh sửa.')
                     },
                     error: function (err) {
-                        $('#loading-event-type').hide();
-                        toastr.error('Đã có lỗi xảy ra. Cập nhật thất bại!!!')
+                        loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'))
+                        toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                     }
                 });
             }
         }
     })
-
-
-    //Hàm hiển thị loading trên modal, đóng modal và load lại table
-    function loadingModalAndRefreshTable() {
-        $('#loading-event-type').hide();
-        $('.modal').each(function () {
-            $(this).modal('hide');
-        });
-        $('#example2').DataTable().ajax.reload(null, false);
-    }
 
     let id_del = 0;
 
@@ -127,16 +108,12 @@ $(document).ready(function () {
             type: "DELETE",
             url: "http://localhost:8000/api/v1/loai-mat-hang/" + id_del,
             success: function (data) {
-                $('#loading-notification').hide();
-                $('.modal').each(function () {
-                    $(this).modal('hide');
-                });
-                $('#example2').DataTable().ajax.reload(null, false);
+                loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'));
                 toastr.success('Loại mặt hàng \"' + id_del + '\" đã xóa ra khỏi danh sách.');
             },
             error: function (err) {
-                $('#loading-event-type').hide();
-                toastr.error('Đã có lỗi xảy ra. Xóa thất bại');
+                loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'));
+                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
             }
         });
     })
@@ -152,16 +129,13 @@ $(document).ready(function () {
             info: true,
             autoWidth: false,
             responsive: true,
-            // fixedHeader: true,
-            // scrollX: 200,
-            pageLength: 5,
 
             //Tạo id cho mỗi thẻ tr
             fnCreatedRow: function (nRow, aData, iDataIndex) {
                 $(nRow).attr('id', 'tr_' + aData.maLMH); // or whatever you choose to set as the id
             },
             ajax: {
-                url: "http://localhost:8000/api/v1/loai-mat-hang",
+                url: url_api_categories,
                 type: "GET",
                 contentType: "application/json",
                 dataSrc: function (d) {
@@ -187,13 +161,6 @@ $(document).ready(function () {
                 }
             }]
         });
-
-        //Tạo số thứ tự bắt đầu từ 1 vào cột mã
-        t.on('order.dt search.dt', function () {
-            t.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
-                cell.innerHTML = i + 1;
-            });
-        }).draw();
     };
 
 });
