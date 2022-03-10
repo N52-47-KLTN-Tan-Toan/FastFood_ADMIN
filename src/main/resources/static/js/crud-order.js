@@ -209,8 +209,8 @@ $(document).ready(function () {
                 class: 'text-center',
                 data: 'maDDH',
             }, {
-                class: 'td_khachHang',
-                data: 'khachHang.phone',
+                class: 'td_phone',
+                data: 'soDienThoai',
             }, {
                 class: 'td_khachHang',
                 data: 'khachHang.name',
