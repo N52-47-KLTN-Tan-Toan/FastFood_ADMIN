@@ -78,7 +78,7 @@
                         Đổi mật khẩu
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">
+                    <a th:href="@{/logout}" class="dropdown-item" th:if="${#request.userPrincipal != null}">
                         <i class="fas fa-door-open mr-2"></i>
                         Đăng xuất
                     </a>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment-header :: fm-head"></head>
+
+<head><title>403</title></head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+
+<header th:replace="fragment-header :: fm-header"></header>
+<aside th:replace="fragment-leftmenu :: fm-leftmenu"></aside>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Lỗi HTTP Error 403 Forbidden</h1>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="error-page">
+            <h2 class="headline text-warning">403</h2>
+
+            <div class="error-content">
+                <h3><i class="fas fa-exclamation-triangle text-warning"></i> Ôi! Lỗi truy cập.</h3>
+
+                <p>
+                    Bạn không được phép truy cập trang này.<br>
+                    Bạn có thể <a href="#">Trở về trang chính</a> hoặc chọn muc khác ở thanh bên trái.
+                </p>
+
+            </div>
+            <!-- /.error-content -->
+        </div>
+        <!-- /.error-page -->
+    </section>
+    <!-- /.content -->
+</div>
+
+<div th:replace="fragment-header :: fm-script"></div>
+</body>
+</html>
