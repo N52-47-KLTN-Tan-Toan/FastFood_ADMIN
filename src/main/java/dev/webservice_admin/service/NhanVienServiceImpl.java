@@ -17,7 +17,7 @@ public class NhanVienServiceImpl implements NhanVienService{
 
     @Override
     public NhanVien findByUsername(String s) {
-        NhanVien nhanVien = restTemplate.getForObject(url + "/username" + s, NhanVien.class);
+        NhanVien nhanVien = restTemplate.getForObject(url + "/username=" + s, NhanVien.class);
         return nhanVien;
     }
 }
