@@ -33,9 +33,16 @@ public class OrderController {
 
     @GetMapping("/print")
     public String print(Model model, @RequestParam Long orderId) {
+        double subTotal = 0.0;
+
         DonDatHang donDatHang = donDatHangService.findById(orderId);
         List<ChiTietDonDatHang> chiTietDonDatHangList = chiTietDonDatHangService.findAllByDonDatHang(orderId);
 
+        for (ChiTietDonDatHang ctddh: chiTietDonDatHangList){
+            subTotal += ctddh.getDonGia();
+        }
+
+        model.addAttribute("subTotal", subTotal);
         model.addAttribute("donDatHang", donDatHang);
         model.addAttribute("chiTietDonDatHang", chiTietDonDatHangList);
         return "order-print";
