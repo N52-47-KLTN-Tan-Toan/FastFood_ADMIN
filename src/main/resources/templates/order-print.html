@@ -22,22 +22,17 @@
     <section class="invoice">
         <!-- title row -->
         <div class="row">
-            <div class="col-12">
-                <h2 class="page-header">
+            <div class="col-12" style="margin-left: 100px">
+                <h2 class="page-header" style="margin-left: 34px">
                     <img src="https://firebasestorage.googleapis.com/v0/b/n52-47-kltn-tan-toan.appspot.com/o/logo-admin2.png?alt=media&token=c566066a-8f66-49e1-ba6d-2067b3d2eda1"
                          alt="T&T Logo" class="brand-image" style="opacity: .8">
-                    <small class="float-right"
-                           th:text="'Ngày lập hóa đơn: ' + ${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></small>
                 </h2>
+                <span th:text="'Ngày lập hóa đơn: ' + ${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></span>
             </div>
             <!-- /.col -->
         </div>
         <!-- info row -->
         <div class="row invoice-info">
-            <div class="col-sm-4 invoice-col">
-                Người bán hàng:
-                <address><strong>Admin</strong></address>
-            </div>
             <!-- /.col -->
             <div class="col-sm-4 invoice-col">
                 Khách hàng:
@@ -47,26 +42,30 @@
                     Nơi giao món: <span th:text="${donDatHang.diaChiGiaoHang}"></span>
                 </address>
             </div>
+            <div class="col-sm-4 invoice-col">
+                Người bán hàng:
+                <address><strong>Admin</strong></address>
+            </div>
         </div>
         <!-- /.row -->
 
         <!-- Table row -->
         <div class="row">
-            <div class="col-12 table-responsive">
+            <div class="col-6 table-responsive">
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th>STT</th>
-                        <th>Mặt hàng</th>
-                        <th>Số lượng</th>
+                        <th class="text-center">STT</th>
+                        <th style="width: 30%;">Mặt hàng</th>
+                        <th class="text-center">Số lượng</th>
                         <th>Thành tiền</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="data, value: ${chiTietDonDatHang}">
-                        <td th:text="${value.index + 1}"></td>
-                        <td th:text="${data.matHang.tenMH}"></td>
-                        <td th:text="${data.soLuongDat}"></td>
+                        <td class="text-center" th:text="${value.index + 1}"></td>
+                        <td th:text="${data.matHang.tenMH} + 'hột gà nướng hột vịt lộn trứng cút lộn'"></td>
+                        <td class="text-center" th:text="${data.soLuongDat}"></td>
                         <td th:text="${#numbers.formatDecimal(data.donGia, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                     </tr>
                     </tbody>
@@ -86,15 +85,15 @@
                 <div class="table-responsive">
                     <table class="table">
                         <tr>
-                            <th style="width:50%">Subtotal:</th>
+                            <th style="width:70%">Tổng tiền mặt hàng:</th>
                             <td th:text="${#numbers.formatDecimal(donDatHang.tongTien - 15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                         </tr>
                         <tr>
-                            <th>Shipping:</th>
+                            <th>Tiền ship:</th>
                             <td th:text="${#numbers.formatDecimal(15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                         </tr>
                         <tr>
-                            <th>Total:</th>
+                            <th>Tổng cộng:</th>
                             <td th:text="${#numbers.formatDecimal(donDatHang.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                         </tr>
                     </table>
