@@ -30,9 +30,14 @@
         <div class="card-body">
             <p class="login-box-msg">Đăng nhập để tiếp tục công việc</p>
 
-            <form action="../../index3.html" method="post">
+            <form name='f' th:action="@{/j_spring_security_check}" method='POST'>
+                <div th:if="${#request.getParameter('error') == 'true'}" class="input-group mb-3">
+                    <div class="alert alert-danger fa fa-exclamation-circle" style="width: 100%; font-size: 13px">
+                        Tài khoản hoặc mật khẩu không hợp lệ
+                    </div>
+                </div>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Tên người dùng">
+                    <input type="text" class="form-control" placeholder="Tên người dùng" name="username">
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-user"></span>
@@ -40,7 +45,7 @@
                     </div>
                 </div>
                 <div class="input-group mb-3">
-                    <input type="password" class="form-control" placeholder="Mật khẩu">
+                    <input type="password" class="form-control" placeholder="Mật khẩu" name="password">
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-lock"></span>
