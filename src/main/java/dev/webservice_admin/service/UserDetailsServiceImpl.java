@@ -21,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${app.url.sinhvien}")
+    @Value("${app.url.employee}")
     private String url;
 
     @Override
