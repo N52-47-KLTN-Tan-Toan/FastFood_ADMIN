@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head th:fragment="fm-head">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -61,10 +62,11 @@
             <!-- Notifications Dropdown Menu -->
             <li class="nav-item dropdown">
                 <div data-toggle="dropdown" style="cursor: pointer">
-                    <img if="${#request.userPrincipal != null}" th:src="@{${nhanVien.getAvatar()}}"
+                    <img th:if="${#request.userPrincipal != null}" th:src="${#authentication.principal.image}"
                          class="img-circle elevation-2" alt="User Image" height="40" width="40">
                     &nbsp;
-                    <span class="text-muted"th:if="${#request.userPrincipal != null}" th:text="${nhanVien.getName()}"></span>
+<!--                    <span class="text-muted" th:if="${#request.userPrincipal != null}" th:text="${nhanVien.getName()}"></span>-->
+                    <span th:if="${#request.userPrincipal != null}" sec:authentication="principal.fullName"></span>
                 </div>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <div class="dropdown-divider"></div>
