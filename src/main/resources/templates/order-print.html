@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -39,12 +40,14 @@
                 <address>
                     <strong th:text="${donDatHang.khachHang.name}"></strong><br>
                     Điện thoại: <span th:text="${donDatHang.khachHang.phone}"></span><br>
+                    Hình thức: <span th:text="${donDatHang.hinhThuc}"></span><br>
                     Nơi giao món: <span th:text="${donDatHang.diaChiGiaoHang}"></span>
                 </address>
             </div>
             <div class="col-sm-4 invoice-col">
                 Người bán hàng:
-                <address><strong>Admin</strong></address>
+                <address><strong th:if="${#request.userPrincipal != null}"
+                                 sec:authentication="principal.fullName"></strong></address>
             </div>
         </div>
         <!-- /.row -->
@@ -86,15 +89,21 @@
                     <table class="table">
                         <tr>
                             <th style="width:70%">Tổng tiền mặt hàng:</th>
-                            <td th:text="${#numbers.formatDecimal(donDatHang.tongTien - 15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                            <td th:text="${#numbers.formatDecimal(subTotal, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                         </tr>
                         <tr>
                             <th>Tiền ship:</th>
-                            <td th:text="${#numbers.formatDecimal(15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                            <td th:if="${donDatHang.hinhThuc == 'Giao tận nơi'}"
+                                th:text="${#numbers.formatDecimal(15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                            <td th:if="${donDatHang.hinhThuc != 'Giao tận nơi'}"
+                                th:text="${#numbers.formatDecimal(0, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                         </tr>
                         <tr>
                             <th>Tổng cộng:</th>
-                            <td th:text="${#numbers.formatDecimal(donDatHang.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                            <td th:if="${donDatHang.hinhThuc == 'Giao tận nơi'}"
+                                th:text="${#numbers.formatDecimal(donDatHang.tongTien + 15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                            <td th:if="${donDatHang.hinhThuc != 'Giao tận nơi'}"
+                                th:text="${#numbers.formatDecimal(donDatHang.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                         </tr>
                     </table>
                 </div>

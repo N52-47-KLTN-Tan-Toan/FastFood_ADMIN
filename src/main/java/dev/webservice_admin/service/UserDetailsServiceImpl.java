@@ -1,5 +1,6 @@
 package dev.webservice_admin.service;
 
+import dev.webservice_admin.model.CustomUserDetails;
 import dev.webservice_admin.model.NhanVien;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +45,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         UserDetails userDetails = new User(String.valueOf(nhanVien.getUsername()), nhanVien.getPassword(), grantList);
 
-        return userDetails;
+        return new CustomUserDetails(nhanVien);
     }
 }

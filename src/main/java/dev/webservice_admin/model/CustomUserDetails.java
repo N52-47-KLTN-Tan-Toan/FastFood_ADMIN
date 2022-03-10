@@ -50,10 +50,10 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public String getFullName() {
-        return nhanVien.getName();
+        return this.nhanVien.getName();
     }
 
-    public NhanVien getNhanVien() {
-        return nhanVien;
+    public String getImage() {
+        return this.nhanVien.getAvatar();
     }
 }
