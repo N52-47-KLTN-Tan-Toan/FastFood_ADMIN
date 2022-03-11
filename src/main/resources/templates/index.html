@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment-header :: fm-head"></head>
+
+<head><title>Dashboard</title></head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<div class="wrapper">
+
+    <header th:replace="fragment-header :: fm-header"></header>
+    <aside th:replace="fragment-leftmenu :: fm-leftmenu"></aside>
+</div>
+
+<div th:replace="fragment-header :: fm-script"></div>
+</body>
+</html>
