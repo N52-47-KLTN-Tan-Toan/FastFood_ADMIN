@@ -3,26 +3,21 @@ firebase.initializeApp(firebaseConfig);
 
 $(document).ready(function () {
 
-    $('#loading-event-khach-hang').hide()
+    $('#loading-event-introduce').hide()
     $('#loading-notification').hide()
 
     assignDataToTable()
 
-    validationKhachHang()
-
     //Trả dữ liệu modal thêm khách hàng về rỗng
     $(document).on('click', '#add-btn', function () {
-        $("#ma-khach-hang").val(0)
-        $("#ten-khach-hang").val('')
-        $("#diem-tich-luy").val(0).prop('readonly', true)
-        $("#ngay-sinh").val('')
-        $("#sdt").val('')
+        $("#ma-gioi-thieu").val(0)
+        $("#ten").val('')
+        $("#tieu-de").val('')
+        $("#noi-dung").val('')
         $("#image-upload-firebase").attr("src", "https://cdn-icons-png.flaticon.com/512/1040/1040241.png")
-        $("#email").val('')
-        $("#dia-chi").val('')
-        $("#file-upload-firebase").val('')
     })
 
+    let id_edit = 0;
     //Lấy dữ liệu đối tượng từ nút edit
     $('table').on('click', '.edit-btn', function (e) {
 
@@ -32,21 +27,13 @@ $(document).ready(function () {
         $.ajax({
             type: 'GET',
             contentType: "application/json",
-            url: url_api_client + '/' + btn_id,
+            url: url_api_introduce + '/' + btn_id,
             success: function (data) {
-                $("#ma-khach-hang").val(btn_id)
-                $("#ten-khach-hang").val(data.name)
-                $("#diem-tich-luy").val(data.diemTichLuy).prop('readonly', false)
-                $("#ngay-sinh").val(data.birthDate)
-                $("#sdt").val(data.phone)
-                $("#image-upload-firebase").attr("src", data.avatar)
-                $("#email").val(data.email)
-                $("#dia-chi").val(data.address)
-                if (data.gender == true) {
-                    $('#gender-male').prop("checked", true)
-                } else {
-                    $('#gender-female').prop("checked", true)
-                }
+                $("#ma-gioi-thieu").val(btn_id)
+                $("#ten").val(data.ten)
+                $("#noi-dung").val(data.noiDung)
+                $("#tieu-de").val(data.tieuDe)
+                $("#image-upload-firebase").attr("src", data.hinhAnh)
             },
             error: function (err) {
                 alert("Error -> " + err)
@@ -55,13 +42,13 @@ $(document).ready(function () {
     })
 
     //Tạo mới khách hàng và cập nhật khách hàng
-    $("#create-update-khach-hang").submit(function (evt) {
+    $("#create-update-introduce").submit(function (evt) {
         evt.preventDefault()
 
         const ref = firebase.storage().ref()
         const file = document.querySelector("#file-upload-firebase").files[0]
 
-        var id = $("#ma-khach-hang").val()
+        var id = $("#ma-gioi-thieu").val()
         let name
         let task
 
@@ -79,33 +66,27 @@ $(document).ready(function () {
 
             task = ref.child(name).put(file, metadata);
             //Thêm mới đối tượng
-            $('#loading-event-khach-hang').show();
+            $('#loading-event-introduce').show();
             task
                 .then(snapshot => snapshot.ref.getDownloadURL())
                 .then(url => {
                     $.ajax({
                         type: "POST",
-                        url: url_api_client,
+                        url: url_api_introduce,
                         data: JSON.stringify({
-                            name: $("#ten-khach-hang").val(),
-                            birthDate: $("#ngay-sinh").val(),
-                            phone: $("#sdt").val(),
-                            email: $("#email").val(),
-                            address: $("#dia-chi").val(),
-                            gender: $(".rad-gender:checked").val() == 1 ? true : false,
-                            avatar: url,
-                            roleName: 'ROLE_CLIENT',
-                            password: '1111',
-                            diemTichLuy: 0
+                            ten: $("#ten").val(),
+                            tieuDe: $("#tieu-de").val(),
+                            noiDung: $("#noi-dung").val(),
+                            hinhAnh: url
                         }),
 
                         contentType: "application/json",
                         success: function (data) {
-                            loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
+                            loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
                             toastr.success(data.name + ' đã được thêm vào.')
                         },
                         error: function (err) {
-                            loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
+                            loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
                             toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                         }
                     });
@@ -116,7 +97,7 @@ $(document).ready(function () {
             if ($('#file-upload-firebase').val() == "") {
                 //Không có cập nhật ảnh
                 const url = $('#img_' + id).prop('src')
-                $('#loading-event-khach-hang').show()
+                $('#loading-event-introduce').show()
                 updateProduct(url);
             } else {
                 //convert hình ảnh upload
@@ -132,8 +113,8 @@ $(document).ready(function () {
                 const task = ref.child(name).put(file, metadata)
 
                 //Có cập nhật ảnh
-                $('#loading-event-khach-hang').show()
-                deleteImageToStorageById(id, url_api_client)
+                $('#loading-event-introduce').show()
+                deleteImageToStorageById(id, url_api_introduce)
                 task
                     .then(snapshot => snapshot.ref.getDownloadURL())
                     .then(url => {
@@ -148,30 +129,24 @@ $(document).ready(function () {
             $.ajax({
                 type: 'GET',
                 contentType: "application/json",
-                url: url_api_client + '/' + id,
+                url: url_api_introduce + '/' + id,
                 success: function (data) {
                     $.ajax({
                         type: "PUT",
                         data: JSON.stringify({
-                            name: $("#ten-khach-hang").val(),
-                            birthDate: $("#ngay-sinh").val(),
-                            phone: $("#sdt").val(),
-                            email: $("#email").val(),
-                            address: $("#dia-chi").val(),
-                            gender: $(".rad-gender:checked").val() == 1 ? true : false,
-                            avatar: url,
-                            roleName: data.roleName,
-                            password: data.password,
-                            diemTichLuy: $("#diem-tich-luy").val()
+                            ten: $("#ten").val(),
+                            tieuDe: $("#tieu-de").val(),
+                            noiDung: $("#noi-dung").val(),
+                            hinhAnh: url,
                         }),
                         contentType: "application/json",
-                        url: url_api_client + '/' + id,
+                        url: url_api_introduce + '/' + id,
                         success: function (data) {
-                            loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
-                            toastr.success('Khách hàng ' + data.userId + ' đã được chỉnh sửa.')
+                            loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
+                            toastr.success('Phần giới thiệu ' + data.maGT + ' đã được chỉnh sửa.')
                         },
                         error: function (err) {
-                            loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
+                            loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
                             toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                         }
                     });
@@ -185,7 +160,7 @@ $(document).ready(function () {
 
     let id_del = 0
 
-    //Hiển thị modal thông báo xóa khách hàng
+    //Hiển thị modal thông báo xóa giới thiệu
     $('table').on('click', '.delete-btn', function () {
 
         let btn_id = this.id;
@@ -194,9 +169,9 @@ $(document).ready(function () {
         $.ajax({
             type: 'GET',
             contentType: "application/json",
-            url: url_api_client + '/' + id_del,
+            url: url_api_introduce + '/' + id_del,
             success: function (data) {
-                $("#modal-overlay .modal-body").text("Xóa khách hàng \"" + data.name + "\" ra khỏi danh sách?")
+                $("#modal-overlay .modal-body").text("Xóa phần giới thiệu \"" + id_del + "\" ra khỏi danh sách?")
             },
             error: function (err) {
                 alert("Error -> " + err);
@@ -205,23 +180,23 @@ $(document).ready(function () {
 
     })
 
-    //Xóa khách hàng theo id
+    //Xóa giới thiệu theo id
     $(document).on("click", "#modal-accept-btn", function () {
 
         $('#loading-notification').show();
 
-        deleteImageToStorageById(id_del, url_api_client);
+        deleteImageToStorageById(id_del, url_api_introduce);
 
         //Delete Object by id
         $.ajax({
             type: "DELETE",
-            url: url_api_client + '/' + id_del,
+            url: url_api_introduce + '/' + id_del,
             success: function (data) {
-                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'));
-                toastr.success('Khách hàng \"' + id_del + '\" đã xóa ra khỏi danh sách.');
+                loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'));
+                toastr.success('Phần giới thiệu \"' + id_del + '\" đã xóa ra khỏi danh sách.');
             },
             error: function (err) {
-                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'));
+                loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'));
                 toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
             }
         });
@@ -239,7 +214,7 @@ $(document).ready(function () {
             responsive: true,
             //Thay đổi ngôn ngữ của bảng
             oLanguage: {
-                sLengthMenu: 'Hiển thị _MENU_ đơn hàng',
+                // sLengthMenu: 'Hiển thị _MENU_ đơn hàng',
                 sSearch: 'Tìm kiếm',
                 sInfo: 'Đang hiển thị Trang _START_ | _END_ trên _TOTAL_ đơn hàng.',
                 sEmptyTable: 'Không có dữ liệu để hiển thị',
@@ -254,10 +229,10 @@ $(document).ready(function () {
             pagingType: 'full_numbers',
             //Tạo id cho mỗi thẻ tr
             fnCreatedRow: function (nRow, aData, iDataIndex) {
-                $(nRow).attr('id', 'tr_' + aData.userId); // or whatever you choose to set as the id
+                $(nRow).attr('id', 'tr_' + aData.maGT); // or whatever you choose to set as the id
             },
             ajax: {
-                url: url_api_client,
+                url: url_api_introduce,
                 type: "GET",
                 contentType: "application/json",
                 dataSrc: function (d) {
@@ -267,50 +242,34 @@ $(document).ready(function () {
 
             columns: [{
                 class: 'text-center',
-                data: 'userId',
+                data: 'maGT',
             }, {
                 class: 'text-center',
-                data: 'avatar',
+                data: 'hinhAnh',
                 render: function (data, type, row, meta) {
-                    return '<img id="img_' + row.userId + '" src="' + data + '" width="50" height="50" />';
+                    return '<img id="img_' + row.maGT + '" src="' + data + '" width="50" height="50" />';
                 }
             }, {
-                class: 'td_name',
-                data: 'name'
+                class: 'td_ten',
+                data: 'ten'
             }, {
-                class: 'td_diemTichLuy',
-                data: 'diemTichLuy'
-            },{
-                class: 'td_address',
-                data: 'address'
+                class: 'td_tieuDe',
+                data: 'tieuDe'
             }, {
-                class: 'td_gender',
-                data: 'gender',
-                render: function (data) {
-                    return data ? 'Nam' : 'Nữ'
-                }
-            }, {
-                class: 'td_email',
-                data: 'email'
-            }, {
-                class: 'td_birthDate',
-                data: 'birthDate',
-                render: $.fn.dataTable.render.moment('YYYY-MM-DD', 'DD/MM/YYYY')
-            }, {
-                class: 'td_phone',
-                data: 'phone',
+                class: 'td_noiDung',
+                data: 'noiDung'
             }, {
                 class: 'text-center',
-                data: 'userId',
+                data: 'maGT',
                 render: function (data, type, row, meta) {
-                    return '<button id="btn_edit_' + row.userId + '" class="btn bg-gradient-warning edit-btn" ' +
+                    return '<button id="btn_edit_' + row.maGT + '" class="btn bg-gradient-warning edit-btn" ' +
                         'data-toggle="modal" data-target="#modal-xl"><i class="fas fa-marker"></i></button>'
                 }
             }, {
                 class: 'text-center',
-                data: 'userId',
+                data: 'maGT',
                 render: function (data, type, row, meta) {
-                    return '  <button id="btn_delete_' + row.userId + '" class="btn bg-gradient-danger delete-btn" ' +
+                    return '  <button id="btn_delete_' + row.maGT + '" class="btn bg-gradient-danger delete-btn" ' +
                         'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>'
                 }
             }]
@@ -322,61 +281,6 @@ $(document).ready(function () {
                 cell.innerHTML = i + 1;
             });
         }).draw();
-    }
-
-
-    //Bảng thông báo
-    function alertUsing(text, flag) {
-        var alert = $(".alert");
-
-        if (flag) {
-            alert.removeClass("alert-danger").addClass("alert-success");
-        } else {
-            alert.removeClass("alert-success").addClass("alert-danger");
-
-        }
-        alert.fadeIn(400);
-        alert.css("display", "block");
-        alert.text(text);
-        setTimeout(function () {
-            alert.fadeOut();
-        }, 2000);
-    }
-
-    function validationKhachHang(){
-
-        // var regName = /^[a-zA-Z]+ [a-zA-Z]+$/;
-        // var name = $("#ten-khach-hang")
-        //
-        // if(!regName.test(name)){
-        //     return true;
-        // }else{
-        //     alertUsing('Vui lòng nhập đúng họ tên', false);
-        //     return false;
-        // }
-
-        var tenKH = $("#ten-khach-hang")
-        var email = $("#email")
-
-        tenKH.keypress(function () {
-            if (tenKH.val().length < 30) {
-                return true;
-            } else {
-                alertUsing("Tên khách hàng tối thiểu 30 ký tự", false);
-                return false;
-            }
-        });
-
-        email.keypress(function () {
-            if (email.val().length < 30) {
-                return true;
-            } else {
-                alertUsing("Email tối thiểu 30 ký tự", false);
-                return false;
-            }
-        });
-
-
     }
 
 });

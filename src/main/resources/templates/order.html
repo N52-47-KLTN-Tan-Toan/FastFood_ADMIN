@@ -37,6 +37,7 @@
                                         <th>Ngày đặt hàng</th>
                                         <th>Trạng thái</th>
                                         <th>Hình thức</th>
+                                        <th>Tổng tiền</th>
                                         <th>Địa chỉ giao hàng</th>
                                         <th>Sửa</th>
                                         <th>Xóa</th>
@@ -48,7 +49,7 @@
                                         <th colspan="4">Lọc theo trạng thái và hình thức</th>
                                         <th>Trạng thái</th>
                                         <th>Hình thức</th>
-                                        <th colspan="4">(Có thể lọc cả 2)</th>
+                                        <th colspan="5">(Có thể lọc cả 2)</th>
                                     </tr>
                                     </tfoot>
                                 </table>
@@ -69,7 +70,7 @@
 
 
 <div th:replace="fragment-modal-order :: fm-modal-order"></div>
-<div th:replace="fragment-modal :: fm-modal-notification"></div>
+<div th:replace="fragment-modal-notification :: fm-modal-notification"></div>
 <div th:replace="fragment-header :: fm-script"></div>
 <script src="../../js/crud-order.js"></script>
 </body>

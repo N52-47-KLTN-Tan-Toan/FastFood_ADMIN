@@ -5,6 +5,8 @@ $(document).ready(function () {
 
     assignDataToTable1();
 
+    validationTypeProduct();
+
     //Trả dữ liệu modal thêm mặt hàng về rỗng
     $(document).on('click', '#add-btn-type', function () {
         $("#ma-loai-mat-hang").val(0);
@@ -181,5 +183,37 @@ $(document).ready(function () {
             }]
         });
     };
+
+
+    //Bảng thông báo
+    function alertUsing(text, flag) {
+        var alert = $(".alert");
+
+        if (flag) {
+            alert.removeClass("alert-danger").addClass("alert-success");
+        } else {
+            alert.removeClass("alert-success").addClass("alert-danger");
+
+        }
+        alert.fadeIn(400);
+        alert.css("display", "block");
+        alert.text(text);
+        setTimeout(function () {
+            alert.fadeOut();
+        }, 2000);
+    }
+
+    function validationTypeProduct(){
+        var tenLMH = $("#ten-loai-mat-hang")
+
+        tenLMH.keypress(function () {
+            if (tenLMH.val().length < 20) {
+                return true;
+            } else {
+                alertUsing("Tên loại mặt hàng tối thiểu 20 ký tự", false);
+                return false;
+            }
+        });
+    }
 
 });

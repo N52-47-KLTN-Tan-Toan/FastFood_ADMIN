@@ -9,6 +9,8 @@ $(document).ready(function () {
         (month < 10 ? '0' : '') + month + '-' +
         (day < 10 ? '0' : '') + day;
 
+    var totalCost = 0.0
+
     $('#loading-event-order').hide();
     $('#loading-notification').hide();
 
@@ -44,9 +46,8 @@ $(document).ready(function () {
             url: url_api_order + '/' + id_edit,
             success: function (data) {
                 $("#ma-don-dat-hang").val(id_edit)
-                $("#ngay-dat-hang").val(data.ngayDatHang)
                 $("#trang-thai").val(data.trangThai)
-                $("#dia-chi-giao-hang").val(data.diaChiGiaoHang)
+                $("#tong-tien").val(data.tongTien)
             },
             error: function (err) {
                 alert("Error -> " + err);
@@ -92,26 +93,88 @@ $(document).ready(function () {
             $('#loading-event-order').show();
             updateTypeProduct();
 
-            //Hàm cập nhật loại mặt hàng
+            //Hàm cập nhật hóa đơn
             function updateTypeProduct() {
                 $.ajax({
-                    type: "PUT",
-                    data: JSON.stringify({
-                        ngayDatHang: $("#ngay-dat-hang").val(),
-                        trangThai: $("#trang-thai").val(),
-                        diaChiGiaoHang: $("#dia-chi-giao-hang").val(),
-                    }),
+                    type: 'GET',
                     contentType: "application/json",
                     url: url_api_order + '/' + id,
                     success: function (data) {
-                        loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
-                        toastr.success('Đơn đặt hàng ' + data.maDDD + ' đã được chỉnh sửa.')
+                        $.ajax({
+                            type: "PUT",
+                            data: JSON.stringify({
+                                ngayDatHang: data.ngayDatHang,
+                                trangThai: $("#trang-thai").val(),
+                                diaChiGiaoHang: data.diaChiGiaoHang,
+                                hinhThuc: data.hinhThuc,
+                                soDienThoai: data.soDienThoai,
+                                tongTien: $("#tong-tien").val(),
+                                khachHang: {
+                                    userId: data.khachHang.userId
+                                }
+                            }),
+                            contentType: "application/json",
+                            url: url_api_order + '/' + id,
+                            success: function (orders) {
+                                loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
+                                toastr.success('Đơn đặt hàng ' + orders.maDDH + ' đã được chỉnh sửa.')
+                                if (orders.trangThai == 'Đã thanh toán'){
+                                    $.ajax({
+                                        type: 'GET',
+                                        contentType: "application/json",
+                                        url: url_api_orderdetail + '/donDatHang=' + orders.maDDH,
+                                        success: function (ods) {
+                                            $.each(ods, (i, obj) => {
+                                                totalCost += obj.matHang.donGia * obj.soLuongDat
+                                            })
+                                            $.ajax({
+                                                type: 'GET',
+                                                contentType: "application/json",
+                                                url: url_api_client + '/' + orders.khachHang.userId,
+                                                success: function (user) {
+                                                    $.ajax({
+                                                        type: "PUT",
+                                                        data: JSON.stringify({
+                                                            name: user.name,
+                                                            birthDate: user.birthDate,
+                                                            phone: user.phone,
+                                                            email: user.email,
+                                                            address: user.address,
+                                                            gender: user.gender,
+                                                            avatar: user.avatar,
+                                                            roleName: user.roleName,
+                                                            password: user.password,
+                                                            diemTichLuy: parseInt(totalCost / 1000)
+                                                        }),
+                                                        contentType: "application/json",
+                                                        url: url_api_client + '/' + orders.khachHang.userId,
+                                                        success: function (data) {
+                                                        },
+                                                        error: function (err) {
+                                                        }
+                                                    });
+                                                },
+                                                error: function (err) {
+                                                    alert("Error -> " + err)
+                                                }
+                                            });
+                                        },
+                                        error: function (err) {
+                                            alert("Error -> " + err);
+                                        }
+                                    });
+                                }
+                            },
+                            error: function (err) {
+                                loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
+                                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                            }
+                        });
                     },
                     error: function (err) {
-                        loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
-                        toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                        alert("Error -> " + err);
                     }
-                });
+                })
             }
         }
     })
@@ -230,6 +293,9 @@ $(document).ready(function () {
                 }
             }, {
                 data: 'hinhThuc',
+            }, {
+                class: 'td_tongTien',
+                data: 'tongTien'
             }, {
                 class: 'td_diaChiGiaoHang',
                 data: 'diaChiGiaoHang',
