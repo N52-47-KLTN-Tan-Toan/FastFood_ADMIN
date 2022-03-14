@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div class="modal fade" id="modal-overlay" th:fragment="fm-modal-notification">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="overlay" id="loading-notification">
+                    <i class="fas fa-2x fa-sync fa-spin"></i>
+                </div>
+                <div class="modal-header">
+                    <h4 class="modal-title">Cảnh báo</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="text-center pt-3">
+                    <img src="https://firebasestorage.googleapis.com/v0/b/utopian-pilot-329813.appspot.com/o/warning.png?alt=media&token=cd8a0732-5471-4329-803c-47cd571bc283"
+                         alt="Lỗi tải hình ảnh" width="100" height="100">
+                </div>
+                <div class="modal-body text-center"></div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Hủy bỏ</button>
+                    <button type="button" class="btn btn-danger" id="modal-accept-btn">Chấp nhận</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+</head>
+<body>
+
+</body>
+</html>

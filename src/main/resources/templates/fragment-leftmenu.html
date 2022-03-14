@@ -8,7 +8,7 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4" th:fragment="fm-leftmenu">
     <!-- Brand Logo -->
-    <a href="/product" class="brand-link">
+    <a href="/" class="brand-link">
         <img src="https://firebasestorage.googleapis.com/v0/b/n52-47-kltn-tan-toan.appspot.com/o/logo-admin.png?alt=media&token=c11d08cb-ffb9-4d6f-bfeb-ce4ed14db301"
              alt="T&T Logo" class="brand-image img-circle elevation-1" style="opacity: .8">
         <span class="brand-text font-weight-light">Admin T&T</span>
@@ -23,25 +23,17 @@
                 id="left-menu">
                 <!-- Add icons to the links using the .nav-icon class
                    with font-awesome or any other icon font library -->
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">
+                            <i class="nav-icon fas fa-chart-bar"></i>
+                            <p>
+                                Thống kê
+                            </p>
+                        </a>
+                    </li>
+
                 <li class="nav-item menu-open">
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-chart-bar"></i>
-                        <p>
-                            Thống kê
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-dollar-sign nav-icon"></i>
-                                <p>Doanh thu</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item menu-open">
-                    <a href="#" class="nav-link active">
+                    <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-book"></i>
                         <p>
                             Quản lý
@@ -75,6 +67,25 @@
                         </li>
                     </ul>
                 </li>
+
+                <li class="nav-item menu-open">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-audio-description"></i>
+                        <p>
+                            Quảng cáo
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/introduce" class="nav-link">
+                                <i class="fas fa-globe nav-icon"></i>
+                                <p>Quản lý giới thiệu</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

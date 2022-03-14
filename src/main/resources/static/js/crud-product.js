@@ -10,6 +10,8 @@ $(document).ready(function () {
 
     assignDataToTable();
 
+    validationProduct();
+
     //Trả dữ liệu modal thêm mặt hàng về rỗng
     $(document).on('click', '#add-btn', function () {
         $("#ma-mat-hang").val(0);
@@ -183,11 +185,11 @@ $(document).ready(function () {
             type: "DELETE",
             url: url_api_product + '/' + id_del,
             success: function (data) {
-                loadingModalAndRefreshTable( $('#loading-notification'),$('#example2'))
+                loadingModalAndRefreshTable($('#loading-notification'), $('#example2'))
                 toastr.success('Mặt hàng \"' + id_del + '\" đã xóa ra khỏi danh sách.')
             },
             error: function (err) {
-                loadingModalAndRefreshTable( $('#loading-notification'),$('#example2'))
+                loadingModalAndRefreshTable($('#loading-notification'), $('#example2'))
                 toastr.error('Mặt hàng này đang được bán. Không thể xóa')
             }
         });
@@ -317,4 +319,70 @@ $(document).ready(function () {
         });
     }
 
+
+    //Bảng thông báo
+    function alertUsing(text, flag) {
+        var alert = $(".alert");
+
+        if (flag) {
+            alert.removeClass("alert-danger").addClass("alert-success");
+        } else {
+            alert.removeClass("alert-success").addClass("alert-danger");
+
+        }
+        alert.fadeIn(400);
+        alert.css("display", "block");
+        alert.text(text);
+        setTimeout(function () {
+            alert.fadeOut();
+        }, 2000);
+    }
+
+    function validationProduct() {
+        var tenMH = $("#ten-mat-hang");
+        var moTa = $("#mo-ta-mat-hang");
+        var donViTinh = $("#don-vi-tinh");
+        var donGia = $("#don-gia-mat-hang");
+
+        tenMH.keypress(function () {
+            if (tenMH.val().length < 55) {
+                return true;
+            } else {
+                alertUsing("Tên mặt hàng tối thiểu 55 ký tự", false);
+                return false;
+            }
+        });
+
+        moTa.keypress(function () {
+            if (moTa.val().length < 160) {
+                return true;
+            } else {
+                alertUsing("Mô tả tối thiểu 160 ký tự", false);
+                return false;
+            }
+        });
+
+        donViTinh.keypress(function () {
+            if (donViTinh.val().length < 10) {
+                return true;
+            } else {
+                alertUsing("Đơn vị tính tối thiểu 10 ký tự", false);
+                return false;
+            }
+        });
+
+        donGia.keypress(function (key) {
+            if (key.charCode > 10000) {
+                if (donGia.val().length < 6) {
+                    return true;
+                } else {
+                    alertUsing("Đơn giá tối thiểu 6 ký tự", false);
+                    return false;
+                }
+            } else {
+                alertUsing("Đơn giá tối thiểu 10000", false);
+                return false;
+            }
+        });
+    }
 });
