@@ -273,7 +273,7 @@ $(document).ready(function () {
                 data: 'maDDH',
             }, {
                 class: 'td_phone',
-                data: 'soDienThoai',
+                data: 'khachHang.phone',
             }, {
                 class: 'td_khachHang',
                 data: 'khachHang.name',
