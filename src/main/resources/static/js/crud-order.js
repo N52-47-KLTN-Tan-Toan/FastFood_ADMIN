@@ -144,7 +144,7 @@ $(document).ready(function () {
                                                             avatar: user.avatar,
                                                             roleName: user.roleName,
                                                             password: user.password,
-                                                            diemTichLuy: parseInt(totalCost / 1000)
+                                                            diemTichLuy: parseInt(totalCost / 10000)
                                                         }),
                                                         contentType: "application/json",
                                                         url: url_api_client + '/' + orders.khachHang.userId,
