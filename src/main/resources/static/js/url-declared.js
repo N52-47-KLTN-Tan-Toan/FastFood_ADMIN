@@ -51,9 +51,35 @@ function deleteImageToStorageById(id_object, url_object) {
 
 //Hàm hiển thị loading trên modal, đóng modal và load lại table
 function loadingModalAndRefreshTable(em_loading, em_table) {
-    em_loading.hide();
+    em_loading.hide()
     $('.modal').each(function () {
-        $(this).modal('hide');
-    });
-    em_table.DataTable().ajax.reload(null, false);
+        $(this).modal('hide')
+    })
+    em_table.DataTable().ajax.reload(null, false)
+}
+
+//Upload File
+function uploadFileExcel(url_api) {
+    $("#form-upload-file").on('submit', function (evt) {
+        evt.preventDefault()
+
+        let formData = new FormData()
+        formData.append("file", exampleInputFile.files[0])
+
+        $.ajax({
+            type: 'POST',
+            enctype: 'multipart/form-data',
+            url: url_api + '/upload',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                toastr.success(res.message)
+                $('#example2').DataTable().ajax.reload(null, false)
+            },
+            error: function (err) {
+                toastr.error(err.message)
+            }
+        })
+    })
 }

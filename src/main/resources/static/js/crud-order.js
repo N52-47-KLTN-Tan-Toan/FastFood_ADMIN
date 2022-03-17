@@ -214,9 +214,11 @@ $(document).ready(function () {
     function assignDataToTable1() {
         var t = $("#example2").DataTable({
             paging: true,
+            pagingType: 'full_numbers',
             lengthChange: true,
             searching: true,
             ordering: true,
+            lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'Tất cả']],
             //Thay đổi ngôn ngữ của bảng
             oLanguage: {
                 sLengthMenu: 'Hiển thị _MENU_ đơn hàng',
@@ -231,7 +233,6 @@ $(document).ready(function () {
                     sPrevious: '<'
                 },
             },
-            pagingType: 'full_numbers',
             autoWidth: false,
             responsive: true,
             processing: true,
@@ -327,6 +328,7 @@ $(document).ready(function () {
         new $.fn.dataTable.Buttons(t, {
             buttons: [
                 {
+                    className: 'mb-2',
                     text: '<i class="fas fa-sync"></i>',
                     action: function (e, dt, node, conf) {
                         t.ajax.reload(null, false)

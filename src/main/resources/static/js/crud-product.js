@@ -1,27 +1,29 @@
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig)
 
 $(document).ready(function () {
 
     $('#loading-event').hide()
-    $('#loading-notification').hide();
+    $('#loading-notification').hide()
 
-    renderDataForLoaiMHOption();
+    renderDataForLoaiMHOption()
 
-    assignDataToTable();
+    assignDataToTable()
 
-    validationProduct();
+    validationProduct()
+
+    uploadFileExcel(url_api_product)
 
     //Trả dữ liệu modal thêm mặt hàng về rỗng
-    $(document).on('click', '#add-btn', function () {
-        $("#ma-mat-hang").val(0);
-        $("#ten-mat-hang").val('');
-        $("#mo-ta-mat-hang").val('');
-        $("#don-vi-tinh").val('');
-        $("#image-upload-firebase").attr("src", "https://cdn-icons-png.flaticon.com/512/1040/1040241.png");
-        $("#don-gia-mat-hang").val('');
-        $("#op-loaimh").val('');
-        $("#file-upload-firebase").val('');
+    $(document).on('click', '.add-btn', function () {
+        $("#ma-mat-hang").val(0)
+        $("#ten-mat-hang").val('')
+        $("#mo-ta-mat-hang").val('')
+        $("#don-vi-tinh").val('')
+        $("#image-upload-firebase").attr("src", "https://cdn-icons-png.flaticon.com/512/1040/1040241.png")
+        $("#don-gia-mat-hang").val('')
+        $("#op-loaimh").val('')
+        $("#file-upload-firebase").val('')
     })
 
     let id_edit = 0;
@@ -36,34 +38,34 @@ $(document).ready(function () {
             url: url_api_product + '/' + btn_id,
             success: function (data) {
                 $("#ma-mat-hang").val(btn_id);
-                $("#ten-mat-hang").val(data.tenMH);
-                $("#mo-ta-mat-hang").val(data.moTa);
-                $("#don-vi-tinh").val(data.donViTinh);
-                $("#image-upload-firebase").attr("src", data.hinhAnh);
-                $("#don-gia-mat-hang").val(data.donGia);
-                $("#op-loaimh").val(data.loaiMatHang.maLMH);
+                $("#ten-mat-hang").val(data.tenMH)
+                $("#mo-ta-mat-hang").val(data.moTa)
+                $("#don-vi-tinh").val(data.donViTinh)
+                $("#image-upload-firebase").attr("src", data.hinhAnh)
+                $("#don-gia-mat-hang").val(data.donGia)
+                $("#op-loaimh").val(data.loaiMatHang.maLMH)
             },
             error: function (err) {
-                alert("Error -> " + err);
+                alert("Error -> " + err)
             }
         });
     })
 
     //Tạo mới mặt hàng và cập nhật mặt hàng
     $("#create-update-product").submit(function (evt) {
-        evt.preventDefault();
+        evt.preventDefault()
 
-        const ref = firebase.storage().ref();
-        const file = document.querySelector("#file-upload-firebase").files[0];
+        const ref = firebase.storage().ref()
+        const file = document.querySelector("#file-upload-firebase").files[0]
 
-        var id = $("#ma-mat-hang").val();
-        let name;
-        let task;
+        var id = $("#ma-mat-hang").val()
+        let name
+        let task
 
         if (id == 0) {
             //convert hình ảnh upload
             try {
-                name = +new Date() + "-" + file.name;
+                name = +new Date() + "-" + file.name
             } catch (e) {
                 toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
                 return false;
@@ -72,7 +74,7 @@ $(document).ready(function () {
                 contentType: file.type
             };
 
-            task = ref.child(name).put(file, metadata);
+            task = ref.child(name).put(file, metadata)
 
             //Thêm mới đối tượng
             $('#loading-event').show();
@@ -103,18 +105,18 @@ $(document).ready(function () {
                         }
                     });
                 })
-                .catch(console.error);
+                .catch(console.error)
         } else if (id > 0) {
             //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
             if ($('#file-upload-firebase').val() == "") {
                 //Không có cập nhật ảnh
-                const url = $('#img_' + id).prop('src');
-                $('#loading-event').show();
-                updateProduct(url);
+                const url = $('#img_' + id).prop('src')
+                $('#loading-event').show()
+                updateProduct(url)
             } else {
                 //convert hình ảnh upload
                 try {
-                    name = +new Date() + "-" + file.name;
+                    name = +new Date() + "-" + file.name
                 } catch (e) {
                     toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
                     return false;
@@ -122,17 +124,17 @@ $(document).ready(function () {
                 const metadata = {
                     contentType: file.type
                 };
-                const task = ref.child(name).put(file, metadata);
+                const task = ref.child(name).put(file, metadata)
 
                 //Có cập nhật ảnh
                 $('#loading-event').show();
-                deleteImageToStorageById(id, url_api_product);
+                deleteImageToStorageById(id, url_api_product)
                 task
                     .then(snapshot => snapshot.ref.getDownloadURL())
                     .then(url => {
-                        updateProduct(url);
+                        updateProduct(url)
                     })
-                    .catch(console.error);
+                    .catch(console.error)
             }
         }
 
@@ -160,9 +162,9 @@ $(document).ready(function () {
                     loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
                     toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                 }
-            });
+            })
         }
-    });
+    })
 
     let id_del = 0;
 
@@ -209,9 +211,9 @@ $(document).ready(function () {
             lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'Tất cả']],
             //Thay đổi ngôn ngữ của bảng
             oLanguage: {
-                sLengthMenu: 'Hiển thị _MENU_ đơn hàng',
+                sLengthMenu: 'Hiển thị _MENU_ mặt hàng',
                 sSearch: 'Tìm kiếm',
-                sInfo: 'Đang hiển thị Trang _START_ | _END_ trên _TOTAL_ đơn hàng.',
+                sInfo: 'Đang hiển thị từ _START_ đến _END_ trên _TOTAL_ mặt hàng.',
                 sEmptyTable: 'Không có dữ liệu để hiển thị',
                 sProcessing: "Đang tải dữ liệu...",
                 oPaginate: {
@@ -307,29 +309,43 @@ $(document).ready(function () {
 
         new $.fn.dataTable.Buttons(t, {
             buttons: [
+                {
+                    className: 'mr-1 mb-2 btn bg-gradient-info add-btn',
+                    text: '<i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Thêm mặt hàng',
+                    action: function (e, dt, node, config) {
+                        $('#modal-xl').modal('show')
+                    }
+                },
+                {
+                    className: 'mr-1 mb-2 bg-gradient-success',
+                    text: '<i class="fas fa-upload"></i>&nbsp;&nbsp;&nbsp;Tải lên file Excel',
+                    action: function (e, dt, node, config) {
+                        $('#modal-success').modal('show')
+                    }
+                },
                 $.extend(true, {}, typeColumn, {
                     title: 'T&T_FastFood_Shop',
-                    className: 'mr-1 mb-2',
+                    className: 'mr-1 mb-2 btn bg-gradient-success',
                     extend: 'excelHtml5',
-                    text: 'Xuất file Excel',
+                    text: '<i class="fas fa-file-excel"></i>&nbsp;&nbsp;&nbsp;Xuất file Excel',
                     autoFilter: true,
                     sheetName: 'MatHang',
                     exportOptions: {
                         // columns: ':visible'
-                        columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                        columns: [0, 1, 2, 3, 4, 5, 6]
                     }
                 }),
                 {
-                    className: 'mb-2',
+                    className: 'mb-2 btn bg-gradient-primary',
                     extend: 'colvis',
                     text: 'Hiển thị cột',
-                },
+                }
             ]
-        });
+        })
 
         t.buttons(0, null).container().prependTo(
             t.table().container()
-        );
+        )
     }
 
     //Hiển thị dữ liệu loại mặt hàng lên combobox
