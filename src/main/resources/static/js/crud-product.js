@@ -3,7 +3,7 @@ firebase.initializeApp(firebaseConfig);
 
 $(document).ready(function () {
 
-    $('#loading-event').hide();
+    $('#loading-event').hide()
     $('#loading-notification').hide();
 
     renderDataForLoaiMHOption();
@@ -199,12 +199,14 @@ $(document).ready(function () {
     function assignDataToTable() {
         var t = $("#example2").DataTable({
             paging: true,
+            pagingType: 'full_numbers',
             lengthChange: true,
             searching: true,
             ordering: true,
             info: true,
             autoWidth: false,
             responsive: true,
+            lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'Tất cả']],
             //Thay đổi ngôn ngữ của bảng
             oLanguage: {
                 sLengthMenu: 'Hiển thị _MENU_ đơn hàng',
@@ -219,7 +221,6 @@ $(document).ready(function () {
                     sPrevious: '<'
                 },
             },
-            pagingType: 'full_numbers',
             //Tạo id cho mỗi thẻ tr
             fnCreatedRow: function (nRow, aData, iDataIndex) {
                 $(nRow).attr('id', 'tr_' + aData.maMH); // or whatever you choose to set as the id
@@ -232,12 +233,7 @@ $(document).ready(function () {
                     return d
                 },
             },
-
             // Hàm render filter option cho loại mặt hàng
-            lengthMenu: [
-                [10, 25, 50, 100, -1],
-                [10, 25, 50, 100, "All"]
-            ],
             initComplete: function () {
                 var column = this.api().column(6);
 
@@ -258,7 +254,7 @@ $(document).ready(function () {
                 class: 'text-center',
                 data: 'hinhAnh',
                 render: function (data, type, row, meta) {
-                    return '<img id="img_' + row.maMH + '" src="' + data + '" width="50" height="50" />';
+                    return '<img id="img_' + row.maMH + '" src="' + data + '" width="50" height="50" />'
                 }
             }, {
                 class: 'td_tenMH',
@@ -294,7 +290,46 @@ $(document).ready(function () {
                         'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>'
                 }
             }]
+        })
+
+        var typeColumn = {
+            exportOptions: {
+                format: {
+                    body: function (data, row, column, node) {
+                        // Strip $ from salary column to make it numeric
+                        return column === 5 ? data.replace(/[,VND]/g, '') : data
+                        && column === 1 ? data.split('"')[3] : data
+                        && column === 6 ? data.split('"')[1] : data
+                    },
+                }
+            }
+        }
+
+        new $.fn.dataTable.Buttons(t, {
+            buttons: [
+                $.extend(true, {}, typeColumn, {
+                    title: 'T&T_FastFood_Shop',
+                    className: 'mr-1 mb-2',
+                    extend: 'excelHtml5',
+                    text: 'Xuất file Excel',
+                    autoFilter: true,
+                    sheetName: 'MatHang',
+                    exportOptions: {
+                        // columns: ':visible'
+                        columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                    }
+                }),
+                {
+                    className: 'mb-2',
+                    extend: 'colvis',
+                    text: 'Hiển thị cột',
+                },
+            ]
         });
+
+        t.buttons(0, null).container().prependTo(
+            t.table().container()
+        );
     }
 
     //Hiển thị dữ liệu loại mặt hàng lên combobox
