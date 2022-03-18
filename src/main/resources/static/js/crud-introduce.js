@@ -206,17 +206,19 @@ $(document).ready(function () {
     function assignDataToTable() {
         var t = $("#example2").DataTable({
             paging: true,
+            pagingType: 'full_numbers',
             lengthChange: true,
             searching: true,
             ordering: true,
             info: true,
             autoWidth: false,
             responsive: true,
+            lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'Tất cả']],
             //Thay đổi ngôn ngữ của bảng
             oLanguage: {
-                // sLengthMenu: 'Hiển thị _MENU_ đơn hàng',
+                sLengthMenu: 'Hiển thị _MENU_ phần',
                 sSearch: 'Tìm kiếm',
-                sInfo: 'Đang hiển thị Trang _START_ | _END_ trên _TOTAL_ đơn hàng.',
+                sInfo: 'Đang hiển thị từ _START_ đến _END_ trên _TOTAL_ phần.',
                 sEmptyTable: 'Không có dữ liệu để hiển thị',
                 sProcessing: "Đang tải dữ liệu...",
                 oPaginate: {
@@ -226,7 +228,6 @@ $(document).ready(function () {
                     sPrevious: '<'
                 },
             },
-            pagingType: 'full_numbers',
             //Tạo id cho mỗi thẻ tr
             fnCreatedRow: function (nRow, aData, iDataIndex) {
                 $(nRow).attr('id', 'tr_' + aData.maGT); // or whatever you choose to set as the id

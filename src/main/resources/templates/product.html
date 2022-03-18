@@ -19,13 +19,6 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card-body">
-                            <div class="float-right" style="margin-top: 31px">
-                                <button id="add-btn" class="btn bg-gradient-info mr-2" data-toggle="modal"
-                                        data-target="#modal-xl">
-                                    <i class="fas fa-plus"></i>
-                                    <span class="pl-2">Thêm mặt hàng</span>
-                                </button>
-                            </div>
                             <div class="col-sm-2">
                                 <div class="form-group">
                                     <label><b>Loại mặt hàng</b></label>
@@ -66,11 +59,13 @@
 <!-- ./wrapper -->
 
 <div th:replace="fragment-modal-product :: fm-modal"></div>
+<div th:replace="fragment-modal-product :: fm-modal-upload"></div>
 <div th:replace="fragment-modal-notification :: fm-modal-notification"></div>
 <div th:replace="fragment-header :: fm-script"></div>
 
 <!-- CRUD mặt hàng -->
 <script src="../../js/crud-product.js"></script>
+
 </body>
 
 </html>

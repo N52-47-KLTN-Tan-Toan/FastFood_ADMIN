@@ -77,6 +77,39 @@
 </div>
 <!-- /.modal -->
 
+<div class="modal fade" id="modal-success" style="padding-top: 200px" th:fragment="fm-modal-upload">
+    <div class="modal-dialog">
+        <div class="modal-content bg-success">
+            <div class="modal-header">
+                <h4 class="modal-title">Tải danh sách các mặt hàng</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="form-upload-file" enctype="multipart/form-data" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="exampleInputFile"
+                                       name="exampleInputFile" required>
+                                <label class="custom-file-label" for="exampleInputFile">Chọn file Excel (.xlsx) hoặc kéo
+                                    thả
+                                    vào đây</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="submit" class="btn btn-outline-light">Tải lên</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
 
 </body>
 </html>
