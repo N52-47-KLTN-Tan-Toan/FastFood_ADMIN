@@ -223,7 +223,7 @@ $(document).ready(function () {
             oLanguage: {
                 sLengthMenu: 'Hiển thị _MENU_ đơn hàng',
                 sSearch: 'Tìm kiếm',
-                sInfo: 'Đang hiển thị Trang _START_ | _END_ trên _TOTAL_ đơn hàng.',
+                sInfo: 'Đang hiển thị từ _START_ đến _END_ trên _TOTAL_ đơn hàng.',
                 sEmptyTable: 'Không có dữ liệu để hiển thị',
                 sProcessing: "Đang tải dữ liệu...",
                 oPaginate: {

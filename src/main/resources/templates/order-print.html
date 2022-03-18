@@ -67,7 +67,7 @@
                     <tbody>
                     <tr th:each="data, value: ${chiTietDonDatHang}">
                         <td class="text-center" th:text="${value.index + 1}"></td>
-                        <td th:text="${data.matHang.tenMH} + 'hột gà nướng hột vịt lộn trứng cút lộn'"></td>
+                        <td th:text="${data.matHang.tenMH}"></td>
                         <td class="text-center" th:text="${data.soLuongDat}"></td>
                         <td th:text="${#numbers.formatDecimal(data.donGia, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                     </tr>

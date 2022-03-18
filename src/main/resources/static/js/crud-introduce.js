@@ -215,6 +215,7 @@ $(document).ready(function () {
             info: true,
             autoWidth: false,
             responsive: true,
+            processing: true,
             lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'Tất cả']],
             //Thay đổi ngôn ngữ của bảng
             oLanguage: {
@@ -291,6 +292,13 @@ $(document).ready(function () {
 
         new $.fn.dataTable.Buttons(t, {
             buttons: [
+                {
+                    className: 'mb-2 mr-1',
+                    text: '<i class="fas fa-sync"></i>',
+                    action: function (e, dt, node, conf) {
+                        t.ajax.reload(null, false)
+                    }
+                },
                 {
                     className: 'mr-1 mb-2 btn bg-gradient-info add-btn-intro',
                     text: '<i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Thêm',
