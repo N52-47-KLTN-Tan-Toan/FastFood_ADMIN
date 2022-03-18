@@ -17,19 +17,12 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="pl-4 pt-4">
-                        <button id="add-btn" class="btn bg-gradient-info mr-2" data-toggle="modal"
-                                data-target="#modal-xl">
-                            <i class="fas fa-plus"></i>
-                            <span class="pl-2">Thêm</span>
-                        </button>
-                    </div>
                     <div class="col-12">
                         <div class="card-body">
                             <table id="example2" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>STT</th>
+                                    <th>Mã</th>
                                     <th>Hình ảnh</th>
                                     <th>Tên</th>
                                     <th>Tiêu đề</th>
@@ -54,6 +47,7 @@
 <!-- ./wrapper -->
 
 <div th:replace="fragment-modal-introduce :: fm-modal-introduce"></div>
+<div th:replace="fragment-modal-product :: fm-modal-upload"></div>
 <div th:replace="fragment-modal-notification :: fm-modal-notification"></div>
 <div th:replace="fragment-header :: fm-script"></div>
 

@@ -18,13 +18,6 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="pl-4 pt-4">
-                        <button id="add-btn-type" class="btn bg-gradient-info mr-2" data-toggle="modal"
-                                data-target="#modal-lg">
-                            <i class="fas fa-plus"></i>
-                            <span class="pl-2">Thêm loại mặt hàng</span>
-                        </button>
-                    </div>
                     <div class="col-12">
                         <div class="card-body">
                             <table id="example2" class="table table-bordered table-striped">
@@ -52,6 +45,7 @@
 <!-- ./wrapper -->
 
 <div th:replace="fragment-modal-type-product :: fm-modal-type"></div>
+<div th:replace="fragment-modal-product :: fm-modal-upload"></div>
 <div th:replace="fragment-modal-notification :: fm-modal-notification"></div>
 <div th:replace="fragment-header :: fm-script"></div>
 <script src="../../js/crud-type-product.js"></script>

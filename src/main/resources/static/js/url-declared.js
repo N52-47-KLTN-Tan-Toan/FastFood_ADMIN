@@ -76,9 +76,15 @@ function uploadFileExcel(url_api) {
             success: function (res) {
                 toastr.success(res.message)
                 $('#example2').DataTable().ajax.reload(null, false)
+                $('.modal').each(function () {
+                    $(this).modal('hide')
+                })
             },
             error: function (err) {
-                toastr.error(err.message)
+                toastr.error('Kích cỡ file lớn hơn 50MB hoặc không đúng định dạng file Excel (.xlsx)')
+            },
+            complete: function (data) {
+                $('#form-upload-file')[0].reset(); // this will reset the form fields
             }
         })
     })

@@ -1,24 +1,26 @@
 $(document).ready(function () {
 
-    $('#loading-event-type').hide();
-    $('#loading-notification').hide();
+    $('#loading-event-type').hide()
+    $('#loading-notification').hide()
 
-    assignDataToTable1();
+    assignDataToTable1()
 
-    validationTypeProduct();
+    validationTypeProduct()
+
+    uploadFileExcel(url_api_categories)
 
     //Trả dữ liệu modal thêm mặt hàng về rỗng
-    $(document).on('click', '#add-btn-type', function () {
-        $("#ma-loai-mat-hang").val(0);
-        $("#ten-loai-mat-hang").val('');
+    $(document).on('click', '.add-btn-type', function () {
+        $("#ma-loai-mat-hang").val(0)
+        $("#ten-loai-mat-hang").val('')
     })
 
     let id_edit = 0;
     //Lấy dữ liệu đối tượng từ nút edit
     $('table').on('click', '.edit-btn', function (e) {
 
-        let btn_id = this.id;
-        id_edit = btn_id.split("_")[2];
+        let btn_id = this.id
+        id_edit = btn_id.split("_")[2]
 
         //Find Object by id
         $.ajax({
@@ -182,8 +184,60 @@ $(document).ready(function () {
 
                 }
             }]
-        });
-    };
+        })
+
+        var typeColumn = {
+            exportOptions: {
+                format: {
+                    body: function (data, row, column, node) {
+                        // Strip $ from salary column to make it numeric
+                        return column === 5 ? data.replace(/[,VND]/g, '') : data
+                        && column === 1 ? data.split('"')[3] : data
+                        && column === 6 ? data.split('"')[1] : data
+                    },
+                }
+            }
+        }
+
+        new $.fn.dataTable.Buttons(t, {
+            buttons: [
+                {
+                    className: 'mr-1 mb-2 btn bg-gradient-info add-btn-type',
+                    text: '<i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Thêm',
+                    action: function (e, dt, node, config) {
+                        $('#modal-lg').modal('show')
+                    }
+                },
+                {
+                    className: 'mr-1 mb-2 bg-gradient-success',
+                    text: '<i class="fas fa-upload"></i>&nbsp;&nbsp;&nbsp;Tải lên',
+                    action: function (e, dt, node, config) {
+                        $('#modal-success').modal('show')
+                    }
+                },
+                {
+                    title: 'T&T_FastFood_Shop_LoaiMatHang',
+                    className: 'mr-1 mb-2 btn bg-gradient-success',
+                    extend: 'excelHtml5',
+                    text: '<i class="fas fa-file-excel"></i>&nbsp;&nbsp;&nbsp;Xuất Excel',
+                    autoFilter: true,
+                    sheetName: 'LoaiMatHang',
+                    exportOptions: {
+                        columns: [0, 1]
+                    }
+                },
+                {
+                    className: 'mb-2 btn bg-gradient-primary',
+                    extend: 'colvis',
+                    text: 'Hiển thị cột',
+                }
+            ]
+        })
+
+        t.buttons(0, null).container().prependTo(
+            t.table().container()
+        )
+    }
 
 
     //Bảng thông báo
