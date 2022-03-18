@@ -1,5 +1,5 @@
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig)
 
 $(document).ready(function () {
 
@@ -8,8 +8,10 @@ $(document).ready(function () {
 
     assignDataToTable()
 
-    //Trả dữ liệu modal thêm khách hàng về rỗng
-    $(document).on('click', '#add-btn', function () {
+    uploadFileExcel(url_api_introduce)
+
+    //Trả dữ liệu modal về rỗng
+    $(document).on('click', '.add-btn-intro', function () {
         $("#ma-gioi-thieu").val(0)
         $("#ten").val('')
         $("#tieu-de").val('')
@@ -17,7 +19,7 @@ $(document).ready(function () {
         $("#image-upload-firebase").attr("src", "https://cdn-icons-png.flaticon.com/512/1040/1040241.png")
     })
 
-    let id_edit = 0;
+    let id_edit = 0
     //Lấy dữ liệu đối tượng từ nút edit
     $('table').on('click', '.edit-btn', function (e) {
 
@@ -38,10 +40,10 @@ $(document).ready(function () {
             error: function (err) {
                 alert("Error -> " + err)
             }
-        });
+        })
     })
 
-    //Tạo mới khách hàng và cập nhật khách hàng
+    //Tạo mới và cập nhật
     $("#create-update-introduce").submit(function (evt) {
         evt.preventDefault()
 
@@ -89,7 +91,7 @@ $(document).ready(function () {
                             loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
                             toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                         }
-                    });
+                    })
                 })
                 .catch(console.error);
         } else if (id != 0) {
@@ -109,7 +111,7 @@ $(document).ready(function () {
                 }
                 const metadata = {
                     contentType: file.type
-                };
+                }
                 const task = ref.child(name).put(file, metadata)
 
                 //Có cập nhật ảnh
@@ -124,7 +126,7 @@ $(document).ready(function () {
             }
         }
 
-        //Hàm cập nhật khách hàng
+        //Hàm cập nhật bảng giới thiệu
         function updateProduct(url) {
             $.ajax({
                 type: 'GET',
@@ -149,14 +151,14 @@ $(document).ready(function () {
                             loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
                             toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                         }
-                    });
+                    })
                 },
                 error: function (err) {
                     alert("Error -> " + err)
                 }
-            });
+            })
         }
-    });
+    })
 
     let id_del = 0
 
@@ -274,14 +276,57 @@ $(document).ready(function () {
                         'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>'
                 }
             }]
-        });
+        })
 
-        //Tạo số thứ tự bắt đầu từ 1 vào cột mã
-        t.on('order.dt search.dt', function () {
-            t.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
-                cell.innerHTML = i + 1;
-            });
-        }).draw();
+        var typeColumn = {
+            exportOptions: {
+                format: {
+                    body: function (data, row, column, node) {
+                        // Strip $ from salary column to make it numeric
+                        return column === 1 ? data.split('"')[3] : data
+                    },
+                }
+            }
+        }
+
+        new $.fn.dataTable.Buttons(t, {
+            buttons: [
+                {
+                    className: 'mr-1 mb-2 btn bg-gradient-info add-btn-intro',
+                    text: '<i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Thêm',
+                    action: function (e, dt, node, config) {
+                        $('#modal-xl').modal('show')
+                    }
+                },
+
+                {
+                    className: 'mr-1 mb-2 bg-gradient-success',
+                    text: '<i class="fas fa-upload"></i>&nbsp;&nbsp;&nbsp;Tải lên',
+                    action: function (e, dt, node, config) {
+                        $('#modal-success').modal('show')
+                    }
+                },
+                $.extend(true, {}, typeColumn, {
+                    title: 'T&T_FastFood_Shop_GioiThieu',
+                    className: 'mr-1 mb-2 btn bg-gradient-success',
+                    extend: 'excelHtml5',
+                    text: '<i class="fas fa-file-excel"></i>&nbsp;&nbsp;&nbsp;Xuất Excel',
+                    autoFilter: true,
+                    sheetName: 'GioiThieu',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4]
+                    }
+                }),
+                {
+                    className: 'mb-2 btn bg-gradient-primary',
+                    extend: 'colvis',
+                    text: 'Hiển thị cột',
+                }
+            ]
+        })
+
+        t.buttons(0, null).container().prependTo(
+            t.table().container()
+        )
     }
-
-});
+})

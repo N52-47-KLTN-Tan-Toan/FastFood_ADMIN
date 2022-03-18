@@ -37,7 +37,7 @@ $(document).ready(function () {
             contentType: "application/json",
             url: url_api_product + '/' + btn_id,
             success: function (data) {
-                $("#ma-mat-hang").val(btn_id);
+                $("#ma-mat-hang").val(btn_id)
                 $("#ten-mat-hang").val(data.tenMH)
                 $("#mo-ta-mat-hang").val(data.moTa)
                 $("#don-vi-tinh").val(data.donViTinh)
@@ -48,7 +48,7 @@ $(document).ready(function () {
             error: function (err) {
                 alert("Error -> " + err)
             }
-        });
+        })
     })
 
     //Tạo mới mặt hàng và cập nhật mặt hàng
@@ -72,7 +72,7 @@ $(document).ready(function () {
             }
             const metadata = {
                 contentType: file.type
-            };
+            }
 
             task = ref.child(name).put(file, metadata)
 
@@ -311,23 +311,23 @@ $(document).ready(function () {
             buttons: [
                 {
                     className: 'mr-1 mb-2 btn bg-gradient-info add-btn',
-                    text: '<i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Thêm mặt hàng',
+                    text: '<i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Thêm',
                     action: function (e, dt, node, config) {
                         $('#modal-xl').modal('show')
                     }
                 },
                 {
                     className: 'mr-1 mb-2 bg-gradient-success',
-                    text: '<i class="fas fa-upload"></i>&nbsp;&nbsp;&nbsp;Tải lên file Excel',
+                    text: '<i class="fas fa-upload"></i>&nbsp;&nbsp;&nbsp;Tải lên',
                     action: function (e, dt, node, config) {
                         $('#modal-success').modal('show')
                     }
                 },
                 $.extend(true, {}, typeColumn, {
-                    title: 'T&T_FastFood_Shop',
+                    title: 'T&T_FastFood_Shop_MatHang',
                     className: 'mr-1 mb-2 btn bg-gradient-success',
                     extend: 'excelHtml5',
-                    text: '<i class="fas fa-file-excel"></i>&nbsp;&nbsp;&nbsp;Xuất file Excel',
+                    text: '<i class="fas fa-file-excel"></i>&nbsp;&nbsp;&nbsp;Xuất Excel',
                     autoFilter: true,
                     sheetName: 'MatHang',
                     exportOptions: {

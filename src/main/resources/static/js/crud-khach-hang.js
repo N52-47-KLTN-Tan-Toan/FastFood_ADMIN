@@ -2,7 +2,7 @@
 firebase.initializeApp(firebaseConfig);
 
 $(document).ready(function () {
-
+    console.log($('#role_name').val())
     $('#loading-event-khach-hang').hide()
     $('#loading-notification').hide()
 
@@ -10,8 +10,10 @@ $(document).ready(function () {
 
     validationKhachHang()
 
+    uploadFileExcel(url_api_client)
+
     //Trả dữ liệu modal thêm khách hàng về rỗng
-    $(document).on('click', '#add-btn', function () {
+    $(document).on('click', '.add-btn-client', function () {
         $("#ma-khach-hang").val(0)
         $("#ten-khach-hang").val('')
         $("#diem-tich-luy").val(0).prop('readonly', true)
@@ -34,7 +36,7 @@ $(document).ready(function () {
             contentType: "application/json",
             url: url_api_client + '/' + btn_id,
             success: function (data) {
-                $("#ma-khach-hang").val(btn_id)
+                $("#ma-khach-hang").val('********' + btn_id.substring(31, 36))
                 $("#ten-khach-hang").val(data.name)
                 $("#diem-tich-luy").val(data.diemTichLuy).prop('readonly', false)
                 $("#ngay-sinh").val(data.birthDate)
@@ -51,137 +53,139 @@ $(document).ready(function () {
             error: function (err) {
                 alert("Error -> " + err)
             }
-        });
-    })
+        })
 
-    //Tạo mới khách hàng và cập nhật khách hàng
-    $("#create-update-khach-hang").submit(function (evt) {
-        evt.preventDefault()
+        //Tạo mới khách hàng và cập nhật khách hàng
+        $("#create-update-khach-hang").submit(function (evt) {
+            evt.preventDefault()
 
-        const ref = firebase.storage().ref()
-        const file = document.querySelector("#file-upload-firebase").files[0]
+            const ref = firebase.storage().ref()
+            const file = document.querySelector("#file-upload-firebase").files[0]
 
-        var id = $("#ma-khach-hang").val()
-        let name
-        let task
+            var id = $("#ma-khach-hang").val()
 
-        if (id == 0) {
-            //convert hình ảnh upload
-            try {
-                name = +new Date() + "-" + file.name
-            } catch (e) {
-                toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
-                return false;
-            }
-            const metadata = {
-                contentType: file.type
-            };
+            let name
+            let task
 
-            task = ref.child(name).put(file, metadata);
-            //Thêm mới đối tượng
-            $('#loading-event-khach-hang').show();
-            task
-                .then(snapshot => snapshot.ref.getDownloadURL())
-                .then(url => {
-                    $.ajax({
-                        type: "POST",
-                        url: url_api_client,
-                        data: JSON.stringify({
-                            name: $("#ten-khach-hang").val(),
-                            birthDate: $("#ngay-sinh").val(),
-                            phone: $("#sdt").val(),
-                            email: $("#email").val(),
-                            address: $("#dia-chi").val(),
-                            gender: $(".rad-gender:checked").val() == 1 ? true : false,
-                            avatar: url,
-                            roleName: 'ROLE_CLIENT',
-                            password: '1111',
-                            diemTichLuy: 0
-                        }),
-
-                        contentType: "application/json",
-                        success: function (data) {
-                            loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
-                            toastr.success(data.name + ' đã được thêm vào.')
-                        },
-                        error: function (err) {
-                            loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
-                            toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                        }
-                    });
-                })
-                .catch(console.error);
-        } else if (id != 0) {
-            //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
-            if ($('#file-upload-firebase').val() == "") {
-                //Không có cập nhật ảnh
-                const url = $('#img_' + id).prop('src')
-                $('#loading-event-khach-hang').show()
-                updateProduct(url);
-            } else {
+            if (id == 0) {
                 //convert hình ảnh upload
                 try {
                     name = +new Date() + "-" + file.name
                 } catch (e) {
                     toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
-                    return false
+                    return false;
                 }
                 const metadata = {
                     contentType: file.type
                 };
-                const task = ref.child(name).put(file, metadata)
 
-                //Có cập nhật ảnh
-                $('#loading-event-khach-hang').show()
-                deleteImageToStorageById(id, url_api_client)
+                task = ref.child(name).put(file, metadata);
+                //Thêm mới đối tượng
+                $('#loading-event-khach-hang').show();
                 task
                     .then(snapshot => snapshot.ref.getDownloadURL())
                     .then(url => {
-                        updateProduct(url)
-                    })
-                    .catch(console.error)
-            }
-        }
+                        $.ajax({
+                            type: "POST",
+                            url: url_api_client,
+                            data: JSON.stringify({
+                                name: $("#ten-khach-hang").val(),
+                                birthDate: $("#ngay-sinh").val(),
+                                phone: $("#sdt").val(),
+                                email: $("#email").val(),
+                                address: $("#dia-chi").val(),
+                                gender: $(".rad-gender:checked").val() == 1 ? true : false,
+                                avatar: url,
+                                roleName: 'ROLE_CLIENT',
+                                password: '1111',
+                                diemTichLuy: 0
+                            }),
 
-        //Hàm cập nhật khách hàng
-        function updateProduct(url) {
-            $.ajax({
-                type: 'GET',
-                contentType: "application/json",
-                url: url_api_client + '/' + id,
-                success: function (data) {
-                    $.ajax({
-                        type: "PUT",
-                        data: JSON.stringify({
-                            name: $("#ten-khach-hang").val(),
-                            birthDate: $("#ngay-sinh").val(),
-                            phone: $("#sdt").val(),
-                            email: $("#email").val(),
-                            address: $("#dia-chi").val(),
-                            gender: $(".rad-gender:checked").val() == 1 ? true : false,
-                            avatar: url,
-                            roleName: data.roleName,
-                            password: data.password,
-                            diemTichLuy: $("#diem-tich-luy").val()
-                        }),
-                        contentType: "application/json",
-                        url: url_api_client + '/' + id,
-                        success: function (data) {
-                            loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
-                            toastr.success('Khách hàng ' + data.userId + ' đã được chỉnh sửa.')
-                        },
-                        error: function (err) {
-                            loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
-                            toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                        }
-                    });
-                },
-                error: function (err) {
-                    alert("Error -> " + err)
+                            contentType: "application/json",
+                            success: function (data) {
+                                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
+                                toastr.success('Khách hàng ' + data.name + ' đã được thêm vào.')
+                            },
+                            error: function (err) {
+                                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
+                                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                            }
+                        });
+                    })
+                    .catch(console.error);
+            } else if (id != 0) {
+                //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
+                if ($('#file-upload-firebase').val() == "") {
+                    //Không có cập nhật ảnh
+                    const url = $('#img_' + btn_id).prop('src')
+                    $('#loading-event-khach-hang').show()
+                    updateProduct(url);
+                } else {
+                    //convert hình ảnh upload
+                    try {
+                        name = +new Date() + "-" + file.name
+                    } catch (e) {
+                        toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
+                        return false
+                    }
+                    const metadata = {
+                        contentType: file.type
+                    };
+                    const task = ref.child(name).put(file, metadata)
+
+                    //Có cập nhật ảnh
+                    $('#loading-event-khach-hang').show()
+                    deleteImageToStorageById(id, url_api_client)
+                    task
+                        .then(snapshot => snapshot.ref.getDownloadURL())
+                        .then(url => {
+                            updateProduct(url)
+                        })
+                        .catch(console.error)
                 }
-            });
-        }
-    });
+            }
+
+            //Hàm cập nhật khách hàng
+            function updateProduct(url) {
+                $.ajax({
+                    type: 'GET',
+                    contentType: "application/json",
+                    url: url_api_client + '/' + btn_id,
+                    success: function (data) {
+                        $.ajax({
+                            type: "PUT",
+                            data: JSON.stringify({
+                                name: $("#ten-khach-hang").val(),
+                                birthDate: $("#ngay-sinh").val(),
+                                phone: $("#sdt").val(),
+                                email: $("#email").val(),
+                                address: $("#dia-chi").val(),
+                                gender: $(".rad-gender:checked").val() == 1 ? true : false,
+                                avatar: url,
+                                roleName: data.roleName,
+                                password: data.password,
+                                diemTichLuy: $("#diem-tich-luy").val()
+                            }),
+                            contentType: "application/json",
+                            url: url_api_client + '/' + id,
+                            success: function (data) {
+                                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
+                                toastr.success('Thông tin của khách hàng ' + data.name + ' đã được chỉnh sửa.')
+                            },
+                            error: function (err) {
+                                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
+                                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                            }
+                        });
+                    },
+                    error: function (err) {
+                        alert("Error -> " + err)
+                    }
+                })
+            }
+        })
+    })
+
 
     let id_del = 0
 
@@ -282,7 +286,7 @@ $(document).ready(function () {
             }, {
                 class: 'td_diemTichLuy',
                 data: 'diemTichLuy'
-            },{
+            }, {
                 class: 'td_address',
                 data: 'address'
             }, {
@@ -312,18 +316,76 @@ $(document).ready(function () {
                 class: 'text-center',
                 data: 'userId',
                 render: function (data, type, row, meta) {
-                    return '  <button id="btn_delete_' + row.userId + '" class="btn bg-gradient-danger delete-btn" ' +
-                        'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>'
+                    if ($('#role_name').val() == '[ROLE_ADMIN]') {
+                        return '  <button id="btn_delete_' + row.userId + '" class="btn bg-gradient-danger delete-btn" ' +
+                            'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>'
+                    } else {
+                        return '  <button class="btn bg-gradient-danger disabled">' +
+                            '<i class="fas fa-trash-alt"></i>' +
+                            '</button>'
+                    }
                 }
             }]
-        });
+        })
 
         //Tạo số thứ tự bắt đầu từ 1 vào cột mã
         t.on('order.dt search.dt', function () {
             t.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
                 cell.innerHTML = i + 1;
             });
-        }).draw();
+        }).draw()
+
+        var typeColumn = {
+            exportOptions: {
+                format: {
+                    body: function (data, row, column, node) {
+                        // Strip $ from salary column to make it numeric
+                        return column === 1 ? data.split('"')[3] : data
+                        && column === 7 ? data.split('/')[2] + '-' + data.split('/')[1] + '-' + data.split('/')[0] : data
+                    },
+                }
+            }
+        }
+
+        new $.fn.dataTable.Buttons(t, {
+            buttons: [
+                {
+                    className: 'mr-1 mb-2 btn bg-gradient-info add-btn-client',
+                    text: '<i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Thêm',
+                    action: function (e, dt, node, config) {
+                        $('#modal-xl ').modal('show')
+                    }
+                },
+                {
+                    className: 'mr-1 mb-2 bg-gradient-success',
+                    text: '<i class="fas fa-upload"></i>&nbsp;&nbsp;&nbsp;Tải lên',
+                    action: function (e, dt, node, config) {
+                        $('#modal-success').modal('show')
+                    }
+                },
+                $.extend(true, {}, typeColumn, {
+                    title: 'T&T_FastFood_Shop_KhachHang',
+                    className: 'mr-1 mb-2 btn bg-gradient-success',
+                    extend: 'excelHtml5',
+                    text: '<i class="fas fa-file-excel"></i>&nbsp;&nbsp;&nbsp;Xuất Excel',
+                    autoFilter: true,
+                    sheetName: 'KhachHang',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    }
+                }),
+                {
+                    className: 'mb-2 btn bg-gradient-primary',
+                    extend: 'colvis',
+                    text: 'Hiển thị cột',
+                }
+            ]
+        })
+
+        t.buttons(0, null).container().prependTo(
+            t.table().container()
+        )
+
     }
 
 
@@ -345,7 +407,7 @@ $(document).ready(function () {
         }, 2000);
     }
 
-    function validationKhachHang(){
+    function validationKhachHang() {
 
         // var regName = /^[a-zA-Z]+ [a-zA-Z]+$/;
         // var name = $("#ten-khach-hang")
