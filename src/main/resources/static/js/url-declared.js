@@ -99,7 +99,7 @@ $(document).ready(function () {
         var $this = $(this)
         // if the current path is like this link, make it active
         if (current === "/") {
-            $this.addClass('active');
+            // $this.addClass('active');
             return false;
         }
         if ($this.attr('href').indexOf(current) !== -1) {
