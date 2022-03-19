@@ -13,7 +13,9 @@ public class LoginController {
     @GetMapping
     public String homePage(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        System.out.println(userDetails.getAuthorities());
+//        String role = userDetails.getRole();
+//
+//        System.out.println(role);
 
         return "index";
     }

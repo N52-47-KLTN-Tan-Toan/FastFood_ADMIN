@@ -5,6 +5,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public class CustomUserDetails implements UserDetails {
 
@@ -55,5 +56,9 @@ public class CustomUserDetails implements UserDetails {
 
     public String getImage() {
         return this.nhanVien.getAvatar();
+    }
+
+    public String getRole() {
+        return this.nhanVien.getRoleName();
     }
 }

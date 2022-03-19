@@ -40,8 +40,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //Các static không cần login
                 .antMatchers("/static/**").permitAll()
 
-                //Trang chỉ dành cho admin
-                .antMatchers("/*").access("hasRole('ROLE_ADMIN')")
+                //Trang thuộc về role
+                .antMatchers("/product", "/type-product", "/introduce", "/dashboard")
+                .access("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF_WAREHOUSE')")
+
+                .antMatchers("/order", "/khach-hang")
+                .access("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF_SALES')")
+
+                .antMatchers("/")
+                .access("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF_SALES', 'ROLE_STAFF_WAREHOUSE')")
 
                 //Trang không đúng role sẽ bắt lỗi
                 .and()

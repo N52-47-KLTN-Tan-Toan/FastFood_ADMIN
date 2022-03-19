@@ -1,129 +1,42 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragment-header :: fm-head"></head>
+
 <head>
-    <title>Dashboard</title>
+    <title>Đang chuyển trang...</title>
 </head>
+
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
 
     <header th:replace="fragment-header :: fm-header"></header>
     <aside th:replace="fragment-leftmenu :: fm-leftmenu"></aside>
 
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper pt-3">
-
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-
-                    <div class="col-12">
-                        <!-- /.card-header -->
-                        <div class="row">
-                            <div class="col-lg-3 col-6">
-                                <!-- small box -->
-                                <div class="small-box bg-info">
-                                    <div class="inner">
-                                        <h3 id="so-luong-mat-hang"></h3>
-                                        <p>Mặt hàng</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-cube"></i>
-                                    </div>
-                                    <a href="/product" class="small-box-footer">Thông tin chi tiết <i
-                                            class="fas fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-                            <div class="col-lg-3 col-6">
-                                <!-- small box -->
-                                <div class="small-box bg-fuchsia">
-                                    <div class="inner">
-                                        <h3 id="so-luong-loai-mat-hang"></h3>
-                                        <p>Loại mặt hàng</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-cubes"></i>
-                                    </div>
-                                    <a href="/type-product" class="small-box-footer">Thông tin chi tiết <i
-                                            class="fas fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-                            <div class="col-lg-3 col-6">
-                                <!-- small box -->
-                                <div class="small-box bg-gradient-teal">
-                                    <div class="inner">
-                                        <h3 id="so-luong-khach-hang"></h3>
-                                        <p>Khách hàng</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-address-card"></i>
-                                    </div>
-                                    <a href="/khach-hang" class="small-box-footer">Thông tin chi tiết <i
-                                            class="fas fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-                            <div class="col-lg-3 col-6">
-                                <!-- small box -->
-                                <div class="small-box bg-danger">
-                                    <div class="inner">
-                                        <h3 id="so-luong-don-hang"></h3>
-
-                                        <p>Đơn hàng</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-clipboard-list"></i>
-                                    </div>
-                                    <a href="/order" class="small-box-footer">Thông tin chi tiết <i
-                                            class="fas fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-                        </div>
-                        <!-- BAR CHART -->
-                        <div class="card card-success">
-                            <div class="card-header">
-                                <h3 class="card-title" style="font-size: 30px;">Doanh thu</h3>
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                                <br>
-
-                                <Select class="form-control col-12 thongke-option">
-                                    <option value="thangTrongNam">Tháng trong năm</option>
-                                    <option value="ngayTheoThang">Ngày trong tháng</option>
-                                    <option value="bayNgayGanDay" selected>7 ngày gần đây</option>
-                                </Select>
-
-                            </div>
-                            <div class="card-body render-bar-chart"></div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.container-fluid -->
-        </section>
-        <!-- /.content -->
-    </div>
 </div>
 
 <div th:replace="fragment-header :: fm-script"></div>
 
-<!-- Render đồ thị và dữ liệu -->
-<script src="../../js/render-data-chart.js"></script>
+<!-- Trở về đúng trang theo role -->
+<script>
+    $(function () {
+        const ROLE_STAFF_SALES = 'ROLE_STAFF_SALES'
+        const ROLE_STAFF_WAREHOUSE = 'ROLE_STAFF_WAREHOUSE'
+        const ROLE_ADMIN = 'ROLE_ADMIN'
 
+        var role = $('#role_name').val()
+
+        switch (role) {
+            case ROLE_STAFF_SALES:
+                window.location.href = '/order'
+                break
+            case ROLE_STAFF_WAREHOUSE:
+                window.location.href = '/product'
+                break
+            case ROLE_ADMIN:
+                window.location.href = '/dashboard'
+                break
+        }
+    })
+</script>
 </body>
 </html>
