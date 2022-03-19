@@ -25,8 +25,7 @@
                                 <!-- small box -->
                                 <div class="small-box bg-info">
                                     <div class="inner">
-                                        <h3>150</h3>
-
+                                        <h3 id="so-luong-mat-hang"></h3>
                                         <p>Mặt hàng</p>
                                     </div>
                                     <div class="icon">
@@ -41,8 +40,7 @@
                                 <!-- small box -->
                                 <div class="small-box bg-fuchsia">
                                     <div class="inner">
-                                        <h3>53</h3>
-
+                                        <h3 id="so-luong-loai-mat-hang"></h3>
                                         <p>Loại mặt hàng</p>
                                     </div>
                                     <div class="icon">
@@ -57,8 +55,7 @@
                                 <!-- small box -->
                                 <div class="small-box bg-gradient-teal">
                                     <div class="inner">
-                                        <h3>44</h3>
-
+                                        <h3 id="so-luong-khach-hang"></h3>
                                         <p>Khách hàng</p>
                                     </div>
                                     <div class="icon">
@@ -73,7 +70,7 @@
                                 <!-- small box -->
                                 <div class="small-box bg-danger">
                                     <div class="inner">
-                                        <h3>65</h3>
+                                        <h3 id="so-luong-don-hang"></h3>
 
                                         <p>Đơn hàng</p>
                                     </div>
@@ -100,19 +97,14 @@
                                 </div>
                                 <br>
 
-                                <Select class="form-control col-12">
-                                    <option value="Tháng">Tháng</option>
-                                    <option value="Năm">Năm</option>
-
+                                <Select class="form-control col-12 thongke-option">
+                                    <option value="thangTrongNam">Tháng trong năm</option>
+                                    <option value="ngayTheoThang">Ngày trong tháng</option>
+                                    <option value="bayNgayGanDay" selected>7 ngày gần đây</option>
                                 </Select>
 
                             </div>
-                            <div class="card-body">
-                                <div class="chart">
-                                    <canvas id="barChart"
-                                            style="min-height: 250px; height: 500px; max-height: 500px; max-width: 100%;"></canvas>
-                                </div>
-                            </div>
+                            <div class="card-body render-bar-chart"></div>
                             <!-- /.card-body -->
                         </div>
                         <!-- /.card -->
@@ -130,105 +122,8 @@
 
 <div th:replace="fragment-header :: fm-script"></div>
 
-<script>
-    $(function () {
-        /* ChartJS
-         * -------
-         * Here we will create a few charts using ChartJS
-         */
-
-        //--------------
-        //- AREA CHART -
-        //--------------
-
-        // Get context with jQuery - using jQuery's .get() method.
-        var areaChartCanvas = $('#barChart').get(0).getContext('2d')
-
-        var areaChartData = {
-            labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7'],
-            datasets: [
-                {
-                    label: 'Doanh thu',
-                    backgroundColor: 'rgba(60,141,188,0.9)',
-                    borderColor: 'rgba(60,141,188,0.8)',
-                    pointRadius: false,
-                    pointColor: '#3b8bba',
-                    pointStrokeColor: 'rgba(60,141,188,1)',
-                    pointHighlightFill: '#fff',
-                    pointHighlightStroke: 'rgba(60,141,188,1)',
-                    data: [28, 48, 40, 19, 86, 27, 90]
-                }
-            ]
-        }
-
-        var areaChartOptions = {
-            maintainAspectRatio: false,
-            responsive: true,
-            legend: {
-                display: false
-            },
-            scales: {
-                xAxes: [{
-                    gridLines: {
-                        display: false,
-                    }
-                }],
-                yAxes: [{
-                    gridLines: {
-                        display: false,
-                    }
-                }]
-            }
-        }
-
-
-        //-------------
-        //- BAR CHART -
-        //-------------
-        var barChartCanvas = $('#barChart').get(0).getContext('2d')
-        var barChartData = $.extend(true, {}, areaChartData)
-        var temp0 = areaChartData.datasets[0]
-
-        barChartData.datasets[0] = temp0
-
-        var barChartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            datasetFill: false
-        }
-
-        new Chart(barChartCanvas, {
-            type: 'bar',
-            data: barChartData,
-            options: barChartOptions
-        })
-
-        //---------------------
-        //- STACKED BAR CHART -
-        //---------------------
-        var stackedBarChartCanvas = $('#stackedBarChart').get(0).getContext('2d')
-        var stackedBarChartData = $.extend(true, {}, barChartData)
-
-        var stackedBarChartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                xAxes: [{
-                    stacked: true,
-                }],
-                yAxes: [{
-                    stacked: true
-                }]
-            }
-        }
-
-        new Chart(stackedBarChartCanvas, {
-            type: 'bar',
-            data: stackedBarChartData,
-            options: stackedBarChartOptions
-        })
-    })
-</script>
+<!-- Render đồ thị và dữ liệu -->
+<script src="../../js/render-data-chart.js"></script>
 
 </body>
 </html>

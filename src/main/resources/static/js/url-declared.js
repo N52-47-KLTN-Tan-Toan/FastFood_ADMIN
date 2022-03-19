@@ -89,3 +89,23 @@ function uploadFileExcel(url_api) {
         })
     })
 }
+
+$(document).ready(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+    var current = location.pathname
+
+    $('#left-menu li a').each(function () {
+        var $this = $(this)
+        // if the current path is like this link, make it active
+        if (current === "/") {
+            $this.addClass('active');
+            return false;
+        }
+        if ($this.attr('href').indexOf(current) !== -1) {
+            $this.addClass('active');
+        }
+    })
+
+    bsCustomFileInput.init();
+})

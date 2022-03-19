@@ -43,7 +43,7 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
     <!-- Upload Image -->
-    <link rel="stylesheet" href="./uploadImage.css">
+    <link rel="stylesheet" href="../../dist/css/uploadImage.css">
 
 </head>
 <body>
@@ -97,7 +97,7 @@
     <!-- Ajax -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- App -->
-    <script src="./app.js"></script>
+    <script src="./../js/app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-storage.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -165,27 +165,6 @@
     <!-- Khai báo hằng URL và các biến xài chung -->
     <script src="../../js/url-declared.js"></script>
     <!-- Page specific script -->
-    <script>
-        $(function () {
-            //Initialize Select2 Elements
-            $('.select2').select2()
-            var current = location.pathname
-
-            $('#left-menu li a').each(function () {
-                var $this = $(this)
-                // if the current path is like this link, make it active
-                if (current === "/") {
-                    $this.addClass('active');
-                    return false;
-                }
-                if ($this.attr('href').indexOf(current) !== -1) {
-                    $this.addClass('active');
-                }
-            })
-
-            bsCustomFileInput.init();
-        })
-    </script>
 </div>
 </body>
 </html>
