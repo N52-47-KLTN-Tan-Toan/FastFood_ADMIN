@@ -1,9 +1,9 @@
 //declearing html elements
 
-const imgDiv = document.querySelector('.profile-pic-div');
-const img = document.querySelector('#image-upload-firebase');
-const file = document.querySelector('#file-upload-firebase');
-const uploadBtn = document.querySelector('#image-upload-btn');
+const imgDiv = document.querySelector('.profile-pic-div')
+const img = document.querySelector('#image-upload-firebase')
+const file = document.querySelector('#file-upload-firebase')
+const uploadBtn = document.querySelector('#image-upload-btn')
 
 //if user hover on img div 
 
@@ -44,4 +44,4 @@ file.addEventListener('change', function(){
 
         //thanks for watching
     }
-});
+})
