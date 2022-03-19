@@ -66,7 +66,7 @@
                          class="img-circle elevation-2" alt="User Image" height="40" width="40">
                     &nbsp;
                     <span class="text-muted" th:if="${#request.userPrincipal != null}" sec:authentication="principal.fullName"></span>
-                    <input type="hidden" id="role_name" th:value="${#authentication.getAuthorities()}">
+                    <input type="hidden" id="role_name" th:value="${#request.userPrincipal.principal.role}">
                 </div>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 <!--                    <div class="dropdown-divider"></div>-->

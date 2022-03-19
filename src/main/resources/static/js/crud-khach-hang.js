@@ -317,7 +317,7 @@ $(document).ready(function () {
                 class: 'text-center',
                 data: 'userId',
                 render: function (data, type, row, meta) {
-                    if ($('#role_name').val() == '[ROLE_ADMIN]') {
+                    if ($('#role_name').val() == 'ROLE_ADMIN') {
                         return '  <button id="btn_delete_' + row.userId + '" class="btn bg-gradient-danger delete-btn" ' +
                             'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>'
                     } else {
