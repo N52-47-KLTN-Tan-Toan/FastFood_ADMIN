@@ -67,6 +67,7 @@
                     &nbsp;
                     <span class="text-muted" th:if="${#request.userPrincipal != null}" sec:authentication="principal.fullName"></span>
                     <input type="hidden" id="role_name" th:value="${#request.userPrincipal.principal.role}">
+                    <input type="hidden" id="userId" th:value="${#request.userPrincipal.principal.uuid}">
                 </div>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 <!--                    <div class="dropdown-divider"></div>-->
@@ -74,11 +75,11 @@
 <!--                        <i class="fas fa-user mr-2"></i>-->
 <!--                        Thông tin cá nhân-->
 <!--                    </a>-->
-<!--                    <div class="dropdown-divider"></div>-->
-<!--                    <a href="#" class="dropdown-item">-->
-<!--                        <i class="fas fa-key mr-2"></i>-->
-<!--                        Đổi mật khẩu-->
-<!--                    </a>-->
+                    <div class="dropdown-divider"></div>
+                    <a href="/profile" class="dropdown-item">
+                        <i class="fas fa-id-badge mr-2"></i>
+                        Hồ sơ
+                    </a>
                     <div class="dropdown-divider"></div>
                     <a th:href="@{/logout}" class="dropdown-item" th:if="${#request.userPrincipal != null}">
                         <i class="fas fa-door-open mr-2"></i>
@@ -112,8 +113,7 @@
     <script src="../../plugins/select2/js/select2.full.min.js"></script>
     <!-- ChartJS -->
     <script src="../../plugins/chart.js/Chart.min.js"></script>
-    <!-- Sparkline -->
-    <script src="plugins/sparklines/sparkline.js"></script>
+
     <!-- jQuery Knob Chart -->
     <script src="plugins/jquery-knob/jquery.knob.min.js"></script>
     <!-- DataTables  & Plugins -->
@@ -135,10 +135,6 @@
     <script src="../../dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="../../dist/js/demo.js"></script>
-    <!-- AdminLTE for demo purposes -->
-    <script src="dist/js/demo.js"></script>
-    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-    <script src="dist/js/pages/dashboard.js"></script>
     <!-- jQuery UI 1.11.4 -->
     <script src="plugins/jquery-ui/jquery-ui.min.js"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
