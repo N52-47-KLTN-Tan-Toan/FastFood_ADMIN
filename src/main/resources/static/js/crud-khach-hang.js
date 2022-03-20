@@ -2,7 +2,7 @@
 firebase.initializeApp(firebaseConfig);
 
 $(document).ready(function () {
-    console.log($('#role_name').val())
+
     $('#loading-event-khach-hang').hide()
     $('#loading-notification').hide()
 

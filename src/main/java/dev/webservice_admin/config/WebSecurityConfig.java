@@ -41,13 +41,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/static/**").permitAll()
 
                 //Trang thuộc về role
-                .antMatchers("/product", "/type-product", "/introduce", "/dashboard")
+                .antMatchers("/profile", "/product", "/type-product", "/introduce", "/dashboard")
                 .access("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF_WAREHOUSE')")
 
-                .antMatchers("/order", "/khach-hang")
+                .antMatchers("/profile", "/order", "/khach-hang")
                 .access("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF_SALES')")
 
-                .antMatchers("/")
+                .antMatchers("/profile", "/")
                 .access("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF_SALES', 'ROLE_STAFF_WAREHOUSE')")
 
                 //Trang không đúng role sẽ bắt lỗi
