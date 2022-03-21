@@ -296,7 +296,8 @@ $(document).ready(function () {
                 data: 'hinhThuc',
             }, {
                 class: 'td_tongTien',
-                data: 'tongTien'
+                data: 'tongTien',
+                render: $.fn.dataTable.render.number(',', '.', 0, '', ' VND')
             }, {
                 class: 'td_diaChiGiaoHang',
                 data: 'diaChiGiaoHang',
@@ -328,17 +329,22 @@ $(document).ready(function () {
         new $.fn.dataTable.Buttons(t, {
             buttons: [
                 {
-                    className: 'mb-2',
+                    className: 'mb-2 mr-1',
                     text: '<i class="fas fa-sync"></i>',
                     action: function (e, dt, node, conf) {
                         t.ajax.reload(null, false)
                     }
                 },
+                {
+                    className: 'mb-2 btn bg-gradient-primary',
+                    extend: 'colvis',
+                    text: 'Hiển thị cột',
+                }
             ]
-        });
+        })
 
         t.buttons(0, null).container().prependTo(
             t.table().container()
-        );
+        )
     }
 })
