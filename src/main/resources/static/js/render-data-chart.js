@@ -8,10 +8,19 @@ $(document).ready(function () {
     reloadBarChart()
     renderBartChart('bayNgayGanDay')
 
-    $('.thongke-option').on('change', function () {
-        var tail = $('.thongke-option').val()
+    reloadDonutChart()
+    renderDonutChart('today')
+
+    $('.thongke-doanhthu-option').on('change', function () {
+        var tail = $('.thongke-doanhthu-option').val()
         reloadBarChart()
         renderBartChart(tail)
+    })
+
+    $('.thongke-mathang-option').on('change', function () {
+        var tail = $('.thongke-mathang-option').val()
+        reloadDonutChart()
+        renderDonutChart(tail)
     })
 
     //Tải lại mỗi lần thay đổi dữ liệu biểu đồ thống kê
@@ -20,8 +29,15 @@ $(document).ready(function () {
         $('.render-bar-chart').append('' +
             '<div class="chart">\n' +
             '     <canvas id="barChart"\n' +
-            '        style="min-height: 250px; height: 500px; max-height: 500px; max-width: 100%;"></canvas>\n' +
+            '        style="min-height: 250px; height: 330px; max-height: 330px; max-width: 100%;"></canvas>\n' +
             '</div>')
+    }
+
+    function reloadDonutChart() {
+        $('.render-donut-chart').empty()
+        $('.render-donut-chart').append('' +
+            '     <canvas id="donutChart"\n' +
+            '        style="min-height: 250px; height: 330px; max-height: 330px; max-width: 100%;"></canvas>\n')
     }
 
     //Get data from json API render for bar chart
@@ -31,23 +47,75 @@ $(document).ready(function () {
             contentType: 'application/json',
             url: url_api_order + '/' + tail,
             success: function (data) {
-                let labels = []
-                let values = []
-                for (var i in data) {
-                    switch (tail) {
-                        case 'thangTrongNam':
-                            labels.push('Tháng ' + new Date(data[i].ngayDatHang).getMonth())
-                            break
-                        case 'ngayTheoThang':
-                            labels.push(formatDate(data[i].ngayDatHang))
-                            break
-                        default:
-                            labels.push(formatDate(data[i].ngayDatHang))
-                            break
+
+                if (data.length == 0) {
+
+                    $('.render-bar-chart').empty()
+                    $('.render-bar-chart').append('' +
+                        '<div class="chart text-center mt-3">\n' +
+                        '     <p>Chưa có dữ liệu để hiển thị</p>' +
+                        '</div>')
+
+                } else {
+                    let labels = []
+                    let values = []
+                    for (var i in data) {
+                        switch (tail) {
+                            case 'thangTrongNam':
+                                labels.push('Tháng ' + new Date(data[i].ngayDatHang).getMonth())
+                                break
+                            case 'ngayTheoThang':
+                                labels.push(formatDate(data[i].ngayDatHang))
+                                break
+                            default:
+                                labels.push(formatDate(data[i].ngayDatHang))
+                                break
+                        }
+                        values.push(data[i].tongTien)
                     }
-                    values.push(data[i].tongTien)
+                    setLabelsAndDataBarChart(labels, values)
                 }
-                setLabelsAndDataChart(labels, values)
+
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+    }
+
+    function renderDonutChart(tail) {
+        $.ajax({
+            type: 'GET',
+            contentType: 'application/json',
+            url: url_api_orderdetail + '/' + tail,
+            success: function (data) {
+
+                if (data.length == 0) {
+
+                    $('.render-donut-chart').empty()
+                    $('.render-donut-chart').append('' +
+                        '<div class="chart text-center mt-3">\n' +
+                        '     <p>Chưa có dữ liệu để hiển thị</p>' +
+                        '</div>')
+
+                } else {
+
+                    let labels = []
+                    let values = []
+                    let colors = []
+                    for (var i in data) {
+                        labels.push(data[i].matHang.tenMH)
+                        values.push(data[i].soLuongDat)
+                    }
+                    for(var i = 0; i < data.length; i++){
+                        const randomColor = Math.floor(Math.random() * 16777215).toString(16)
+                        colors.push('#' + randomColor)
+                    }
+
+                    setLabelsAndDataDonutChart(labels, values, colors)
+
+                }
+
             },
             error: function (err) {
                 console.log(err)
@@ -86,7 +154,7 @@ $(document).ready(function () {
     }
 
     //Render biểu đồ cột
-    function setLabelsAndDataChart(labels, values) {
+    function setLabelsAndDataBarChart(labels, values) {
         /* ChartJS
                  * -------
                  * Here we will create a few charts using ChartJS
@@ -157,32 +225,35 @@ $(document).ready(function () {
             data: barChartData,
             options: barChartOptions
         })
+    }
 
-        //
-        // //---------------------
-        // //- STACKED BAR CHART -
-        // //---------------------
-        // var stackedBarChartCanvas = $('#stackedBarChart').get(0).getContext('2d')
-        // var stackedBarChartData = $.extend(true, {}, barChartData)
-        //
-        // var stackedBarChartOptions = {
-        //     responsive: true,
-        //     maintainAspectRatio: false,
-        //     scales: {
-        //         xAxes: [{
-        //             stacked: true,
-        //         }],
-        //         yAxes: [{
-        //             stacked: true
-        //         }]
-        //     }
-        // }
-
-        // var chart = new Chart(stackedBarChartCanvas, {
-        //     type: 'bar',
-        //     data: stackedBarChartData,
-        //     options: stackedBarChartOptions
-        // })
+    //Render biểu đồ donut
+    function setLabelsAndDataDonutChart(labels, values, clrs) {
+        //-------------
+        //- DONUT CHART -
+        //-------------
+        // Get context with jQuery - using jQuery's .get() method.
+        var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
+        var donutData = {
+            labels: labels,
+            datasets: [
+                {
+                    data: values,
+                    backgroundColor: clrs,
+                }
+            ]
+        }
+        var donutOptions = {
+            maintainAspectRatio: false,
+            responsive: true,
+        }
+        //Create pie or douhnut chart
+        // You can switch between pie and douhnut using the method below.
+        new Chart(donutChartCanvas, {
+            type: 'doughnut',
+            data: donutData,
+            options: donutOptions
+        })
     }
 
 })
