@@ -3,20 +3,20 @@ firebase.initializeApp(firebaseConfig);
 
 $(document).ready(function () {
 
-    $('#loading-event-khach-hang').hide()
+    $('#loading-event-nhan-vien').hide()
     $('#loading-notification').hide()
 
     assignDataToTable()
 
-    validationKhachHang()
+    validationNhanVien()
 
-    uploadFileExcel(url_api_client)
+    uploadFileExcel(url_api_staff)
 
-    //Trả dữ liệu modal thêm khách hàng về rỗng
-    $(document).on('click', '.add-btn-client', function () {
-        $("#ma-khach-hang").val(0)
-        $("#ten-khach-hang").val('')
-        $("#diem-tich-luy").val(0).prop('readonly', true)
+    //Trả dữ liệu modal thêm nhân viên về rỗng
+    $(document).on('click', '.add-btn-staff', function () {
+        $("#ma-nhan-vien").val(0)
+        $("#ten-nhan-vien").val('')
+        $("#op-loainv").val('ROLE_STAFF_SALES')
         $("#ngay-sinh").val('')
         $("#sdt").val('')
         $("#image-upload-firebase").attr("src", "https://cdn-icons-png.flaticon.com/512/1040/1040241.png")
@@ -25,14 +25,14 @@ $(document).ready(function () {
         $("#file-upload-firebase").val('')
     })
 
-    //Tạo mới khách hàng
-    $("#create-update-khach-hang").submit(function (evt) {
+    // Tạo mới nhân viên
+    $("#create-update-nhan-vien").submit(function (evt) {
         evt.preventDefault()
 
         const ref = firebase.storage().ref()
         const file = document.querySelector("#file-upload-firebase").files[0]
 
-        var id = $("#ma-khach-hang").val()
+        var id = $("#ma-nhan-vien").val()
 
         let name
         let task
@@ -51,33 +51,32 @@ $(document).ready(function () {
 
             task = ref.child(name).put(file, metadata);
             //Thêm mới đối tượng
-            $('#loading-event-khach-hang').show();
+            $('#loading-event-nhan-vien').show();
             task
                 .then(snapshot => snapshot.ref.getDownloadURL())
                 .then(url => {
                     $.ajax({
                         type: "POST",
-                        url: url_api_client,
+                        url: url_api_staff,
                         data: JSON.stringify({
-                            name: $("#ten-khach-hang").val(),
+                            name: $("#ten-nhan-vien").val(),
                             birthDate: $("#ngay-sinh").val(),
                             phone: $("#sdt").val(),
                             email: $("#email").val(),
                             address: $("#dia-chi").val(),
                             gender: $(".rad-gender:checked").val() == 1 ? true : false,
                             avatar: url,
-                            roleName: 'ROLE_CLIENT',
+                            roleName: $("#op-loainv option:selected").val(),
                             password: '1111',
-                            diemTichLuy: 0
                         }),
 
                         contentType: "application/json",
                         success: function (data) {
-                            loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
-                            toastr.success('Khách hàng ' + data.name + ' đã được thêm vào.')
+                            loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                            toastr.success('Nhân viên ' + data.name + ' đã được thêm vào.')
                         },
                         error: function (err) {
-                            loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
+                            loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
                             toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                         }
                     });
@@ -95,11 +94,11 @@ $(document).ready(function () {
         $.ajax({
             type: 'GET',
             contentType: "application/json",
-            url: url_api_client + '/' + btn_id,
+            url: url_api_staff + '/' + btn_id,
             success: function (data) {
-                $("#ma-khach-hang").val('********' + btn_id.substring(31, 36))
-                $("#ten-khach-hang").val(data.name)
-                $("#diem-tich-luy").val(data.diemTichLuy).prop('readonly', false)
+                $("#ma-nhan-vien").val('********' + data.userId.substring(31, 36))
+                $("#ten-nhan-vien").val(data.name)
+                $("#op-loainv").val(data.roleName)
                 $("#ngay-sinh").val(data.birthDate)
                 $("#sdt").val(data.phone)
                 $("#image-upload-firebase").attr("src", data.avatar)
@@ -116,25 +115,26 @@ $(document).ready(function () {
             }
         })
 
-        //Cập nhật khách hàng
-        $("#create-update-khach-hang").submit(function (evt) {
+        //Cập nhật nhân viên
+        $("#create-update-nhan-vien").submit(function (evt) {
             evt.preventDefault()
 
             const ref = firebase.storage().ref()
             const file = document.querySelector("#file-upload-firebase").files[0]
 
-            var id = $("#ma-khach-hang").val()
+            var id = $("#ma-nhan-vien").val()
 
             let name
             let task
+
 
             if (id != 0) {
                 //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
                 if ($('#file-upload-firebase').val() == "") {
                     //Không có cập nhật ảnh
                     const url = $('#img_' + btn_id).prop('src')
-                    $('#loading-event-khach-hang').show()
-                    updateProduct(url);
+                    $('#loading-event-nhan-vien').show()
+                    updateNhanVien(url);
                 } else {
                     //convert hình ảnh upload
                     try {
@@ -149,46 +149,45 @@ $(document).ready(function () {
                     const task = ref.child(name).put(file, metadata)
 
                     //Có cập nhật ảnh
-                    $('#loading-event-khach-hang').show()
-                    deleteImageToStorageById(btn_id, url_api_client)
+                    $('#loading-event-nhan-vien').show()
+                    deleteImageToStorageById(btn_id, url_api_staff)
                     task
                         .then(snapshot => snapshot.ref.getDownloadURL())
                         .then(url => {
-                            updateProduct(url)
+                            updateNhanVien(url)
                         })
                         .catch(console.error)
                 }
             }
 
-            //Hàm cập nhật khách hàng
-            function updateProduct(url) {
+            //Hàm cập nhật nhân viên
+            function updateNhanVien(url) {
                 $.ajax({
                     type: 'GET',
                     contentType: "application/json",
-                    url: url_api_client + '/' + btn_id,
+                    url: url_api_staff + '/' + btn_id,
                     success: function (data) {
                         $.ajax({
                             type: "PUT",
                             data: JSON.stringify({
-                                name: $("#ten-khach-hang").val(),
+                                name: $("#ten-nhan-vien").val(),
                                 birthDate: $("#ngay-sinh").val(),
                                 phone: $("#sdt").val(),
                                 email: $("#email").val(),
                                 address: $("#dia-chi").val(),
                                 gender: $(".rad-gender:checked").val() == 1 ? true : false,
                                 avatar: url,
-                                roleName: data.roleName,
+                                roleName: $("#op-loainv").val(),
                                 password: data.password,
-                                diemTichLuy: $("#diem-tich-luy").val()
                             }),
                             contentType: "application/json",
-                            url: url_api_client + '/' + btn_id,
+                            url: url_api_staff + '/' + btn_id,
                             success: function (data) {
-                                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
-                                toastr.success('Thông tin của khách hàng ' + data.name + ' đã được chỉnh sửa.')
+                                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                                toastr.success('Thông tin của nhân viên ' + data.name + ' đã được chỉnh sửa.')
                             },
                             error: function (err) {
-                                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
+                                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
                                 toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                             }
                         });
@@ -204,7 +203,7 @@ $(document).ready(function () {
 
     let id_del = 0
 
-    //Hiển thị modal thông báo xóa khách hàng
+    //Hiển thị modal thông báo xóa nhân viên
     $('table').on('click', '.delete-btn', function () {
 
         let btn_id = this.id;
@@ -213,9 +212,9 @@ $(document).ready(function () {
         $.ajax({
             type: 'GET',
             contentType: "application/json",
-            url: url_api_client + '/' + id_del,
+            url: url_api_staff + '/' + id_del,
             success: function (data) {
-                $("#modal-overlay .modal-body").text("Xóa khách hàng \"" + data.name + "\" ra khỏi danh sách?")
+                $("#modal-overlay .modal-body").text("Xóa nhân viên \"" + data.name + "\" ra khỏi danh sách?")
             },
             error: function (err) {
                 alert("Error -> " + err);
@@ -224,26 +223,67 @@ $(document).ready(function () {
 
     })
 
-    //Xóa khách hàng theo id
+    //Xóa nhân viên theo id
     $(document).on("click", "#modal-accept-btn", function () {
 
         $('#loading-notification').show();
 
-        deleteImageToStorageById(id_del, url_api_client);
+        deleteImageToStorageById(id_del, url_api_staff);
 
         //Delete Object by id
         $.ajax({
             type: "DELETE",
-            url: url_api_client + '/' + id_del,
+            url: url_api_staff + '/' + id_del,
             success: function (data) {
-                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'));
-                toastr.success('Khách hàng \"' + id_del + '\" đã xóa ra khỏi danh sách.');
+                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'));
+                toastr.success('Nhân viên \"' + id_del + '\" đã xóa ra khỏi danh sách.');
             },
             error: function (err) {
-                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'));
+                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'));
                 toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
             }
         });
+    })
+
+    //Phân quyền
+    $('table').on('change', '.phan-quyen', function () {
+
+        let btn_id = this.id.split("_")[2]
+        $.ajax({
+            type: 'GET',
+            contentType: "application/json",
+            url: url_api_staff + '/' + btn_id,
+            success: function (data) {
+                $.ajax({
+                    type: "PUT",
+                    data: JSON.stringify({
+                        name: data.name,
+                        birthDate: data.birthDate,
+                        phone: data.phone,
+                        email: data.email,
+                        address: data.address,
+                        gender: data.gender,
+                        avatar: data.avatar,
+                        roleName: $('#phan_quyen_' + btn_id).val(),
+                        password: data.password,
+                    }),
+                    contentType: "application/json",
+                    url: url_api_staff + '/' + btn_id,
+                    success: function (data) {
+                        loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                        toastr.success('Quyền cũa nhân viên ' + data.name + ' đã được thay đổi.')
+                    },
+                    error: function (err) {
+                        loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                        toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                    }
+                })
+            },
+            error: function (err) {
+                alert("Error -> " + err)
+            }
+        })
+
     })
 
     //Hiển thị dữ liệu
@@ -261,9 +301,9 @@ $(document).ready(function () {
             lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'Tất cả']],
             //Thay đổi ngôn ngữ của bảng
             oLanguage: {
-                sLengthMenu: 'Hiển thị _MENU_ khách hàng',
+                sLengthMenu: 'Hiển thị _MENU_ nhân viên',
                 sSearch: 'Tìm kiếm',
-                sInfo: 'Đang hiển thị từ _START_ đến _END_ trên _TOTAL_ khách hàng.',
+                sInfo: 'Đang hiển thị từ _START_ đến _END_ trên _TOTAL_ nhân viên.',
                 sEmptyTable: 'Không có dữ liệu để hiển thị',
                 sProcessing: "Đang tải dữ liệu...",
                 oPaginate: {
@@ -279,7 +319,7 @@ $(document).ready(function () {
                 $(nRow).attr('id', 'tr_' + aData.userId); // or whatever you choose to set as the id
             },
             ajax: {
-                url: url_api_client,
+                url: url_api_staff,
                 type: "GET",
                 contentType: "application/json",
                 dataSrc: function (d) {
@@ -300,8 +340,35 @@ $(document).ready(function () {
                 class: 'td_name',
                 data: 'name'
             }, {
-                class: 'td_diemTichLuy',
-                data: 'diemTichLuy'
+                class: 'td_tenLNV',
+                data: 'roleName',
+                render: function (data, type, row, meta) {
+                    switch (row.roleName) {
+                        case 'ROLE_ADMIN':
+                            return ' <select name="" id="phan_quyen_'+ row.userId +'" class="form-control phan-quyen"> \
+                        <option value="ROLE_ADMIN" selected>Người quản trị</option> \
+                        <option value="ROLE_STAFF_SALES">Nhân viên bán hàng</option> \
+                        <option value="ROLE_STAFF_WAREHOUSE">Nhân viên kho</option> \
+                </select> '
+                            break
+
+                        case 'ROLE_STAFF_SALES':
+                            return ' <select name="" id="phan_quyen_'+ row.userId +'" class="form-control phan-quyen"> \
+                        <option value="ROLE_ADMIN">Người quản trị</option> \
+                        <option value="ROLE_STAFF_SALES" selected>Nhân viên bán hàng</option> \
+                        <option value="ROLE_STAFF_WAREHOUSE">Nhân viên kho</option> \
+                </select> '
+                            break
+
+                        case 'ROLE_STAFF_WAREHOUSE':
+                            return ' <select name="" id="phan_quyen_'+ row.userId +'" class="form-control phan-quyen"> \
+                        <option value="ROLE_ADMIN">Người quản trị</option> \
+                        <option value="ROLE_STAFF_SALES">Nhân viên bán hàng</option> \
+                        <option value="ROLE_STAFF_WAREHOUSE" selected>Nhân viên kho</option> \
+                </select> '
+                            break
+                    }
+                }
             }, {
                 class: 'td_address',
                 data: 'address'
@@ -373,7 +440,7 @@ $(document).ready(function () {
                     }
                 },
                 {
-                    className: 'mr-1 mb-2 btn bg-gradient-info add-btn-client',
+                    className: 'mr-1 mb-2 btn bg-gradient-info add-btn-staff',
                     text: '<i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Thêm',
                     action: function (e, dt, node, config) {
                         $('#modal-xl ').modal('show')
@@ -387,12 +454,12 @@ $(document).ready(function () {
                     }
                 },
                 $.extend(true, {}, typeColumn, {
-                    title: 'T&T_FastFood_Shop_KhachHang',
+                    title: 'T&T_FastFood_Shop_NhanVien',
                     className: 'mr-1 mb-2 btn bg-gradient-success',
                     extend: 'excelHtml5',
                     text: '<i class="fas fa-file-excel"></i>&nbsp;&nbsp;&nbsp;Xuất Excel',
                     autoFilter: true,
-                    sheetName: 'KhachHang',
+                    sheetName: 'NhanVien',
                     exportOptions: {
                         columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
                     }
@@ -430,7 +497,7 @@ $(document).ready(function () {
         }, 2000);
     }
 
-    function validationKhachHang() {
+    function validationNhanVien() {
 
         // var regName = /^[a-zA-Z]+ [a-zA-Z]+$/;
         // var name = $("#ten-khach-hang")
@@ -442,14 +509,14 @@ $(document).ready(function () {
         //     return false;
         // }
 
-        var tenKH = $("#ten-khach-hang")
+        var tenNV = $("#ten-nhan-vien")
         var email = $("#email")
 
-        tenKH.keypress(function () {
-            if (tenKH.val().length < 30) {
+        tenNV.keypress(function () {
+            if (tenNV.val().length < 30) {
                 return true;
             } else {
-                alertUsing("Tên khách hàng tối thiểu 30 ký tự", false);
+                alertUsing("Tên nhân viên tối thiểu 30 ký tự", false);
                 return false;
             }
         });
