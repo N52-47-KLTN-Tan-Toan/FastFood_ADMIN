@@ -105,17 +105,15 @@
                         </tr>
                         <tr>
                             <th>Tiền ship:</th>
-                            <td th:if="${donDatHang.hinhThuc == 'Giao tận nơi'}"
-                                th:text="${#numbers.formatDecimal(15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
-                            <td th:if="${donDatHang.hinhThuc != 'Giao tận nơi'}"
-                                th:text="${#numbers.formatDecimal(0, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                            <td th:text="${#numbers.formatDecimal(15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+<!--                            <td th:if="${donDatHang.hinhThuc != 'Giao tận nơi'}"-->
+<!--                                th:text="${#numbers.formatDecimal(0, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>-->
                         </tr>
                         <tr>
                             <th>Tổng cộng:</th>
-                            <td th:if="${donDatHang.hinhThuc == 'Giao tận nơi'}"
-                                th:text="${#numbers.formatDecimal(donDatHang.tongTien + 15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
-                            <td th:if="${donDatHang.hinhThuc != 'Giao tận nơi'}"
-                                th:text="${#numbers.formatDecimal(donDatHang.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                            <td th:text="${#numbers.formatDecimal(donDatHang.tongTien + 15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+<!--                            <td th:if="${donDatHang.hinhThuc != 'Giao tận nơi'}"-->
+<!--                                th:text="${#numbers.formatDecimal(donDatHang.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>-->
                         </tr>
                     </table>
                 </div>
