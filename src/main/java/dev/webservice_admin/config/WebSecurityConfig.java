@@ -50,6 +50,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/profile", "/")
                 .access("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF_SALES', 'ROLE_STAFF_WAREHOUSE')")
 
+                .antMatchers("/nhan-vien")
+                .access("hasRole('ROLE_ADMIN')")
+
                 //Trang không đúng role sẽ bắt lỗi
                 .and()
                 .exceptionHandling().accessDeniedPage("/403")

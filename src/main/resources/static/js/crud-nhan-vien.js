@@ -23,6 +23,7 @@ $(document).ready(function () {
         $("#email").val('')
         $("#dia-chi").val('')
         $("#file-upload-firebase").val('')
+        $('#ten-dang-nhap').val('')
     })
 
     // Tạo mới nhân viên
@@ -68,6 +69,7 @@ $(document).ready(function () {
                             avatar: url,
                             roleName: $("#op-loainv option:selected").val(),
                             password: '1111',
+                            username: $('#ten-dang-nhap').val()
                         }),
 
                         contentType: "application/json",
@@ -104,6 +106,7 @@ $(document).ready(function () {
                 $("#image-upload-firebase").attr("src", data.avatar)
                 $("#email").val(data.email)
                 $("#dia-chi").val(data.address)
+                $('#ten-dang-nhap').val(data.username)
                 if (data.gender == true) {
                     $('#gender-male').prop("checked", true)
                 } else {
@@ -179,6 +182,7 @@ $(document).ready(function () {
                                 avatar: url,
                                 roleName: $("#op-loainv").val(),
                                 password: data.password,
+                                username: $('#ten-dang-nhap').val()
                             }),
                             contentType: "application/json",
                             url: url_api_staff + '/' + btn_id,
@@ -266,6 +270,7 @@ $(document).ready(function () {
                         avatar: data.avatar,
                         roleName: $('#phan_quyen_' + btn_id).val(),
                         password: data.password,
+                        username: data.username
                     }),
                     contentType: "application/json",
                     url: url_api_staff + '/' + btn_id,
@@ -345,7 +350,7 @@ $(document).ready(function () {
                 render: function (data, type, row, meta) {
                     switch (row.roleName) {
                         case 'ROLE_ADMIN':
-                            return ' <select name="" id="phan_quyen_'+ row.userId +'" class="form-control phan-quyen"> \
+                            return ' <select disabled name="" id="phan_quyen_'+ row.userId +'" class="form-control phan-quyen"> \
                         <option value="ROLE_ADMIN" selected>Người quản trị</option> \
                         <option value="ROLE_STAFF_SALES">Nhân viên bán hàng</option> \
                         <option value="ROLE_STAFF_WAREHOUSE">Nhân viên kho</option> \

@@ -59,10 +59,17 @@
                                 <label for="ngay-sinh">Ngày sinh</label>
                                 <input id="ngay-sinh" type="date" class="form-control" required>
                             </div>
-                            <div class="col-lg-6 float-right">
+                            <div class="col-lg-3 float-right">
                                 <label for="sdt">Số điện thoại</label>
                                 <input id="sdt" type="text" class="form-control"
                                        placeholder="VD: 01868857383"
+                                       required>
+                            </div>
+                            <div class="col-lg-3 float-right">
+                                <label for="ten-dang-nhap">Tên đăng nhập</label>
+                                <input id="ten-dang-nhap" type="text" class="form-control"
+                                       pattern="[A-Za-z0-9]{5,10}" title="Tối thiểu 5 ký tự chữ hoặc số và tối đa 10 ký tự"
+                                       placeholder="VD: username123"
                                        required>
                             </div>
                         </div>
