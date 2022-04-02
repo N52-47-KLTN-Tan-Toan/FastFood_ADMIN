@@ -12,6 +12,19 @@
     border: 1px solid rgb(201, 200, 200);
 }
 
+.profile-pic-div-1{
+    height: 200px;
+    width: 390px;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin-top: 100px;
+    transform: translate(-50%,-50%);
+    overflow: hidden;
+    display: block;
+    border: 1px solid rgb(201, 200, 200);
+}
+
 #image-upload-firebase{
     height: 100%;
     width: 100%;
