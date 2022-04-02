@@ -68,7 +68,7 @@ $(document).ready(function () {
                             gender: $(".rad-gender:checked").val() == 1 ? true : false,
                             avatar: url,
                             roleName: $("#op-loainv option:selected").val(),
-                            password: '1111',
+                            password: '$2a$10$lUNmzJdFvspwLlEGhdKIZuLyrHXEtC94TK.dqhXD5XDex/rBmD4Qq',
                             username: $('#ten-dang-nhap').val()
                         }),
 

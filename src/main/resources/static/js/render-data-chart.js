@@ -62,7 +62,7 @@ $(document).ready(function () {
                     for (var i in data) {
                         switch (tail) {
                             case 'thangTrongNam':
-                                labels.push('Tháng ' + new Date(data[i].ngayDatHang).getMonth())
+                                labels.push('Tháng ' + (new Date(data[i].ngayDatHang).getMonth() + 1))
                                 break
                             case 'ngayTheoThang':
                                 labels.push(formatDate(data[i].ngayDatHang))
