@@ -28,36 +28,37 @@
                     </div>
                     <div style="margin-top: -80px;">
                         <div class="col-lg-12">
-                            <div class="col-lg-6 float-left">
+                            <div class="col-lg-6 float-left form-group">
                                 <label for="ma-mat-hang">Mã mặt hàng</label>
                                 <input id="ma-mat-hang" type="text" class="form-control" readonly>
                             </div>
-                            <div class="col-lg-6 float-right">
+                            <div class="col-lg-6 float-right form-group">
                                 <label for="ten-mat-hang">Tên mặt hàng</label>
                                 <input id="ten-mat-hang" type="text" class="form-control" placeholder="VD: Bánh mì"
-                                       required>
+                                       name="nameProduct">
                             </div>
                         </div>
                         <div class="col-lg-12">
-                            <div class="col-lg-6 float-left">
+                            <div class="col-lg-6 float-left form-group">
                                 <label for="mo-ta-mat-hang">Mô tả</label>
                                 <input id="mo-ta-mat-hang" type="text" class="form-control"
-                                       placeholder="VD: Bánh mì kẹp thịt heo quay, dưa leo" required>
+                                       placeholder="VD: Bánh mì kẹp thịt heo quay, dưa leo" name="description">
                             </div>
-                            <div class="col-lg-6 float-right">
+                            <div class="col-lg-6 float-right form-group">
                                 <label for="don-vi-tinh">Đơn vị tính</label>
-                                <input id="don-vi-tinh" type="text" class="form-control" placeholder="VD: ổ" required>
+                                <input id="don-vi-tinh" type="text" class="form-control" placeholder="VD: ổ"
+                                       name="unitProduct">
                             </div>
                         </div>
                         <div class="col-lg-12">
-                            <div class="col-lg-6 float-left">
+                            <div class="col-lg-6 float-left form-group">
                                 <label for="don-gia-mat-hang">Đơn giá</label>
                                 <input id="don-gia-mat-hang" type="text" class="form-control" placeholder="VD: 15000"
-                                       required>
+                                       name="cost">
                             </div>
-                            <div class="col-lg-6 float-right">
+                            <div class="col-lg-6 float-right form-group">
                                 <label for="op-loaimh">Loại mặt hàng</label>
-                                <select name="" id="op-loaimh" class="form-control" required></select>
+                                <select name="categories" id="op-loaimh" class="form-control"></select>
                             </div>
                         </div>
                     </div>
