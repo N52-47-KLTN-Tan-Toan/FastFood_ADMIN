@@ -3,14 +3,62 @@ firebase.initializeApp(firebaseConfig)
 
 $(document).ready(function () {
 
+    //Các ràng buộc cho field
+    var rules = {
+        nameProduct: {
+            required: true,
+            maxlength: 55
+        },
+        description: {
+            required: true,
+            maxlength: 160
+        },
+        unitProduct: {
+            required: true,
+            maxlength: 20
+        },
+        cost: {
+            required: true,
+            digits: true,
+            min: 10000
+        },
+        categories: {
+            required: true
+        }
+    }
+
+    //Các thông báo khi bắt lỗi
+    var mess = {
+        nameProduct: {
+            required: 'Vui lòng điền tên mặt hàng',
+            maxlength: 'Tên mặt hàng tối đa 55 ký tự'
+        },
+        description: {
+            required: 'Vui lòng điền mô tả',
+            maxlength: 'Mô tả tối đa 160 ký tự'
+        },
+        unitProduct: {
+            required: 'Vui lòng điền đơn vị tính',
+            maxlength: 'Đơn vị tính tối đa 20 ký tự'
+        },
+        cost: {
+            required: 'Vui lòng điền giá tiền',
+            digits: 'Chỉ được nhập số',
+            min: 'Tối thiểu phải 10000'
+        },
+        categories: {
+            required: 'Vui lòng chọn loại mặt hàng'
+        }
+    }
+
+    let id_del = 0
+
     $('#loading-event').hide()
     $('#loading-notification').hide()
 
     renderDataForLoaiMHOption()
 
     assignDataToTable()
-
-    validationProduct()
 
     uploadFileExcel(url_api_product)
 
@@ -51,122 +99,121 @@ $(document).ready(function () {
         })
     })
 
-    //Tạo mới mặt hàng và cập nhật mặt hàng
-    $("#create-update-product").submit(function (evt) {
-        evt.preventDefault()
+    $.validator.setDefaults({
+        submitHandler: function () {
 
-        const ref = firebase.storage().ref()
-        const file = document.querySelector("#file-upload-firebase").files[0]
+            const ref = firebase.storage().ref()
+            const file = document.querySelector("#file-upload-firebase").files[0]
 
-        var id = $("#ma-mat-hang").val()
-        let name
-        let task
+            var id = $("#ma-mat-hang").val()
+            let name
+            let task
 
-        if (id == 0) {
-            //convert hình ảnh upload
-            try {
-                name = +new Date() + "-" + file.name
-            } catch (e) {
-                toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
-                return false;
-            }
-            const metadata = {
-                contentType: file.type
-            }
-
-            task = ref.child(name).put(file, metadata)
-
-            //Thêm mới đối tượng
-            $('#loading-event').show();
-            task
-                .then(snapshot => snapshot.ref.getDownloadURL())
-                .then(url => {
-                    $.ajax({
-                        type: "POST",
-                        url: url_api_product,
-                        data: JSON.stringify({
-                            tenMH: $("#ten-mat-hang").val(),
-                            moTa: $("#mo-ta-mat-hang").val(),
-                            donGia: $("#don-gia-mat-hang").val(),
-                            donViTinh: $("#don-vi-tinh").val(),
-                            hinhAnh: url,
-                            loaiMatHang: {
-                                maLMH: $("#op-loaimh option:selected").val()
-                            }
-                        }),
-                        contentType: "application/json",
-                        success: function (data) {
-                            loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
-                            toastr.success(data.tenMH + ' đã được thêm vào.')
-                        },
-                        error: function (err) {
-                            loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
-                            toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                        }
-                    });
-                })
-                .catch(console.error)
-        } else if (id > 0) {
-            //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
-            if ($('#file-upload-firebase').val() == "") {
-                //Không có cập nhật ảnh
-                const url = $('#img_' + id).prop('src')
-                $('#loading-event').show()
-                updateProduct(url)
-            } else {
+            if (id == 0) {
                 //convert hình ảnh upload
                 try {
                     name = +new Date() + "-" + file.name
                 } catch (e) {
                     toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
-                    return false;
+                    return false
                 }
                 const metadata = {
                     contentType: file.type
-                };
-                const task = ref.child(name).put(file, metadata)
+                }
 
-                //Có cập nhật ảnh
+                task = ref.child(name).put(file, metadata)
+
+                //Thêm mới đối tượng
                 $('#loading-event').show();
-                deleteImageToStorageById(id, url_api_product)
                 task
                     .then(snapshot => snapshot.ref.getDownloadURL())
                     .then(url => {
-                        updateProduct(url)
+                        $.ajax({
+                            type: "POST",
+                            url: url_api_product,
+                            data: JSON.stringify({
+                                tenMH: $("#ten-mat-hang").val(),
+                                moTa: $("#mo-ta-mat-hang").val(),
+                                donGia: $("#don-gia-mat-hang").val(),
+                                donViTinh: $("#don-vi-tinh").val(),
+                                hinhAnh: url,
+                                loaiMatHang: {
+                                    maLMH: $("#op-loaimh option:selected").val()
+                                }
+                            }),
+                            contentType: "application/json",
+                            success: function (data) {
+                                loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
+                                toastr.success(data.tenMH + ' đã được thêm vào.')
+                            },
+                            error: function (err) {
+                                loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
+                                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                            }
+                        });
                     })
                     .catch(console.error)
+            } else if (id > 0) {
+                //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
+                if ($('#file-upload-firebase').val() == "") {
+                    //Không có cập nhật ảnh
+                    const url = $('#img_' + id).prop('src')
+                    $('#loading-event').show()
+                    updateProduct(url)
+                } else {
+                    //convert hình ảnh upload
+                    try {
+                        name = +new Date() + "-" + file.name
+                    } catch (e) {
+                        toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
+                        return false;
+                    }
+                    const metadata = {
+                        contentType: file.type
+                    };
+                    const task = ref.child(name).put(file, metadata)
+
+                    //Có cập nhật ảnh
+                    $('#loading-event').show();
+                    deleteImageToStorageById(id, url_api_product)
+                    task
+                        .then(snapshot => snapshot.ref.getDownloadURL())
+                        .then(url => {
+                            updateProduct(url)
+                        })
+                        .catch(console.error)
+                }
+            }
+
+            //Hàm cập nhật mặt hàng
+            function updateProduct(url) {
+                $.ajax({
+                    type: "PUT",
+                    data: JSON.stringify({
+                        tenMH: $("#ten-mat-hang").val(),
+                        moTa: $("#mo-ta-mat-hang").val(),
+                        donGia: $("#don-gia-mat-hang").val(),
+                        donViTinh: $("#don-vi-tinh").val(),
+                        hinhAnh: url,
+                        loaiMatHang: {
+                            maLMH: $("#op-loaimh option:selected").val()
+                        }
+                    }),
+                    contentType: "application/json",
+                    url: url_api_product + '/' + id,
+                    success: function (data) {
+                        loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
+                        toastr.success('Mặt hàng ' + data.maMH + ' đã được chỉnh sửa.')
+                    },
+                    error: function (err) {
+                        loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
+                        toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                    }
+                })
             }
         }
-
-        //Hàm cập nhật mặt hàng
-        function updateProduct(url) {
-            $.ajax({
-                type: "PUT",
-                data: JSON.stringify({
-                    tenMH: $("#ten-mat-hang").val(),
-                    moTa: $("#mo-ta-mat-hang").val(),
-                    donGia: $("#don-gia-mat-hang").val(),
-                    donViTinh: $("#don-vi-tinh").val(),
-                    hinhAnh: url,
-                    loaiMatHang: {
-                        maLMH: $("#op-loaimh option:selected").val()
-                    }
-                }),
-                contentType: "application/json",
-                url: url_api_product + '/' + id,
-                success: function (data) {
-                    loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
-                    toastr.success('Mặt hàng ' + data.maMH + ' đã được chỉnh sửa.')
-                },
-                error: function (err) {
-                    loadingModalAndRefreshTable($('#loading-event'), $('#example2'))
-                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                }
-            })
-        }
     })
-
-    let id_del = 0;
+    validateForm($('#create-update-product'), rules, mess)
 
     //Hiển thị modal thông báo xóa mặt hàng
     $('table').on('click', '.delete-btn', function () {
@@ -375,73 +422,7 @@ $(document).ready(function () {
             error: function (data) {
                 toastr.error('Lỗi tải dữ liệu. Vui lòng F5 vài giây sau!')
             }
-        });
+        })
     }
 
-
-    //Bảng thông báo
-    function alertUsing(text, flag) {
-        var alert = $(".alert");
-
-        if (flag) {
-            alert.removeClass("alert-danger").addClass("alert-success");
-        } else {
-            alert.removeClass("alert-success").addClass("alert-danger");
-
-        }
-        alert.fadeIn(400);
-        alert.css("display", "block");
-        alert.text(text);
-        setTimeout(function () {
-            alert.fadeOut();
-        }, 2000);
-    }
-
-    function validationProduct() {
-        var tenMH = $("#ten-mat-hang");
-        var moTa = $("#mo-ta-mat-hang");
-        var donViTinh = $("#don-vi-tinh");
-        var donGia = $("#don-gia-mat-hang");
-
-        tenMH.keypress(function () {
-            if (tenMH.val().length < 55) {
-                return true;
-            } else {
-                alertUsing("Tên mặt hàng tối thiểu 55 ký tự", false);
-                return false;
-            }
-        });
-
-        moTa.keypress(function () {
-            if (moTa.val().length < 160) {
-                return true;
-            } else {
-                alertUsing("Mô tả tối thiểu 160 ký tự", false);
-                return false;
-            }
-        });
-
-        donViTinh.keypress(function () {
-            if (donViTinh.val().length < 10) {
-                return true;
-            } else {
-                alertUsing("Đơn vị tính tối thiểu 10 ký tự", false);
-                return false;
-            }
-        });
-
-        donGia.keypress(function (key) {
-            if (key.charCode > 10000) {
-                if (donGia.val().length < 6) {
-                    return true;
-                } else {
-                    alertUsing("Đơn giá tối thiểu 6 ký tự", false);
-                    return false;
-                }
-            } else {
-                alertUsing("Đơn giá tối thiểu 10000", false);
-                return false;
-            }
-        });
-    }
-});
+})

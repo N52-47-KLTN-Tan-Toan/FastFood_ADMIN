@@ -93,6 +93,29 @@ function uploadFileExcel(url_api) {
     })
 }
 
+// Hàm bắt validation bằng jquery
+// Tham số truyền vào bao gồm
+// + form cần truyền vào
+// + ràng buộc
+// + thông báo xuất ra
+function validateForm(form, rules, mess) {
+    form.validate({
+        rules: rules, // Các ràng buộc
+        messages: mess, // Thông báo xuất hiện
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback')
+            element.closest('.form-group').append(error)
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid')
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid')
+        }
+    })
+}
+
 $(document).ready(function () {
     //Initialize Select2 Elements
     $('.select2').select2()
