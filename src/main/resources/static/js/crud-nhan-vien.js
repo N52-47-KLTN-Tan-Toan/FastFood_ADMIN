@@ -3,12 +3,78 @@ firebase.initializeApp(firebaseConfig);
 
 $(document).ready(function () {
 
+// Các ràng buộc cho field
+    var rules = {
+        tenNhanVien: {
+            required: true,
+            maxlength: 30
+        },
+        'rad-gender': {
+            required: true,
+        },
+        ngaySinh: {
+            required: true
+        },
+        sdt: {
+            required: true,
+            digits: true,
+            maxlength: 10
+        },
+        email: {
+            required: true,
+            maxlength: 40
+        },
+        diaChi: {
+            required: true,
+            maxlength: 40
+        },
+        loaiNV: {
+            required: true
+        },
+        tenDangNhap: {
+            required: true,
+            maxlength: 10
+        }
+    }
+
+    // Các thông báo khi bắt lỗi
+    var mess = {
+        tenNhanVien: {
+            required: 'Vui lòng điền tên nhân viên',
+            maxlength: 'Tên khách hàng tối đa 30 ký tự'
+        },
+        'rad-gender': {
+            required: 'Vui lòng chọn giới tính',
+        },
+        ngaySinh: {
+            required: 'Vui lòng chọn ngày sinh'
+        },
+        sdt: {
+            required: 'Vui lòng điền số điện thoại',
+            digits: 'Chỉ được nhập số',
+            maxlength: 'Số điện thoại tối đa 10 số'
+        },
+        email: {
+            required: 'Vui lòng điền email',
+            maxlength: 'Email tối đa 40 ký tự'
+        },
+        diaChi: {
+            required: 'Vui lòng điền địa chỉ',
+            maxlength: 'Địa chỉ tối đa 40 ký tự'
+        },
+        loaiNV: {
+            required: 'Vui lòng chọn loại nhân viên'
+        },
+        tenDangNhap: {
+            required: 'Vui lòng điền tên đăng nhập',
+            maxlength: 'Tối đa 10 ký tự'
+        }
+    }
+
     $('#loading-event-nhan-vien').hide()
     $('#loading-notification').hide()
 
     assignDataToTable()
-
-    validationNhanVien()
 
     uploadFileExcel(url_api_staff)
 
@@ -26,184 +92,189 @@ $(document).ready(function () {
         $('#ten-dang-nhap').val('')
     })
 
-    // Tạo mới nhân viên
-    $("#create-update-nhan-vien").submit(function (evt) {
-        evt.preventDefault()
 
-        const ref = firebase.storage().ref()
-        const file = document.querySelector("#file-upload-firebase").files[0]
+    $.validator.setDefaults({
+        submitHandler: function () {
+            // Tạo mới nhân viên
+            $("#create-update-nhan-vien").submit(function (evt) {
+                evt.preventDefault()
 
-        var id = $("#ma-nhan-vien").val()
+                const ref = firebase.storage().ref()
+                const file = document.querySelector("#file-upload-firebase").files[0]
 
-        let name
-        let task
+                var id = $("#ma-nhan-vien").val()
 
-        if (id == 0) {
-            //convert hình ảnh upload
-            try {
-                name = +new Date() + "-" + file.name
-            } catch (e) {
-                toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
-                return false;
-            }
-            const metadata = {
-                contentType: file.type
-            };
+                let name
+                let task
 
-            task = ref.child(name).put(file, metadata);
-            //Thêm mới đối tượng
-            $('#loading-event-nhan-vien').show();
-            task
-                .then(snapshot => snapshot.ref.getDownloadURL())
-                .then(url => {
-                    $.ajax({
-                        type: "POST",
-                        url: url_api_staff,
-                        data: JSON.stringify({
-                            name: $("#ten-nhan-vien").val(),
-                            birthDate: $("#ngay-sinh").val(),
-                            phone: $("#sdt").val(),
-                            email: $("#email").val(),
-                            address: $("#dia-chi").val(),
-                            gender: $(".rad-gender:checked").val() == 1 ? true : false,
-                            avatar: url,
-                            roleName: $("#op-loainv option:selected").val(),
-                            password: '$2a$10$lUNmzJdFvspwLlEGhdKIZuLyrHXEtC94TK.dqhXD5XDex/rBmD4Qq',
-                            username: $('#ten-dang-nhap').val()
-                        }),
-
-                        contentType: "application/json",
-                        success: function (data) {
-                            loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
-                            toastr.success('Nhân viên ' + data.name + ' đã được thêm vào.')
-                        },
-                        error: function (err) {
-                            loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
-                            toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                        }
-                    });
-                })
-                .catch(console.error);
-        }
-    })
-
-    //Lấy dữ liệu đối tượng từ nút edit
-    $('table').on('click', '.edit-btn', function (e) {
-
-        let btn_id = this.id.split("_")[2];
-
-        //Find Object by id
-        $.ajax({
-            type: 'GET',
-            contentType: "application/json",
-            url: url_api_staff + '/' + btn_id,
-            success: function (data) {
-                $("#ma-nhan-vien").val('********' + data.userId.substring(31, 36))
-                $("#ten-nhan-vien").val(data.name)
-                $("#op-loainv").val(data.roleName)
-                $("#ngay-sinh").val(data.birthDate)
-                $("#sdt").val(data.phone)
-                $("#image-upload-firebase").attr("src", data.avatar)
-                $("#email").val(data.email)
-                $("#dia-chi").val(data.address)
-                $('#ten-dang-nhap').val(data.username)
-                if (data.gender == true) {
-                    $('#gender-male').prop("checked", true)
-                } else {
-                    $('#gender-female').prop("checked", true)
-                }
-            },
-            error: function (err) {
-                alert("Error -> " + err)
-            }
-        })
-
-        //Cập nhật nhân viên
-        $("#create-update-nhan-vien").submit(function (evt) {
-            evt.preventDefault()
-
-            const ref = firebase.storage().ref()
-            const file = document.querySelector("#file-upload-firebase").files[0]
-
-            var id = $("#ma-nhan-vien").val()
-
-            let name
-            let task
-
-
-            if (id != 0) {
-                //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
-                if ($('#file-upload-firebase').val() == "") {
-                    //Không có cập nhật ảnh
-                    const url = $('#img_' + btn_id).prop('src')
-                    $('#loading-event-nhan-vien').show()
-                    updateNhanVien(url);
-                } else {
+                if (id == 0) {
                     //convert hình ảnh upload
                     try {
                         name = +new Date() + "-" + file.name
                     } catch (e) {
                         toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
-                        return false
+                        return false;
                     }
                     const metadata = {
                         contentType: file.type
                     };
-                    const task = ref.child(name).put(file, metadata)
 
-                    //Có cập nhật ảnh
-                    $('#loading-event-nhan-vien').show()
-                    deleteImageToStorageById(btn_id, url_api_staff)
+                    task = ref.child(name).put(file, metadata);
+                    //Thêm mới đối tượng
+                    $('#loading-event-nhan-vien').show();
                     task
                         .then(snapshot => snapshot.ref.getDownloadURL())
                         .then(url => {
-                            updateNhanVien(url)
-                        })
-                        .catch(console.error)
-                }
-            }
+                            $.ajax({
+                                type: "POST",
+                                url: url_api_staff,
+                                data: JSON.stringify({
+                                    name: $("#ten-nhan-vien").val(),
+                                    birthDate: $("#ngay-sinh").val(),
+                                    phone: $("#sdt").val(),
+                                    email: $("#email").val(),
+                                    address: $("#dia-chi").val(),
+                                    gender: $(".rad-gender:checked").val() == 1 ? true : false,
+                                    avatar: url,
+                                    roleName: $("#op-loainv option:selected").val(),
+                                    password: '$2a$10$lUNmzJdFvspwLlEGhdKIZuLyrHXEtC94TK.dqhXD5XDex/rBmD4Qq',
+                                    username: $('#ten-dang-nhap').val()
+                                }),
 
-            //Hàm cập nhật nhân viên
-            function updateNhanVien(url) {
+                                contentType: "application/json",
+                                success: function (data) {
+                                    loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                                    toastr.success('Nhân viên ' + data.name + ' đã được thêm vào.')
+                                },
+                                error: function (err) {
+                                    loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                                }
+                            });
+                        })
+                        .catch(console.error);
+                }
+            })
+
+            //Lấy dữ liệu đối tượng từ nút edit
+            $('table').on('click', '.edit-btn', function (e) {
+
+                let btn_id = this.id.split("_")[2];
+
+                //Find Object by id
                 $.ajax({
                     type: 'GET',
                     contentType: "application/json",
                     url: url_api_staff + '/' + btn_id,
                     success: function (data) {
-                        $.ajax({
-                            type: "PUT",
-                            data: JSON.stringify({
-                                name: $("#ten-nhan-vien").val(),
-                                birthDate: $("#ngay-sinh").val(),
-                                phone: $("#sdt").val(),
-                                email: $("#email").val(),
-                                address: $("#dia-chi").val(),
-                                gender: $(".rad-gender:checked").val() == 1 ? true : false,
-                                avatar: url,
-                                roleName: $("#op-loainv").val(),
-                                password: data.password,
-                                username: $('#ten-dang-nhap').val()
-                            }),
-                            contentType: "application/json",
-                            url: url_api_staff + '/' + btn_id,
-                            success: function (data) {
-                                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
-                                toastr.success('Thông tin của nhân viên ' + data.name + ' đã được chỉnh sửa.')
-                            },
-                            error: function (err) {
-                                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
-                                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                            }
-                        });
+                        $("#ma-nhan-vien").val('********' + data.userId.substring(31, 36))
+                        $("#ten-nhan-vien").val(data.name)
+                        $("#op-loainv").val(data.roleName)
+                        $("#ngay-sinh").val(data.birthDate)
+                        $("#sdt").val(data.phone)
+                        $("#image-upload-firebase").attr("src", data.avatar)
+                        $("#email").val(data.email)
+                        $("#dia-chi").val(data.address)
+                        $('#ten-dang-nhap').val(data.username)
+                        if (data.gender == true) {
+                            $('#gender-male').prop("checked", true)
+                        } else {
+                            $('#gender-female').prop("checked", true)
+                        }
                     },
                     error: function (err) {
                         alert("Error -> " + err)
                     }
                 })
-            }
-        })
-    })
 
+                //Cập nhật nhân viên
+                $("#create-update-nhan-vien").submit(function (evt) {
+                    evt.preventDefault()
+
+                    const ref = firebase.storage().ref()
+                    const file = document.querySelector("#file-upload-firebase").files[0]
+
+                    var id = $("#ma-nhan-vien").val()
+
+                    let name
+                    let task
+
+
+                    if (id != 0) {
+                        //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
+                        if ($('#file-upload-firebase').val() == "") {
+                            //Không có cập nhật ảnh
+                            const url = $('#img_' + btn_id).prop('src')
+                            $('#loading-event-nhan-vien').show()
+                            updateNhanVien(url);
+                        } else {
+                            //convert hình ảnh upload
+                            try {
+                                name = +new Date() + "-" + file.name
+                            } catch (e) {
+                                toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
+                                return false
+                            }
+                            const metadata = {
+                                contentType: file.type
+                            };
+                            const task = ref.child(name).put(file, metadata)
+
+                            //Có cập nhật ảnh
+                            $('#loading-event-nhan-vien').show()
+                            deleteImageToStorageById(btn_id, url_api_staff)
+                            task
+                                .then(snapshot => snapshot.ref.getDownloadURL())
+                                .then(url => {
+                                    updateNhanVien(url)
+                                })
+                                .catch(console.error)
+                        }
+                    }
+
+                    //Hàm cập nhật nhân viên
+                    function updateNhanVien(url) {
+                        $.ajax({
+                            type: 'GET',
+                            contentType: "application/json",
+                            url: url_api_staff + '/' + btn_id,
+                            success: function (data) {
+                                $.ajax({
+                                    type: "PUT",
+                                    data: JSON.stringify({
+                                        name: $("#ten-nhan-vien").val(),
+                                        birthDate: $("#ngay-sinh").val(),
+                                        phone: $("#sdt").val(),
+                                        email: $("#email").val(),
+                                        address: $("#dia-chi").val(),
+                                        gender: $(".rad-gender:checked").val() == 1 ? true : false,
+                                        avatar: url,
+                                        roleName: $("#op-loainv").val(),
+                                        password: data.password,
+                                        username: $('#ten-dang-nhap').val()
+                                    }),
+                                    contentType: "application/json",
+                                    url: url_api_staff + '/' + btn_id,
+                                    success: function (data) {
+                                        loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                                        toastr.success('Thông tin của nhân viên ' + data.name + ' đã được chỉnh sửa.')
+                                    },
+                                    error: function (err) {
+                                        loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                                        toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                                    }
+                                });
+                            },
+                            error: function (err) {
+                                alert("Error -> " + err)
+                            }
+                        })
+                    }
+                })
+            })
+        }
+    })
+    validateForm($('#create-update-nhan-vien'), rules, mess)
 
     let id_del = 0
 
@@ -350,7 +421,7 @@ $(document).ready(function () {
                 render: function (data, type, row, meta) {
                     switch (row.roleName) {
                         case 'ROLE_ADMIN':
-                            return ' <select disabled name="" id="phan_quyen_'+ row.userId +'" class="form-control phan-quyen"> \
+                            return ' <select disabled name="" id="phan_quyen_' + row.userId + '" class="form-control phan-quyen"> \
                         <option value="ROLE_ADMIN" selected>Người quản trị</option> \
                         <option value="ROLE_STAFF_SALES">Nhân viên bán hàng</option> \
                         <option value="ROLE_STAFF_WAREHOUSE">Nhân viên kho</option> \
@@ -358,7 +429,7 @@ $(document).ready(function () {
                             break
 
                         case 'ROLE_STAFF_SALES':
-                            return ' <select name="" id="phan_quyen_'+ row.userId +'" class="form-control phan-quyen"> \
+                            return ' <select name="" id="phan_quyen_' + row.userId + '" class="form-control phan-quyen"> \
                         <option value="ROLE_ADMIN">Người quản trị</option> \
                         <option value="ROLE_STAFF_SALES" selected>Nhân viên bán hàng</option> \
                         <option value="ROLE_STAFF_WAREHOUSE">Nhân viên kho</option> \
@@ -366,7 +437,7 @@ $(document).ready(function () {
                             break
 
                         case 'ROLE_STAFF_WAREHOUSE':
-                            return ' <select name="" id="phan_quyen_'+ row.userId +'" class="form-control phan-quyen"> \
+                            return ' <select name="" id="phan_quyen_' + row.userId + '" class="form-control phan-quyen"> \
                         <option value="ROLE_ADMIN">Người quản trị</option> \
                         <option value="ROLE_STAFF_SALES">Nhân viên bán hàng</option> \
                         <option value="ROLE_STAFF_WAREHOUSE" selected>Nhân viên kho</option> \
@@ -480,62 +551,6 @@ $(document).ready(function () {
         t.buttons(0, null).container().prependTo(
             t.table().container()
         )
-
-    }
-
-
-    //Bảng thông báo
-    function alertUsing(text, flag) {
-        var alert = $(".alert");
-
-        if (flag) {
-            alert.removeClass("alert-danger").addClass("alert-success");
-        } else {
-            alert.removeClass("alert-success").addClass("alert-danger");
-
-        }
-        alert.fadeIn(400);
-        alert.css("display", "block");
-        alert.text(text);
-        setTimeout(function () {
-            alert.fadeOut();
-        }, 2000);
-    }
-
-    function validationNhanVien() {
-
-        // var regName = /^[a-zA-Z]+ [a-zA-Z]+$/;
-        // var name = $("#ten-khach-hang")
-        //
-        // if(!regName.test(name)){
-        //     return true;
-        // }else{
-        //     alertUsing('Vui lòng nhập đúng họ tên', false);
-        //     return false;
-        // }
-
-        var tenNV = $("#ten-nhan-vien")
-        var email = $("#email")
-
-        tenNV.keypress(function () {
-            if (tenNV.val().length < 30) {
-                return true;
-            } else {
-                alertUsing("Tên nhân viên tối thiểu 30 ký tự", false);
-                return false;
-            }
-        });
-
-        email.keypress(function () {
-            if (email.val().length < 30) {
-                return true;
-            } else {
-                alertUsing("Email tối thiểu 30 ký tự", false);
-                return false;
-            }
-        });
-
-
     }
 
 });

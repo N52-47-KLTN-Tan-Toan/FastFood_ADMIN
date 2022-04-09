@@ -3,6 +3,38 @@ firebase.initializeApp(firebaseConfig)
 
 $(document).ready(function () {
 
+    // Các ràng buộc cho field
+    var rules = {
+        ten: {
+            required: true,
+            maxlength: 50
+        },
+        tieuDe: {
+            required: true,
+            maxlength: 50
+        },
+        noiDung: {
+            required: true,
+            maxlength: 50
+        }
+    }
+
+    // Các thông báo khi bắt lỗi
+    var mess = {
+        ten: {
+            required: 'Vui lòng điền tên thông tin giới thiệu',
+            maxlength: 'Tên thông tin giới thiệu tối đa 50 ký tự'
+        },
+        tieuDe: {
+            required: 'Vui lòng điền tiêu đề',
+            maxlength: 'Tiêu đề tối đa 50 ký tự'
+        },
+        noiDung: {
+            required: 'Vui lòng điền nội dung',
+            maxlength: 'Nội dung tối đa 50 ký tự'
+        }
+    }
+
     $('#loading-event-introduce').hide()
     $('#loading-notification').hide()
 
@@ -43,123 +75,128 @@ $(document).ready(function () {
         })
     })
 
-    //Tạo mới và cập nhật
-    $("#create-update-introduce").submit(function (evt) {
-        evt.preventDefault()
+    $.validator.setDefaults({
+        submitHandler: function () {
 
-        const ref = firebase.storage().ref()
-        const file = document.querySelector("#file-upload-firebase").files[0]
+            //Tạo mới và cập nhật
+            $("#create-update-introduce").submit(function (evt) {
+                evt.preventDefault()
 
-        var id = $("#ma-gioi-thieu").val()
-        let name
-        let task
+                const ref = firebase.storage().ref()
+                const file = document.querySelector("#file-upload-firebase").files[0]
 
-        if (id == 0) {
-            //convert hình ảnh upload
-            try {
-                name = +new Date() + "-" + file.name
-            } catch (e) {
-                toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
-                return false;
-            }
-            const metadata = {
-                contentType: file.type
-            };
+                var id = $("#ma-gioi-thieu").val()
+                let name
+                let task
 
-            task = ref.child(name).put(file, metadata);
-            //Thêm mới đối tượng
-            $('#loading-event-introduce').show();
-            task
-                .then(snapshot => snapshot.ref.getDownloadURL())
-                .then(url => {
-                    $.ajax({
-                        type: "POST",
-                        url: url_api_introduce,
-                        data: JSON.stringify({
-                            ten: $("#ten").val(),
-                            tieuDe: $("#tieu-de").val(),
-                            noiDung: $("#noi-dung").val(),
-                            hinhAnh: url
-                        }),
+                if (id == 0) {
+                    //convert hình ảnh upload
+                    try {
+                        name = +new Date() + "-" + file.name
+                    } catch (e) {
+                        toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
+                        return false;
+                    }
+                    const metadata = {
+                        contentType: file.type
+                    };
 
-                        contentType: "application/json",
-                        success: function (data) {
-                            loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
-                            toastr.success(data.name + ' đã được thêm vào.')
-                        },
-                        error: function (err) {
-                            loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
-                            toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                    task = ref.child(name).put(file, metadata);
+                    //Thêm mới đối tượng
+                    $('#loading-event-introduce').show();
+                    task
+                        .then(snapshot => snapshot.ref.getDownloadURL())
+                        .then(url => {
+                            $.ajax({
+                                type: "POST",
+                                url: url_api_introduce,
+                                data: JSON.stringify({
+                                    ten: $("#ten").val(),
+                                    tieuDe: $("#tieu-de").val(),
+                                    noiDung: $("#noi-dung").val(),
+                                    hinhAnh: url
+                                }),
+
+                                contentType: "application/json",
+                                success: function (data) {
+                                    loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
+                                    toastr.success(data.name + ' đã được thêm vào.')
+                                },
+                                error: function (err) {
+                                    loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
+                                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                                }
+                            })
+                        })
+                        .catch(console.error);
+                } else if (id != 0) {
+                    //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
+                    if ($('#file-upload-firebase').val() == "") {
+                        //Không có cập nhật ảnh
+                        const url = $('#img_' + id).prop('src')
+                        $('#loading-event-introduce').show()
+                        updateProduct(url);
+                    } else {
+                        //convert hình ảnh upload
+                        try {
+                            name = +new Date() + "-" + file.name
+                        } catch (e) {
+                            toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
+                            return false
                         }
-                    })
-                })
-                .catch(console.error);
-        } else if (id != 0) {
-            //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
-            if ($('#file-upload-firebase').val() == "") {
-                //Không có cập nhật ảnh
-                const url = $('#img_' + id).prop('src')
-                $('#loading-event-introduce').show()
-                updateProduct(url);
-            } else {
-                //convert hình ảnh upload
-                try {
-                    name = +new Date() + "-" + file.name
-                } catch (e) {
-                    toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
-                    return false
-                }
-                const metadata = {
-                    contentType: file.type
-                }
-                const task = ref.child(name).put(file, metadata)
+                        const metadata = {
+                            contentType: file.type
+                        }
+                        const task = ref.child(name).put(file, metadata)
 
-                //Có cập nhật ảnh
-                $('#loading-event-introduce').show()
-                deleteImageToStorageById(id, url_api_introduce)
-                task
-                    .then(snapshot => snapshot.ref.getDownloadURL())
-                    .then(url => {
-                        updateProduct(url)
-                    })
-                    .catch(console.error)
-            }
-        }
+                        //Có cập nhật ảnh
+                        $('#loading-event-introduce').show()
+                        deleteImageToStorageById(id, url_api_introduce)
+                        task
+                            .then(snapshot => snapshot.ref.getDownloadURL())
+                            .then(url => {
+                                updateProduct(url)
+                            })
+                            .catch(console.error)
+                    }
+                }
 
-        //Hàm cập nhật bảng giới thiệu
-        function updateProduct(url) {
-            $.ajax({
-                type: 'GET',
-                contentType: "application/json",
-                url: url_api_introduce + '/' + id,
-                success: function (data) {
+                //Hàm cập nhật bảng giới thiệu
+                function updateProduct(url) {
                     $.ajax({
-                        type: "PUT",
-                        data: JSON.stringify({
-                            ten: $("#ten").val(),
-                            tieuDe: $("#tieu-de").val(),
-                            noiDung: $("#noi-dung").val(),
-                            hinhAnh: url,
-                        }),
+                        type: 'GET',
                         contentType: "application/json",
                         url: url_api_introduce + '/' + id,
                         success: function (data) {
-                            loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
-                            toastr.success('Phần giới thiệu ' + data.maGT + ' đã được chỉnh sửa.')
+                            $.ajax({
+                                type: "PUT",
+                                data: JSON.stringify({
+                                    ten: $("#ten").val(),
+                                    tieuDe: $("#tieu-de").val(),
+                                    noiDung: $("#noi-dung").val(),
+                                    hinhAnh: url,
+                                }),
+                                contentType: "application/json",
+                                url: url_api_introduce + '/' + id,
+                                success: function (data) {
+                                    loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
+                                    toastr.success('Phần giới thiệu ' + data.maGT + ' đã được chỉnh sửa.')
+                                },
+                                error: function (err) {
+                                    loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
+                                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                                }
+                            })
                         },
                         error: function (err) {
-                            loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
-                            toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                            alert("Error -> " + err)
                         }
                     })
-                },
-                error: function (err) {
-                    alert("Error -> " + err)
                 }
             })
         }
     })
-
+    validateForm($('#create-update-introduce'), rules, mess)
     let id_del = 0
 
     //Hiển thị modal thông báo xóa giới thiệu
