@@ -74,10 +74,9 @@ $(document).ready(function () {
         $("#file-upload-firebase").val('')
     })
 
-    let id_edit = 0;
     //Lấy dữ liệu đối tượng từ nút edit
     $('table').on('click', '.edit-btn', function (e) {
-        let btn_id = this.id.split("_")[2];
+        let btn_id = this.id.split("_")[2]
 
         //Find Object by id
         $.ajax({
@@ -107,7 +106,6 @@ $(document).ready(function () {
 
             var id = $("#ma-mat-hang").val()
             let name
-            let task
 
             if (id == 0) {
                 //convert hình ảnh upload
@@ -121,7 +119,7 @@ $(document).ready(function () {
                     contentType: file.type
                 }
 
-                task = ref.child(name).put(file, metadata)
+                const task = ref.child(name).put(file, metadata)
 
                 //Thêm mới đối tượng
                 $('#loading-event').show();
@@ -153,7 +151,7 @@ $(document).ready(function () {
                         });
                     })
                     .catch(console.error)
-            } else if (id > 0) {
+            } else {
                 //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
                 if ($('#file-upload-firebase').val() == "") {
                     //Không có cập nhật ảnh
@@ -225,9 +223,9 @@ $(document).ready(function () {
     //Xóa mặt hàng theo id và xóa dòng liên quan trên bảng
     $(document).on("click", "#modal-accept-btn", function () {
 
-        $('#loading-notification').show();
+        $('#loading-notification').show()
 
-        deleteImageToStorageById(url_api_product, id_del);
+        deleteImageToStorageById(id_del, url_api_product)
 
         //Delete Object by id
         $.ajax({

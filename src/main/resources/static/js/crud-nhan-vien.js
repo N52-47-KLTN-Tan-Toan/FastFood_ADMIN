@@ -1,9 +1,52 @@
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig)
 
-$(document).ready(function () {
+;(function () {
 
-// Các ràng buộc cho field
+    // Method validation for datepicker
+    $.validator.addMethod('dateFormat',
+        function (value, element) {
+            var check = false
+            var re = /^\d{4}\-\d{1,2}\-\d{1,2}$/
+            if (re.test(value)) {
+                var adata = value.split('-')
+                var dd = parseInt(adata[2], 10)
+                var mm = parseInt(adata[1], 10)
+                var yyyy = parseInt(adata[0], 10)
+                var xdata = new Date(yyyy, mm - 1, dd)
+                if ((xdata.getFullYear() === yyyy) && (xdata.getMonth() === mm - 1) && (xdata.getDate() === dd)) {
+                    check = true
+                } else {
+                    check = false
+                }
+            } else {
+                check = false
+            }
+            return this.optional(element) || check
+        }, 'Sai định dạng (ngày / tháng / năm)')
+
+    // Method validation for check username
+    $.validator.addMethod('checkUsername',
+        function (val, ele) {
+            $.ajax({
+                type: 'GET',
+                contentType: "application/json",
+                url: url_api_staff + '/username=' + val,
+                success: function (res) {
+
+                    if (val == res.username) {
+                        return false
+                    } else {
+                        return true
+                    }
+                },
+                error: function (err) {
+                    alert("Error -> " + err)
+                }
+            })
+        }, 'Tên đăng nhập đã tồn tại')
+
+    // Các ràng buộc cho field
     var rules = {
         tenNhanVien: {
             required: true,
@@ -13,27 +56,36 @@ $(document).ready(function () {
             required: true,
         },
         ngaySinh: {
-            required: true
+            required: true,
+            dateFormat: true
         },
         sdt: {
             required: true,
             digits: true,
-            maxlength: 10
+            pattern: /^(84|0[2|3|5|7|8|9])+([0-9]{8})$/
         },
         email: {
             required: true,
-            maxlength: 40
+            email: true
         },
         diaChi: {
             required: true,
-            maxlength: 40
         },
         loaiNV: {
             required: true
         },
         tenDangNhap: {
             required: true,
-            maxlength: 10
+            pattern: /^[a-z0-9_-]{5,15}$/,
+            remote: {
+                url: url_api_staff + '/checkExistsByUsername',
+                type: 'POST',
+                data: {
+                    u: function () {
+                        return $("#ten-dang-nhap").val()
+                    }
+                }
+            }
         }
     }
 
@@ -52,22 +104,22 @@ $(document).ready(function () {
         sdt: {
             required: 'Vui lòng điền số điện thoại',
             digits: 'Chỉ được nhập số',
-            maxlength: 'Số điện thoại tối đa 10 số'
+            pattern: 'Gồm 0(3|5|7|8|9) đầu và 8 số theo sau'
         },
         email: {
             required: 'Vui lòng điền email',
-            maxlength: 'Email tối đa 40 ký tự'
+            email: 'Sai định dạng email'
         },
         diaChi: {
             required: 'Vui lòng điền địa chỉ',
-            maxlength: 'Địa chỉ tối đa 40 ký tự'
         },
         loaiNV: {
             required: 'Vui lòng chọn loại nhân viên'
         },
         tenDangNhap: {
             required: 'Vui lòng điền tên đăng nhập',
-            maxlength: 'Tối đa 10 ký tự'
+            pattern: 'Tên đăng nhập từ 5 đến 15 ký tự, bao gồm cả chữ và số',
+            remote: 'Tên đăng nhập đã tồn tại'
         }
     }
 
@@ -92,232 +144,209 @@ $(document).ready(function () {
         $('#ten-dang-nhap').val('')
     })
 
+    //Lấy dữ liệu đối tượng từ nút edit
+    $('table').on('click', '.edit-btn', function (e) {
+
+        let btn_id = this.id.split("_")[2]
+
+        //Find Object by id
+        $.ajax({
+            type: 'GET',
+            contentType: "application/json",
+            url: url_api_staff + '/' + btn_id,
+            success: function (data) {
+                $("#ma-nhan-vien").val(data.userId)
+                $("#ten-nhan-vien").val(data.name)
+                $("#op-loainv").val(data.roleName)
+                $("#ngay-sinh").val(data.birthDate)
+                $("#sdt").val(data.phone)
+                $("#image-upload-firebase").attr("src", data.avatar)
+                $("#email").val(data.email)
+                $("#dia-chi").val(data.address)
+                $('#ten-dang-nhap').val(data.username)
+                if (data.gender == true) {
+                    $('#gender-male').prop("checked", true)
+                } else {
+                    $('#gender-female').prop("checked", true)
+                }
+            },
+            error: function (err) {
+                alert("Error -> " + err)
+            }
+        })
+
+    })
 
     $.validator.setDefaults({
         submitHandler: function () {
-            // Tạo mới nhân viên
-            $("#create-update-nhan-vien").submit(function (evt) {
-                evt.preventDefault()
 
-                const ref = firebase.storage().ref()
-                const file = document.querySelector("#file-upload-firebase").files[0]
+            const ref = firebase.storage().ref()
+            const file = document.querySelector("#file-upload-firebase").files[0]
 
-                var id = $("#ma-nhan-vien").val()
+            var id = $("#ma-nhan-vien").val()
 
-                let name
-                let task
+            let name
 
-                if (id == 0) {
+            if (id == 0) {
+                //convert hình ảnh upload
+                try {
+                    name = +new Date() + "-" + file.name
+                } catch (e) {
+                    toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
+                    return false;
+                }
+                const metadata = {
+                    contentType: file.type
+                }
+
+                const task = ref.child(name).put(file, metadata)
+
+                //Thêm mới đối tượng
+                $('#loading-event-nhan-vien').show()
+                task
+                    .then(snapshot => snapshot.ref.getDownloadURL())
+                    .then(url => {
+                        $.ajax({
+                            type: "POST",
+                            url: url_api_staff,
+                            data: JSON.stringify({
+                                name: $("#ten-nhan-vien").val(),
+                                birthDate: $("#ngay-sinh").val(),
+                                phone: $("#sdt").val(),
+                                email: $("#email").val(),
+                                address: $("#dia-chi").val(),
+                                gender: $(".rad-gender:checked").val() == 1 ? true : false,
+                                avatar: url,
+                                roleName: $("#op-loainv option:selected").val(),
+                                password: '$2a$10$lUNmzJdFvspwLlEGhdKIZuLyrHXEtC94TK.dqhXD5XDex/rBmD4Qq',
+                                username: $('#ten-dang-nhap').val()
+                            }),
+
+                            contentType: "application/json",
+                            success: function (data) {
+                                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                                toastr.success('Nhân viên ' + data.name + ' đã được thêm vào.')
+                            },
+                            error: function (err) {
+                                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                            }
+                        })
+                    })
+                    .catch(console.error)
+            } else {
+                //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
+                if ($('#file-upload-firebase').val() == "") {
+                    //Không có cập nhật ảnh
+                    const url = $('#img_' + id).prop('src')
+                    $('#loading-event-nhan-vien').show()
+                    updateNhanVien(url)
+                } else {
                     //convert hình ảnh upload
                     try {
                         name = +new Date() + "-" + file.name
                     } catch (e) {
                         toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
-                        return false;
+                        return false
                     }
                     const metadata = {
                         contentType: file.type
                     };
+                    const task = ref.child(name).put(file, metadata)
 
-                    task = ref.child(name).put(file, metadata);
-                    //Thêm mới đối tượng
-                    $('#loading-event-nhan-vien').show();
+                    //Có cập nhật ảnh
+                    $('#loading-event-nhan-vien').show()
+                    deleteImageToStorageByIdForPerson(id, url_api_staff)
                     task
                         .then(snapshot => snapshot.ref.getDownloadURL())
                         .then(url => {
-                            $.ajax({
-                                type: "POST",
-                                url: url_api_staff,
-                                data: JSON.stringify({
-                                    name: $("#ten-nhan-vien").val(),
-                                    birthDate: $("#ngay-sinh").val(),
-                                    phone: $("#sdt").val(),
-                                    email: $("#email").val(),
-                                    address: $("#dia-chi").val(),
-                                    gender: $(".rad-gender:checked").val() == 1 ? true : false,
-                                    avatar: url,
-                                    roleName: $("#op-loainv option:selected").val(),
-                                    password: '$2a$10$lUNmzJdFvspwLlEGhdKIZuLyrHXEtC94TK.dqhXD5XDex/rBmD4Qq',
-                                    username: $('#ten-dang-nhap').val()
-                                }),
-
-                                contentType: "application/json",
-                                success: function (data) {
-                                    loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
-                                    toastr.success('Nhân viên ' + data.name + ' đã được thêm vào.')
-                                },
-                                error: function (err) {
-                                    loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
-                                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                                }
-                            });
+                            updateNhanVien(url)
                         })
-                        .catch(console.error);
+                        .catch(console.error)
                 }
-            })
+            }
 
-            //Lấy dữ liệu đối tượng từ nút edit
-            $('table').on('click', '.edit-btn', function (e) {
-
-                let btn_id = this.id.split("_")[2];
-
-                //Find Object by id
+            //Hàm cập nhật nhân viên
+            function updateNhanVien(url) {
                 $.ajax({
                     type: 'GET',
                     contentType: "application/json",
-                    url: url_api_staff + '/' + btn_id,
+                    url: url_api_staff + '/' + id,
                     success: function (data) {
-                        $("#ma-nhan-vien").val('********' + data.userId.substring(31, 36))
-                        $("#ten-nhan-vien").val(data.name)
-                        $("#op-loainv").val(data.roleName)
-                        $("#ngay-sinh").val(data.birthDate)
-                        $("#sdt").val(data.phone)
-                        $("#image-upload-firebase").attr("src", data.avatar)
-                        $("#email").val(data.email)
-                        $("#dia-chi").val(data.address)
-                        $('#ten-dang-nhap').val(data.username)
-                        if (data.gender == true) {
-                            $('#gender-male').prop("checked", true)
-                        } else {
-                            $('#gender-female').prop("checked", true)
-                        }
+                        $.ajax({
+                            type: "PUT",
+                            data: JSON.stringify({
+                                name: $("#ten-nhan-vien").val(),
+                                birthDate: $("#ngay-sinh").val(),
+                                phone: $("#sdt").val(),
+                                email: $("#email").val(),
+                                address: $("#dia-chi").val(),
+                                gender: $(".rad-gender:checked").val() == 1 ? true : false,
+                                avatar: url,
+                                roleName: $("#op-loainv").val(),
+                                password: data.password,
+                                username: $('#ten-dang-nhap').val()
+                            }),
+                            contentType: "application/json",
+                            url: url_api_staff + '/' + id,
+                            success: function (data) {
+                                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                                toastr.success('Thông tin của nhân viên ' + data.name + ' đã được chỉnh sửa.')
+                            },
+                            error: function (err) {
+                                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                            }
+                        });
                     },
                     error: function (err) {
                         alert("Error -> " + err)
                     }
                 })
+            }
 
-                //Cập nhật nhân viên
-                $("#create-update-nhan-vien").submit(function (evt) {
-                    evt.preventDefault()
-
-                    const ref = firebase.storage().ref()
-                    const file = document.querySelector("#file-upload-firebase").files[0]
-
-                    var id = $("#ma-nhan-vien").val()
-
-                    let name
-                    let task
-
-
-                    if (id != 0) {
-                        //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
-                        if ($('#file-upload-firebase').val() == "") {
-                            //Không có cập nhật ảnh
-                            const url = $('#img_' + btn_id).prop('src')
-                            $('#loading-event-nhan-vien').show()
-                            updateNhanVien(url);
-                        } else {
-                            //convert hình ảnh upload
-                            try {
-                                name = +new Date() + "-" + file.name
-                            } catch (e) {
-                                toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
-                                return false
-                            }
-                            const metadata = {
-                                contentType: file.type
-                            };
-                            const task = ref.child(name).put(file, metadata)
-
-                            //Có cập nhật ảnh
-                            $('#loading-event-nhan-vien').show()
-                            deleteImageToStorageById(btn_id, url_api_staff)
-                            task
-                                .then(snapshot => snapshot.ref.getDownloadURL())
-                                .then(url => {
-                                    updateNhanVien(url)
-                                })
-                                .catch(console.error)
-                        }
-                    }
-
-                    //Hàm cập nhật nhân viên
-                    function updateNhanVien(url) {
-                        $.ajax({
-                            type: 'GET',
-                            contentType: "application/json",
-                            url: url_api_staff + '/' + btn_id,
-                            success: function (data) {
-                                $.ajax({
-                                    type: "PUT",
-                                    data: JSON.stringify({
-                                        name: $("#ten-nhan-vien").val(),
-                                        birthDate: $("#ngay-sinh").val(),
-                                        phone: $("#sdt").val(),
-                                        email: $("#email").val(),
-                                        address: $("#dia-chi").val(),
-                                        gender: $(".rad-gender:checked").val() == 1 ? true : false,
-                                        avatar: url,
-                                        roleName: $("#op-loainv").val(),
-                                        password: data.password,
-                                        username: $('#ten-dang-nhap').val()
-                                    }),
-                                    contentType: "application/json",
-                                    url: url_api_staff + '/' + btn_id,
-                                    success: function (data) {
-                                        loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
-                                        toastr.success('Thông tin của nhân viên ' + data.name + ' đã được chỉnh sửa.')
-                                    },
-                                    error: function (err) {
-                                        loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
-                                        toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                                    }
-                                });
-                            },
-                            error: function (err) {
-                                alert("Error -> " + err)
-                            }
-                        })
-                    }
-                })
-            })
         }
     })
     validateForm($('#create-update-nhan-vien'), rules, mess)
 
-    let id_del = 0
-
     //Hiển thị modal thông báo xóa nhân viên
     $('table').on('click', '.delete-btn', function () {
 
-        let btn_id = this.id;
-        id_del = btn_id.split("_")[2];
+        let btn_id = this.id.split("_")[2]
 
         $.ajax({
             type: 'GET',
             contentType: "application/json",
-            url: url_api_staff + '/' + id_del,
+            url: url_api_staff + '/' + btn_id,
             success: function (data) {
                 $("#modal-overlay .modal-body").text("Xóa nhân viên \"" + data.name + "\" ra khỏi danh sách?")
             },
             error: function (err) {
-                alert("Error -> " + err);
+                alert("Error -> " + err)
             }
-        });
+        })
 
-    })
+        //Xóa nhân viên theo id
+        $('#modal-accept-btn').click(function () {
 
-    //Xóa nhân viên theo id
-    $(document).on("click", "#modal-accept-btn", function () {
+            $('#loading-event-nhan-vien').show()
 
-        $('#loading-notification').show();
+            deleteImageToStorageByIdForPerson(btn_id, url_api_staff)
 
-        deleteImageToStorageById(id_del, url_api_staff);
-
-        //Delete Object by id
-        $.ajax({
-            type: "DELETE",
-            url: url_api_staff + '/' + id_del,
-            success: function (data) {
-                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'));
-                toastr.success('Nhân viên \"' + id_del + '\" đã xóa ra khỏi danh sách.');
-            },
-            error: function (err) {
-                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'));
-                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-            }
-        });
+            //Delete Object by id
+            $.ajax({
+                type: "DELETE",
+                url: url_api_staff + '/' + btn_id,
+                success: function (data) {
+                    loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                    toastr.success('Nhân viên \"' + btn_id + '\" đã xóa ra khỏi danh sách.')
+                },
+                error: function (err) {
+                    loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                }
+            })
+        })
     })
 
     //Phân quyền
@@ -553,4 +582,4 @@ $(document).ready(function () {
         )
     }
 
-});
+}())

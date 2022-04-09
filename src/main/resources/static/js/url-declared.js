@@ -37,19 +37,46 @@ function deleteImageToStorageById(id_object, url_object) {
         url: url_object + '/' + id_object,
         success: function (data) {
             // Create a reference to the file to delete
-            var desertRef = firebase.storage().refFromURL(data.hinhAnh);
+            var desertRef = firebase.storage().refFromURL(data.hinhAnh)
 
             // Delete the file
             desertRef.delete().then(function () {
-                // console.log("Delete file in firebase storage successfully");
+                // console.log("Delete file in firebase storage successfully")
             }).catch(function (error) {
 
-            });
+            })
         },
         error: function (err) {
 
         }
-    });
+    })
+
+}
+
+//Hàm xóa hình ảnh trên firebase storage dựa trên tìm kiếm id của người dùng
+function deleteImageToStorageByIdForPerson(id_object, url_object) {
+
+    //Find Object by id
+    $.ajax({
+        type: 'GET',
+        contentType: "application/json",
+        url: url_object + '/' + id_object,
+        success: function (data) {
+            // Create a reference to the file to delete
+            var desertRef = firebase.storage().refFromURL(data.avatar)
+
+            // Delete the file
+            desertRef.delete().then(function () {
+                // console.log("Delete file in firebase storage successfully")
+            }).catch(function (error) {
+
+            })
+        },
+        error: function (err) {
+
+        }
+    })
+
 }
 
 //Hàm hiển thị loading trên modal, đóng modal và load lại table
@@ -125,7 +152,7 @@ $(document).ready(function () {
         var $this = $(this)
         // if the current path is like this link, make it active
         if (current === "/") {
-            // $this.addClass('active');
+            // $this.addClass('active')
             return false;
         }
         if ($this.attr('href').indexOf(current) !== -1) {

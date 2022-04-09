@@ -1,4 +1,4 @@
-$(document).ready(function () {
+;(function () {
 
     // Các ràng buộc cho field
     var rules = {
@@ -25,126 +25,121 @@ $(document).ready(function () {
 
     //Trả dữ liệu modal thêm mặt hàng về rỗng
     $(document).on('click', '.add-btn-type', function () {
+
         $("#ma-loai-mat-hang").val(0)
         $("#ten-loai-mat-hang").val('')
+
     })
 
-    let id_edit = 0;
     //Lấy dữ liệu đối tượng từ nút edit
     $('table').on('click', '.edit-btn', function (e) {
 
-        let btn_id = this.id
-        id_edit = btn_id.split("_")[2]
+        let btn_id = this.id.split("_")[2]
 
         //Find Object by id
         $.ajax({
             type: 'GET',
             contentType: "application/json",
-            url: url_api_categories + '/' + id_edit,
+            url: url_api_categories + '/' + btn_id,
             success: function (data) {
-                $("#ma-loai-mat-hang").val(id_edit);
-                $("#ten-loai-mat-hang").val(data.tenLMH);
+                $("#ma-loai-mat-hang").val(btn_id)
+                $("#ten-loai-mat-hang").val(data.tenLMH)
             },
             error: function (err) {
-                alert("Error -> " + err);
+                alert("Error -> " + err)
             }
-        });
+        })
+
     })
 
     $.validator.setDefaults({
         submitHandler: function () {
 
-            //Tạo mới loại mặt hàng và cập nhật loại mặt hàng
-            $("#create-update-type-product").submit(function (evt) {
-                evt.preventDefault();
+            var id = $("#ma-loai-mat-hang").val()
 
-                var id = $("#ma-loai-mat-hang").val();
+            if (id == 0) {
 
-                if (id == 0) {
-                    $('#loading-event-type').show();
+                $('#loading-event-type').show()
 
-                    //Thêm mới đối tượng
+                //Thêm mới đối tượng
+                $.ajax({
+                    type: "POST",
+                    url: url_api_categories,
+                    data: JSON.stringify({
+                        tenLMH: $("#ten-loai-mat-hang").val(),
+                    }),
+                    contentType: "application/json",
+                    success: function (data) {
+                        loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'))
+                        toastr.success(data.tenLMH + ' đã được thêm vào.')
+                    },
+                    error: function (err) {
+                        loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'))
+                        toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                    }
+                })
+
+            } else {
+
+                //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
+                $('#loading-event-type').show()
+                updateTypeProduct()
+
+                //Hàm cập nhật loại mặt hàng
+                function updateTypeProduct() {
                     $.ajax({
-                        type: "POST",
-                        url: url_api_categories,
+                        type: "PUT",
                         data: JSON.stringify({
                             tenLMH: $("#ten-loai-mat-hang").val(),
                         }),
                         contentType: "application/json",
+                        url: url_api_categories + '/' + id,
                         success: function (data) {
-                            loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'));
-                            toastr.success(data.tenLMH + ' đã được thêm vào.')
+                            loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'))
+                            toastr.success('Loại mặt hàng ' + data.maLMH + ' đã được chỉnh sửa.')
                         },
                         error: function (err) {
-                            loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'));
+                            loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'))
                             toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                         }
-                    });
-                } else if (id > 0) {
-                    //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
-
-                    //Không có cập nhật ảnh
-                    $('#loading-event').show();
-                    updateTypeProduct();
-
-                    //Hàm cập nhật loại mặt hàng
-                    function updateTypeProduct() {
-                        $.ajax({
-                            type: "PUT",
-                            data: JSON.stringify({
-                                tenLMH: $("#ten-loai-mat-hang").val(),
-                            }),
-                            contentType: "application/json",
-                            url: url_api_categories + '/' + id,
-                            success: function (data) {
-                                loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'))
-                                toastr.success('Loại mặt hàng ' + data.maLMH + ' đã được chỉnh sửa.')
-                            },
-                            error: function (err) {
-                                loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'))
-                                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                            }
-                        });
-                    }
+                    })
                 }
-            })
+            }
         }
     })
     validateForm($('#create-update-type-product'), rules, mess)
 
-
-    let id_del = 0;
-
     // Hiển thị modal thông báo xóa loại mặt hàng
     $('table').on('click', '.delete-btn', function () {
-        let btn_id = this.id;
-        id_del = btn_id.split("_")[2];
 
-        $("#modal-overlay .modal-body").text("Xóa loại mặt hàng \"" + id_del + "\" ra khỏi danh sách?");
+        let btn_id = this.id.split("_")[2]
+
+        $("#modal-overlay .modal-body").text("Xóa loại mặt hàng \"" + btn_id + "\" ra khỏi danh sách?")
+
+        // Xóa loại mặt hàng theo id và xóa dòng liên quan trên bảng
+        $('#modal-accept-btn').click(function () {
+
+            $('#loading-notification').show()
+
+            // Delete Object by id
+            $.ajax({
+                type: "DELETE",
+                url: "http://localhost:8000/api/v1/loai-mat-hang/" + btn_id,
+                success: function (data) {
+                    loadingModalAndRefreshTable($('#loading-notification'), $('#example2'));
+                    toastr.success('Loại mặt hàng \"' + btn_id + '\" đã xóa ra khỏi danh sách.');
+                },
+                error: function (err) {
+                    loadingModalAndRefreshTable($('#loading-notification'), $('#example2'));
+                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                }
+            })
+
+        })
+
     })
 
-// Xóa loại mặt hàng theo id và xóa dòng liên quan trên bảng
-    $(document).on("click", "#modal-accept-btn", function () {
-
-        $('#loading-notification').show();
-
-        // Delete Object by id
-        $.ajax({
-            type: "DELETE",
-            url: "http://localhost:8000/api/v1/loai-mat-hang/" + id_del,
-            success: function (data) {
-                loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'));
-                toastr.success('Loại mặt hàng \"' + id_del + '\" đã xóa ra khỏi danh sách.');
-            },
-            error: function (err) {
-                loadingModalAndRefreshTable($('#loading-event-type'), $('#example2'));
-                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-            }
-        });
-    })
-
-
-//Hiển thị dữ liệu
+    //Hiển thị dữ liệu
     function assignDataToTable1() {
         var t = $("#example2").DataTable({
             paging: true,
@@ -268,4 +263,4 @@ $(document).ready(function () {
         )
     }
 
-});
+}())
