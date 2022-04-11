@@ -14,6 +14,17 @@
     $('#loading-event-order').hide()
     $('#loading-notification').hide()
 
+    $('#tab-status').append('' +
+        '<li class="nav-item">\n' +
+        '<a id="tab1" class="nav-link active" href="#tab-table1" data-toggle="tab">Chờ xác nhận</a>\n' +
+        '</li>' +
+        '<li class="nav-item">\n'+
+        '<a id="tab2" class="nav-link" href="#tab-table2" data-toggle="tab">Đang giao</a>\n' +
+        '</li>' +
+        '<li class="nav-item">\n' +
+        '<a id="tab3" class="nav-link" href="#tab-table3" data-toggle="tab">Đã thanh toán</a>\n' +
+        '</li>')
+
     tabStatus('Chờ xác nhận')
     tabStatus('Đang giao')
     tabStatus('Đã thanh toán')
@@ -222,22 +233,13 @@
             success: function (data) {
                 switch (status) {
                     case 'Chờ xác nhận':
-                        $('#tab-status').append('' +
-                            '<li class="nav-item">\n' +
-                            '<a class="nav-link active" href="#tab-table1" data-toggle="tab">Chờ xác nhận (' + data.length + ')</a>\n' +
-                            '</li>')
+                        $('#tab1').text('Chờ xác nhận (' + data.length + ')')
                         break
                     case 'Đang giao':
-                        $('#tab-status').append('' +
-                            '<li class="nav-item">\n' +
-                            '<a class="nav-link" href="#tab-table2" data-toggle="tab">Đang giao (' + data.length + ')</a>\n' +
-                            '</li>')
+                        $('#tab2').text('Đang giao (' + data.length + ')')
                         break
                     case 'Đã thanh toán':
-                        $('#tab-status').append('' +
-                            '<li class="nav-item">\n' +
-                            '<a class="nav-link" href="#tab-table3" data-toggle="tab">Đã thanh toán (' + data.length + ')</a>\n' +
-                            '</li>')
+                        $('#tab3').text('Đã thanh toán (' + data.length + ')')
                         break
                     default : break
                 }
@@ -291,26 +293,26 @@
                     return d
                 },
             },
-            initComplete: function () {
-                this.api().columns([5]).every(function () {
-                    var column = this;
-                    var select = $('<select><option value=""></option></select>')
-                        .appendTo($(column.footer()).empty())
-                        .on('change', function () {
-                            var val = $.fn.dataTable.util.escapeRegex(
-                                $(this).val()
-                            )
-
-                            column
-                                .search(val ? '^' + val + '$' : '', true, false)
-                                .draw()
-                        })
-
-                    column.data().unique().sort().each(function (d, j) {
-                        select.append('<option value="' + d + '">' + d + '</option>')
-                    })
-                })
-            },
+            // initComplete: function () {
+            //     this.api().columns([5]).every(function () {
+            //         var column = this;
+            //         var select = $('<select><option value=""></option></select>')
+            //             .appendTo($(column.footer()).empty())
+            //             .on('change', function () {
+            //                 var val = $.fn.dataTable.util.escapeRegex(
+            //                     $(this).val()
+            //                 )
+            //
+            //                 column
+            //                     .search(val ? '^' + val + '$' : '', true, false)
+            //                     .draw()
+            //             })
+            //
+            //         column.data().unique().sort().each(function (d, j) {
+            //             select.append('<option value="' + d + '">' + d + '</option>')
+            //         })
+            //     })
+            // },
             columns: [{
                 class: 'text-center',
                 data: 'maDDH',
@@ -400,7 +402,6 @@
     }
 
     function refreshTableAndStatus() {
-        $('#tab-status').empty()
         tabStatus('Chờ xác nhận')
         tabStatus('Đang giao')
         tabStatus('Đã thanh toán')

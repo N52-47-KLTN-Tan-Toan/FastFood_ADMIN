@@ -41,7 +41,16 @@ firebase.initializeApp(firebaseConfig)
         sdt: {
             required: true,
             digits: true,
-            pattern: /^(84|0[2|3|5|7|8|9])+([0-9]{8})$/
+            pattern: /^(84|0[2|3|5|7|8|9])+([0-9]{8})$/,
+            remote: {
+                url: url_api_client + '/checkExistsByPhone',
+                type: 'POST',
+                data: {
+                    p: function () {
+                        return $("#sdt").val()
+                    }
+                }
+            }
         },
         email: {
             required: true,
@@ -67,7 +76,8 @@ firebase.initializeApp(firebaseConfig)
         sdt: {
             required: 'Vui lòng điền số điện thoại',
             digits: 'Chỉ được nhập số',
-            pattern: 'Gồm 0(3|5|7|8|9) đầu và 8 số theo sau'
+            pattern: 'Gồm 0(3|5|7|8|9) đầu và 8 số theo sau',
+            remote: 'Số điện thoại này đã tồn tại'
         },
         email: {
             required: 'Vui lòng điền email',
@@ -349,7 +359,7 @@ firebase.initializeApp(firebaseConfig)
                 class: 'text-center',
                 data: 'avatar',
                 render: function (data, type, row, meta) {
-                    return '<img id="img_' + row.userId + '" src="' + data + '" width="50" height="50" />';
+                    return '<img id="img_' + row.userId + '" src="' + data + '" width="50" height="50" />'
                 }
             }, {
                 class: 'td_name',

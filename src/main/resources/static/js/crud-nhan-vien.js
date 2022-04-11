@@ -50,7 +50,7 @@ firebase.initializeApp(firebaseConfig)
     var rules = {
         tenNhanVien: {
             required: true,
-            maxlength: 30
+            maxlength: 32
         },
         'rad-gender': {
             required: true,
@@ -142,6 +142,7 @@ firebase.initializeApp(firebaseConfig)
         $("#dia-chi").val('')
         $("#file-upload-firebase").val('')
         $('#ten-dang-nhap').val('')
+        $('#ten-dang-nhap').prop('readonly', false)
     })
 
     //Lấy dữ liệu đối tượng từ nút edit
@@ -160,10 +161,11 @@ firebase.initializeApp(firebaseConfig)
                 $("#op-loainv").val(data.roleName)
                 $("#ngay-sinh").val(data.birthDate)
                 $("#sdt").val(data.phone)
-                $("#image-upload-firebase").attr("src", data.avatar)
+                $("#image-upload-firebase").attr('src', data.avatar)
                 $("#email").val(data.email)
                 $("#dia-chi").val(data.address)
-                $('#ten-dang-nhap').val(data.username)
+                $('#ten-dang-nhap').val('hidden404' + data.username.substring(3, 5))
+                $('#ten-dang-nhap').prop('readonly', true)
                 if (data.gender == true) {
                     $('#gender-male').prop("checked", true)
                 } else {
@@ -285,7 +287,7 @@ firebase.initializeApp(firebaseConfig)
                                 avatar: url,
                                 roleName: $("#op-loainv").val(),
                                 password: data.password,
-                                username: $('#ten-dang-nhap').val()
+                                username: data.username
                             }),
                             contentType: "application/json",
                             url: url_api_staff + '/' + id,
