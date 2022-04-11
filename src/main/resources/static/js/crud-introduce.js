@@ -51,7 +51,6 @@ firebase.initializeApp(firebaseConfig)
         $("#image-upload-firebase").attr("src", "https://cdn-icons-png.flaticon.com/512/1040/1040241.png")
     })
 
-    let id_edit = 0
     //Lấy dữ liệu đối tượng từ nút edit
     $('table').on('click', '.edit-btn', function (e) {
 
@@ -85,13 +84,19 @@ firebase.initializeApp(firebaseConfig)
             var id = $("#ma-gioi-thieu").val()
             let name
 
+            var ext = $('#file-upload-firebase').val().split('.').pop().toLowerCase()
+            if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                toastr.warning('Vui lòng chọn hình ảnh có đuôi .gif .png .jpg hoặc .jpeg !!!!')
+                return false
+            }
+
             if (id == 0) {
 
                 //convert hình ảnh upload
                 try {
                     name = +new Date() + "-" + file.name
                 } catch (e) {
-                    toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
+                    toastr.warning('Vui lòng chọn hình ảnh!!!')
                     return false
                 }
                 const metadata = {

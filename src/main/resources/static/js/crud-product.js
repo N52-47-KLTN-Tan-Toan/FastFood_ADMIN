@@ -51,8 +51,6 @@ $(document).ready(function () {
         }
     }
 
-    let id_del = 0
-
     $('#loading-event').hide()
     $('#loading-notification').hide()
 
@@ -107,12 +105,18 @@ $(document).ready(function () {
             var id = $("#ma-mat-hang").val()
             let name
 
+            var ext = $('#file-upload-firebase').val().split('.').pop().toLowerCase()
+            if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                toastr.warning('Vui lòng chọn hình ảnh có đuôi .gif .png .jpg hoặc .jpeg !!!!')
+                return false
+            }
+
             if (id == 0) {
                 //convert hình ảnh upload
                 try {
                     name = +new Date() + "-" + file.name
                 } catch (e) {
-                    toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
+                    toastr.warning('Vui lòng chọn hình ảnh!!!')
                     return false
                 }
                 const metadata = {
@@ -215,31 +219,31 @@ $(document).ready(function () {
 
     //Hiển thị modal thông báo xóa mặt hàng
     $('table').on('click', '.delete-btn', function () {
-        let btn_id = this.id
-        id_del = btn_id.split("_")[2]
-        $("#modal-overlay .modal-body").text("Xóa mặt hàng \"" + id_del + "\" ra khỏi danh sách?")
-    })
+        let btn_id = this.id.split("_")[2]
 
-    //Xóa mặt hàng theo id và xóa dòng liên quan trên bảng
-    $(document).on("click", "#modal-accept-btn", function () {
+        $("#modal-overlay .modal-body").text("Xóa mặt hàng \"" + btn_id + "\" ra khỏi danh sách?")
 
-        $('#loading-notification').show()
+        //Xóa mặt hàng theo id và xóa dòng liên quan trên bảng
+        $('#modal-accept-btn').click(function () {
 
-        deleteImageToStorageById(id_del, url_api_product)
+            $('#loading-notification').show()
 
-        //Delete Object by id
-        $.ajax({
-            type: "DELETE",
-            url: url_api_product + '/' + id_del,
-            success: function (data) {
-                loadingModalAndRefreshTable($('#loading-notification'), $('#example2'))
-                toastr.success('Mặt hàng \"' + id_del + '\" đã xóa ra khỏi danh sách.')
-            },
-            error: function (err) {
-                loadingModalAndRefreshTable($('#loading-notification'), $('#example2'))
-                toastr.error('Mặt hàng này đang được bán. Không thể xóa')
-            }
-        });
+            deleteImageToStorageById(btn_id, url_api_product)
+
+            //Delete Object by id
+            $.ajax({
+                type: "DELETE",
+                url: url_api_product + '/' + btn_id,
+                success: function (data) {
+                    loadingModalAndRefreshTable($('#loading-notification'), $('#example2'))
+                    toastr.success('Mặt hàng \"' + btn_id + '\" đã xóa ra khỏi danh sách.')
+                },
+                error: function (err) {
+                    loadingModalAndRefreshTable($('#loading-notification'), $('#example2'))
+                    toastr.error('Mặt hàng này đang được bán. Không thể xóa')
+                }
+            })
+        })
     })
 
     //Hiển thị dữ liệu

@@ -151,12 +151,18 @@ firebase.initializeApp(firebaseConfig)
             let name
             let task
 
+            var ext = $('#file-upload-firebase').val().split('.').pop().toLowerCase()
+            if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                toastr.warning('Vui lòng chọn hình ảnh có đuôi .gif .png .jpg hoặc .jpeg !!!!')
+                return false
+            }
+
             if (id == 0) {
                 //convert hình ảnh upload
                 try {
                     name = +new Date() + "-" + file.name
                 } catch (e) {
-                    toastr.warning('Vui lòng chọn hình ảnh thích hợp!!!')
+                    toastr.warning('Vui lòng chọn hình ảnh!!!')
                     return false;
                 }
                 const metadata = {
