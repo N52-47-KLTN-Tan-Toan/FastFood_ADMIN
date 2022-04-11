@@ -20,39 +20,93 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card-body">
-<!--                            <div class="col-sm-2 pb-2">-->
-<!--                                <button id="add-btn-order" class="btn bg-gradient-info mr-2" data-toggle="modal"-->
-<!--                                        data-target="#modal-xl">-->
-<!--                                    <i class="fas fa-plus"></i>-->
-<!--                                    <span class="pl-2">Lập hóa đơn</span>-->
-<!--                                </button>-->
-<!--                            </div>-->
-                            <div class="col-sm-12">
-                                <table id="example2" class="table table-bordered table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>Mã đơn</th>
-                                        <th>Số điện thoại</th>
-                                        <th>Tên khách hàng</th>
-                                        <th>Ngày đặt hàng</th>
-                                        <th>Trạng thái</th>
-                                        <th>Hình thức</th>
-                                        <th>Tổng tiền</th>
-                                        <th>Địa chỉ giao hàng</th>
-                                        <th>Sửa</th>
-                                        <th>Xóa</th>
-                                        <th>In</th>
-                                    </tr>
-                                    </thead>
-                                    <tfoot>
-                                    <tr>
-                                        <th colspan="4">Lọc theo trạng thái và hình thức</th>
-                                        <th>Trạng thái</th>
-                                        <th>Hình thức</th>
-                                        <th colspan="5">(Có thể lọc cả 2)</th>
-                                    </tr>
-                                    </tfoot>
-                                </table>
+                            <ul id="tab-status" class="nav nav-tabs" role="tablist">
+<!--                                <li class="nav-item">-->
+<!--                                    <a class="nav-link active" href="#tab-table1" data-toggle="tab">Table 1</a>-->
+<!--                                </li>-->
+<!--                                <li class="nav-item">-->
+<!--                                    <a class="nav-link" href="#tab-table2" data-toggle="tab">Table 2</a>-->
+<!--                                </li>-->
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tab-table1">
+                                    <table id="example2" class="table table-bordered table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>Mã đơn</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Tên khách hàng</th>
+                                            <th>Ngày đặt hàng</th>
+                                            <th>Trạng thái</th>
+                                            <th>Hình thức</th>
+                                            <th>Tổng tiền</th>
+                                            <th>Địa chỉ giao hàng</th>
+                                            <th>Sửa</th>
+                                            <th>In</th>
+                                            <th>Xóa</th>
+                                        </tr>
+                                        </thead>
+                                        <tfoot>
+                                        <tr>
+                                            <th colspan="5">Lọc theo hình thức</th>
+                                            <th>Hình thức</th>
+                                            <th colspan="5"></th>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <div class="tab-pane" id="tab-table2">
+                                    <table id="myTable2" class="table table-bordered table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>Mã đơn</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Tên khách hàng</th>
+                                            <th>Ngày đặt hàng</th>
+                                            <th>Trạng thái</th>
+                                            <th>Hình thức</th>
+                                            <th>Tổng tiền</th>
+                                            <th>Địa chỉ giao hàng</th>
+                                            <th>Sửa</th>
+                                            <th>In</th>
+                                            <th>Xóa</th>
+                                        </tr>
+                                        </thead>
+                                        <tfoot>
+                                        <tr>
+                                            <th colspan="5">Lọc theo hình thức</th>
+                                            <th>Hình thức</th>
+                                            <th colspan="5"></th>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <div class="tab-pane" id="tab-table3">
+                                    <table id="myTable3" class="table table-bordered table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>Mã đơn</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Tên khách hàng</th>
+                                            <th>Ngày đặt hàng</th>
+                                            <th>Trạng thái</th>
+                                            <th>Hình thức</th>
+                                            <th>Tổng tiền</th>
+                                            <th>Địa chỉ giao hàng</th>
+                                            <th>Sửa</th>
+                                            <th>In</th>
+                                            <th>Xóa</th>
+                                        </tr>
+                                        </thead>
+                                        <tfoot>
+                                        <tr>
+                                            <th colspan="5">Lọc theo hình thức</th>
+                                            <th>Hình thức</th>
+                                            <th colspan="5"></th>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                         <!-- /.card-body -->

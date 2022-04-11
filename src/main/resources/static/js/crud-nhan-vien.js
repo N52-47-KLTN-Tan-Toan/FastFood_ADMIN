@@ -529,6 +529,7 @@ firebase.initializeApp(firebaseConfig)
                     body: function (data, row, column, node) {
                         // Strip $ from salary column to make it numeric
                         return column === 1 ? data.split('"')[3] : data
+                        && column === 3 ? data.split('"')[7] : data
                         && column === 7 ? data.split('/')[2] + '-' + data.split('/')[1] + '-' + data.split('/')[0] : data
                     },
                 }
