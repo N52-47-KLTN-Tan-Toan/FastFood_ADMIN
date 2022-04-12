@@ -13,12 +13,12 @@
 }
 
 .profile-pic-div-1{
-    height: 200px;
+    height: 300px;
     width: 390px;
     position: relative;
     top: 50%;
     left: 50%;
-    margin-top: 100px;
+    margin-top: 150px;
     transform: translate(-50%,-50%);
     overflow: hidden;
     display: block;
