@@ -82,15 +82,16 @@ firebase.initializeApp(firebaseConfig)
             const file = document.querySelector("#file-upload-firebase").files[0]
 
             var id = $("#ma-gioi-thieu").val()
+            var ext = $('#file-upload-firebase').val().split('.').pop().toLowerCase()
+
             let name
 
-            var ext = $('#file-upload-firebase').val().split('.').pop().toLowerCase()
-            if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
-                toastr.warning('Vui lòng chọn hình ảnh có đuôi .gif .png .jpg hoặc .jpeg !!!!')
-                return false
-            }
-
             if (id == 0) {
+
+                if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                    toastr.warning('Vui lòng chọn hình ảnh có đuôi .gif .png .jpg hoặc .jpeg !!!!')
+                    return false
+                }
 
                 //convert hình ảnh upload
                 try {
@@ -137,11 +138,19 @@ firebase.initializeApp(firebaseConfig)
 
                 //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
                 if ($('#file-upload-firebase').val() == "") {
+
                     //Không có cập nhật ảnh
                     const url = $('#img_' + id).prop('src')
                     $('#loading-event-introduce').show()
                     updateTypeProduct(url)
+
                 } else {
+
+                    if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                        toastr.warning('Vui lòng chọn hình ảnh có đuôi .gif .png .jpg hoặc .jpeg !!!!')
+                        return false
+                    }
+
                     //convert hình ảnh upload
                     try {
                         name = +new Date() + "-" + file.name

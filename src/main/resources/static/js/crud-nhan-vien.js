@@ -186,16 +186,17 @@ firebase.initializeApp(firebaseConfig)
             const file = document.querySelector("#file-upload-firebase").files[0]
 
             var id = $("#ma-nhan-vien").val()
+            var ext = $('#file-upload-firebase').val().split('.').pop().toLowerCase()
 
             let name
 
-            var ext = $('#file-upload-firebase').val().split('.').pop().toLowerCase()
-            if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
-                toastr.warning('Vui lòng chọn hình ảnh có đuôi .gif .png .jpg hoặc .jpeg !!!!')
-                return false
-            }
-
             if (id == 0) {
+
+                if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                    toastr.warning('Vui lòng chọn hình ảnh có đuôi .gif .png .jpg hoặc .jpeg !!!!')
+                    return false
+                }
+
                 //convert hình ảnh upload
                 try {
                     name = +new Date() + "-" + file.name
@@ -242,14 +243,24 @@ firebase.initializeApp(firebaseConfig)
                         })
                     })
                     .catch(console.error)
+
             } else {
+
                 //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
                 if ($('#file-upload-firebase').val() == "") {
+
                     //Không có cập nhật ảnh
                     const url = $('#img_' + id).prop('src')
                     $('#loading-event-nhan-vien').show()
                     updateNhanVien(url)
+
                 } else {
+
+                    if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                        toastr.warning('Vui lòng chọn hình ảnh có đuôi .gif .png .jpg hoặc .jpeg !!!!')
+                        return false
+                    }
+
                     //convert hình ảnh upload
                     try {
                         name = +new Date() + "-" + file.name
@@ -271,7 +282,9 @@ firebase.initializeApp(firebaseConfig)
                             updateNhanVien(url)
                         })
                         .catch(console.error)
+
                 }
+
             }
 
             //Hàm cập nhật nhân viên
@@ -299,7 +312,7 @@ firebase.initializeApp(firebaseConfig)
                             url: url_api_staff + '/' + id,
                             success: function (data) {
                                 loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
-                                toastr.success('Thông tin của nhân viên ' + data.name + ' đã được chỉnh sửa.')
+                                toastr.success('Thông tin nhân viên "' + data.name + '" đã được chỉnh sửa.')
                             },
                             error: function (err) {
                                 loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))

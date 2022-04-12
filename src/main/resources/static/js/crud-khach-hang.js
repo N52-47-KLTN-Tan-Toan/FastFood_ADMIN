@@ -147,17 +147,17 @@ firebase.initializeApp(firebaseConfig)
             const file = document.querySelector("#file-upload-firebase").files[0]
 
             var id = $("#ma-khach-hang").val()
+            var ext = $('#file-upload-firebase').val().split('.').pop().toLowerCase()
 
             let name
-            let task
-
-            var ext = $('#file-upload-firebase').val().split('.').pop().toLowerCase()
-            if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
-                toastr.warning('Vui lòng chọn hình ảnh có đuôi .gif .png .jpg hoặc .jpeg !!!!')
-                return false
-            }
 
             if (id == 0) {
+
+                if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                    toastr.warning('Vui lòng chọn hình ảnh có đuôi .gif .png .jpg hoặc .jpeg !!!!')
+                    return false
+                }
+
                 //convert hình ảnh upload
                 try {
                     name = +new Date() + "-" + file.name
@@ -169,7 +169,7 @@ firebase.initializeApp(firebaseConfig)
                     contentType: file.type
                 };
 
-                task = ref.child(name).put(file, metadata)
+                const task = ref.child(name).put(file, metadata)
 
                 //Thêm mới đối tượng
                 $('#loading-event-khach-hang').show()
@@ -204,14 +204,23 @@ firebase.initializeApp(firebaseConfig)
                         })
                     })
                     .catch(console.error)
+
             } else {
                 //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
                 if ($('#file-upload-firebase').val() == '') {
+
                     //Không có cập nhật ảnh
                     const url = $('#img_' + id).prop('src')
                     $('#loading-event-khach-hang').show()
                     updateCustomer(url)
+
                 } else {
+
+                    if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                        toastr.warning('Vui lòng chọn hình ảnh có đuôi .gif .png .jpg hoặc .jpeg !!!!')
+                        return false
+                    }
+
                     //convert hình ảnh upload
                     try {
                         name = +new Date() + "-" + file.name
