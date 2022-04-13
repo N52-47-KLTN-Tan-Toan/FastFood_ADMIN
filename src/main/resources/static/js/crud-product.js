@@ -299,17 +299,17 @@ firebase.initializeApp(firebaseConfig)
             },
             // Hàm render filter option cho loại mặt hàng
             initComplete: function () {
-                var column = this.api().column(6);
+                var column = this.api().column(6)
 
                 var select = $('#select-lmh')
                     .on('change', function () {
                         var val = $(this).val();
-                        column.search(val ? '^' + $(this).val() + '$' : val, true, false).draw();
-                    });
+                        column.search(val ? '^' + $(this).val() + '$' : val, true, false).draw()
+                    })
 
                 column.data().unique().sort().each(function (d, j) {
-                    select.append('<option value="' + d + '">' + d + '</option>');
-                });
+                    select.append('<option value="' + d + '">' + d + '</option>')
+                })
             },
             columns: [{
                 class: 'text-center',

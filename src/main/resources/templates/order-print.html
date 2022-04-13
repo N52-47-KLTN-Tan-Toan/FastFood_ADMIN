@@ -59,7 +59,8 @@
                 <div class="col-sm-2 invoice-col ml-4">
                     Người bán hàng:
                     <address><strong th:if="${#request.userPrincipal != null}"
-                                     th:text="${'NV' + #strings.substring(#request.userPrincipal.principal.uuid, 31, 36)}"></strong></address>
+                                     th:text="${'NV' + #strings.substring(#request.userPrincipal.principal.uuid, 31, 36)}"></strong>
+                    </address>
                 </div>
             </div>
             <!-- /.row -->
@@ -105,15 +106,17 @@
                         </tr>
                         <tr>
                             <th>Tiền ship:</th>
-                            <td th:text="${#numbers.formatDecimal(15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
-<!--                            <td th:if="${donDatHang.hinhThuc != 'Giao tận nơi'}"-->
-<!--                                th:text="${#numbers.formatDecimal(0, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>-->
+                            <td th:if="${donDatHang.hinhThuc == 'Giao tận nơi'}"
+                                th:text="${#numbers.formatDecimal(15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                            <td th:if="${donDatHang.hinhThuc != 'Giao tận nơi'}"
+                                th:text="${#numbers.formatDecimal(0, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                         </tr>
                         <tr>
                             <th>Tổng cộng:</th>
-                            <td th:text="${#numbers.formatDecimal(donDatHang.tongTien + 15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
-<!--                            <td th:if="${donDatHang.hinhThuc != 'Giao tận nơi'}"-->
-<!--                                th:text="${#numbers.formatDecimal(donDatHang.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>-->
+                            <td th:if="${donDatHang.hinhThuc == 'Giao tận nơi'}"
+                                th:text="${#numbers.formatDecimal(donDatHang.tongTien + 15000, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                            <td th:if="${donDatHang.hinhThuc != 'Giao tận nơi'}"
+                                th:text="${#numbers.formatDecimal(donDatHang.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                         </tr>
                     </table>
                 </div>

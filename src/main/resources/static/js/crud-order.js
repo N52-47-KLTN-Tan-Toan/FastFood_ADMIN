@@ -18,7 +18,7 @@
         '<li class="nav-item">\n' +
         '<a id="tab1" class="nav-link active" href="#tab-table1" data-toggle="tab">Chờ xác nhận</a>\n' +
         '</li>' +
-        '<li class="nav-item">\n'+
+        '<li class="nav-item">\n' +
         '<a id="tab2" class="nav-link" href="#tab-table2" data-toggle="tab">Đang giao</a>\n' +
         '</li>' +
         '<li class="nav-item">\n' +
@@ -31,20 +31,6 @@
     assignDataToTable($('#example2'), 'Chờ xác nhận')
     assignDataToTable($('#myTable2'), 'Đang giao')
     assignDataToTable($('#myTable3'), 'Đã thanh toán')
-
-    //Trả dữ liệu modal thêm mặt hàng về rỗng
-    // $(document).on('click', '#add-btn-order', function () {
-    //     $("#ma-don-dat-hang").val(0)
-    //     $("#ngay-dat-hang").val(output)
-    //     $("#trang-thai").val('Chờ xác nhận')
-    //     $("#dia-chi-giao-hang").val('Tại chỗ')
-    //     $("#hinh-thuc").val('Dùng tại chỗ')
-    //
-    //     $("#trang-thai").prop('disabled', true)
-    //     $("#dia-chi-giao-hang").prop('disabled', true)
-    //     $("#hinh-thuc").prop('disabled', true)
-    //
-    // })
 
     //Lấy dữ liệu đối tượng từ nút edit
     $('table').on('click', '.edit-btn', function (e) {
@@ -75,34 +61,7 @@
 
         var id = $("#ma-don-dat-hang").val()
 
-        if (id == 0) {
-            $('#loading-event-order').show()
-
-            //Thêm mới đối tượng
-            $.ajax({
-                type: "POST",
-                url: url_api_order,
-                data: JSON.stringify({
-                    ngayDatHang: $("#ngay-dat-hang").val(),
-                    trangThai: $("#trang-thai").val(),
-                    diaChiGiaoHang: $("#dia-chi-giao-hang").val(),
-                    hinhThuc: 'Dùng tại chỗ'
-                }),
-
-                contentType: "application/json",
-                success: function (data) {
-                    loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
-                    toastr.success(data.maDDH + ' đã được thêm vào.')
-                },
-                error: function (err) {
-                    loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
-                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                }
-            })
-        } else if (id > 0) {
-            //Cập nhật thông tin đối tượng có hoặc không cập nhật ảnh trên firebase
-
-            //Không có cập nhật ảnh
+        if (id > 0) {
             $('#loading-event-order').show()
             updateTypeProduct()
 
@@ -197,7 +156,7 @@
     $('table').on('click', '.delete-btn', function () {
         let btn_id = this.id.split("_")[2]
 
-        $("#modal-overlay .modal-body").text('Xóa đơn đặt hàng "' + btn_id + '" ra khỏi danh sách?')
+        $("#modal-overlay .modal-body").text('Xóa đơn hàng "' + btn_id + '" ra khỏi danh sách?')
 
         // Xóa loại mặt hàng theo id và xóa dòng liên quan trên bảng
         $('#modal-accept-btn').click(function () {
@@ -209,16 +168,22 @@
                 type: "DELETE",
                 url: url_api_order + '/' + btn_id,
                 success: function (data) {
+                    refreshTableAndStatus()
                     loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
-                    toastr.success('Đơn đặt hàng "' + btn_id + '" đã xóa ra khỏi danh sách.')
+                    toastr.success('Đơn hàng "' + btn_id + '" đã xóa ra khỏi danh sách.')
                 },
                 error: function (err) {
                     loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
-                    toastr.error('Đã có lỗi xảy ra. Xóa thất bại')
                 }
             })
 
         })
+    })
+
+    $('table').on('click', '.chkDDH', function () {
+        let chkLength = $(':checkbox:checked').length + ''
+        $('.transferTusBtn span').text('Chuyển trạng thái ' +
+            'cho ' + chkLength + ' đơn hàng')
     })
 
     //Tab hiển thị bảng hóa đơn theo trạng thái
@@ -241,7 +206,8 @@
                     case 'Đã thanh toán':
                         $('#tab3').text('Đã thanh toán (' + data.length + ')')
                         break
-                    default : break
+                    default :
+                        break
                 }
 
             },
@@ -277,7 +243,7 @@
             autoWidth: false,
             responsive: true,
             processing: true,
-            order: [[4, 'asc']],
+            order: [[5, 'desc']],
             //Tạo id cho mỗi thẻ tr
             fnCreatedRow: function (nRow, aData, iDataIndex) {
                 $(nRow).attr('id', 'tr_' + aData.maDDH); // or whatever you choose to set as the id
@@ -293,27 +259,13 @@
                     return d
                 },
             },
-            // initComplete: function () {
-            //     this.api().columns([5]).every(function () {
-            //         var column = this;
-            //         var select = $('<select><option value=""></option></select>')
-            //             .appendTo($(column.footer()).empty())
-            //             .on('change', function () {
-            //                 var val = $.fn.dataTable.util.escapeRegex(
-            //                     $(this).val()
-            //                 )
-            //
-            //                 column
-            //                     .search(val ? '^' + val + '$' : '', true, false)
-            //                     .draw()
-            //             })
-            //
-            //         column.data().unique().sort().each(function (d, j) {
-            //             select.append('<option value="' + d + '">' + d + '</option>')
-            //         })
-            //     })
-            // },
             columns: [{
+                class: 'text-center',
+                data: 'maDDH',
+                render: function (data, type, row, meta) {
+                    return '<input class="chkDDH" type="checkbox" value="' + row.maDDH + '">'
+                }
+            }, {
                 class: 'text-center',
                 data: 'maDDH',
             }, {
@@ -336,8 +288,10 @@
                         case 'Đang giao':
                             return '<button class="btn btn-block bg-gradient-warning btn-sm text-black">' + row.trangThai + '</button>'
                         case 'Đã thanh toán':
+                            // $('.transferStatus').hide()
                             return '<button class="btn btn-block bg-gradient-success btn-sm text-black">' + row.trangThai + '</button>'
-                        default: break
+                        default:
+                            break
                     }
                 }
             }, {
@@ -380,15 +334,36 @@
                     text: '<i class="fas fa-sync"></i>',
                     action: function (e, dt, node, conf) {
                         t.ajax.reload(null, false)
+                        $(':checkbox:checked').each(function (i) {
+                            console.log($(this).val())
+                        })
                     }
                 },
-                // {
-                //     className: 'mr-1 mb-2 mt-2 btn bg-gradient-info add-btn',
-                //     text: '<i class="fas fa-plus"></i>&nbsp;&nbsp;&nbsp;Tạo đơn hàng',
-                //     action: function (e, dt, node, config) {
-                //         // $('#modal-xl').modal('show')
-                //     }
-                // },
+                {
+                    className: 'mb-2 mr-1 mt-2 btn bg-gradient-info transferTusBtn',
+                    text: 'Chuyển trạng thái',
+                    action: function (e, dt, node, conf) {
+                        if ($(':checkbox:checked').length == 0) {
+                            toastr.warning('Vui lòng tích vào 1 đơn để tiếp tục')
+                            return false
+                        }
+
+                        $(':checkbox:checked').each(function (i) {
+
+                            switch (status) {
+                                case 'Chờ xác nhận':
+                                    updateOrderStatus($(this).val(), 'Đang giao', $(':checkbox:checked').length)
+                                    break
+                                case 'Đang giao':
+                                    updateOrderStatus($(this).val(), 'Đã thanh toán', $(':checkbox:checked').length)
+                                    break
+                                default:
+                                    break
+                            }
+
+                        })
+                    }
+                },
                 {
                     className: 'mb-2 mt-2 btn bg-gradient-primary',
                     extend: 'colvis',
@@ -408,6 +383,90 @@
         $('#example2').DataTable().ajax.reload(null, false)
         $('#myTable2').DataTable().ajax.reload(null, false)
         $('#myTable3').DataTable().ajax.reload(null, false)
+    }
+
+    function updateOrderStatus(orderID, status, chkLength) {
+        $.ajax({
+            type: 'GET',
+            contentType: 'application/json',
+            url: url_api_order + '/' + orderID,
+            success: function (data) {
+                $.ajax({
+                    type: "PUT",
+                    data: JSON.stringify({
+                        ngayDatHang: data.ngayDatHang,
+                        trangThai: status,
+                        diaChiGiaoHang: data.diaChiGiaoHang,
+                        hinhThuc: data.hinhThuc,
+                        soDienThoai: data.soDienThoai,
+                        tongTien: data.tongTien,
+                        khachHang: {
+                            userId: data.khachHang.userId
+                        }
+                    }),
+                    contentType: "application/json",
+                    url: url_api_order + '/' + data.maDDH,
+                    success: function (orders) {
+                        refreshTableAndStatus()
+                        loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
+                        toastr.success('Đơn hàng ' + orders.maDDH + ' trong số ' + chkLength + ' đơn hàng đã được chuyển sang trạng thái ' + status)
+                        if (orders.trangThai == 'Đã thanh toán') {
+                            $.ajax({
+                                type: 'GET',
+                                contentType: "application/json",
+                                url: url_api_orderdetail + '/donDatHang=' + orders.maDDH,
+                                success: function (ods) {
+                                    $.each(ods, (i, obj) => {
+                                        totalCost += obj.matHang.donGia * obj.soLuongDat
+                                    })
+                                    $.ajax({
+                                        type: 'GET',
+                                        contentType: "application/json",
+                                        url: url_api_client + '/' + orders.khachHang.userId,
+                                        success: function (user) {
+                                            $.ajax({
+                                                type: "PUT",
+                                                data: JSON.stringify({
+                                                    name: user.name,
+                                                    birthDate: user.birthDate,
+                                                    phone: user.phone,
+                                                    email: user.email,
+                                                    address: user.address,
+                                                    gender: user.gender,
+                                                    avatar: user.avatar,
+                                                    roleName: user.roleName,
+                                                    password: user.password,
+                                                    diemTichLuy: parseInt(totalCost / 10000)
+                                                }),
+                                                contentType: "application/json",
+                                                url: url_api_client + '/' + orders.khachHang.userId,
+                                                success: function (data) {
+                                                },
+                                                error: function (err) {
+                                                }
+                                            })
+                                        },
+                                        error: function (err) {
+                                            alert("Error -> " + err)
+                                        }
+                                    })
+                                },
+                                error: function (err) {
+                                    alert("Error -> " + err)
+                                }
+                            });
+                        }
+                    },
+                    error: function (err) {
+                        loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
+                        toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                    }
+                });
+            },
+            error: function (err) {
+                alert("Error -> " + err);
+            }
+        })
     }
 
 }())

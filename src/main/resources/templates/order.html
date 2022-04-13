@@ -3,7 +3,9 @@
 
 <head th:replace="fragment-header :: fm-head"></head>
 
-<head><title>Quản lý đơn đặt hàng</title></head>
+<head>
+    <title>Quản lý đơn đặt hàng</title>
+</head>
 
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
@@ -26,6 +28,7 @@
                                     <table id="example2" class="table table-bordered table-striped">
                                         <thead>
                                         <tr>
+                                            <th></th>
                                             <th>Mã đơn</th>
                                             <th>Số điện thoại</th>
                                             <th>Tên khách hàng</th>
@@ -105,6 +108,9 @@
 <div th:replace="fragment-modal-order :: fm-modal-order"></div>
 <div th:replace="fragment-modal-notification :: fm-modal-notification"></div>
 <div th:replace="fragment-header :: fm-script"></div>
+
+<!-- Page specific script -->
 <script src="../../js/crud-order.js"></script>
+
 </body>
 </html>
