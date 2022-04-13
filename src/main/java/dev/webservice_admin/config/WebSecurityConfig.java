@@ -44,7 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/profile", "/product", "/type-product", "/introduce", "/dashboard")
                 .access("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF_WAREHOUSE')")
 
-                .antMatchers("/profile", "/order/**", "/khach-hang")
+                .antMatchers("/profile", "/order/**", "/khach-hang", "/createOrder/**")
                 .access("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF_SALES')")
 
                 .antMatchers("/profile", "/")

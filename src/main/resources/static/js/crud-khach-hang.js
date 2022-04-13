@@ -405,6 +405,13 @@ firebase.initializeApp(firebaseConfig)
                 class: 'text-center',
                 data: 'userId',
                 render: function (data, type, row, meta) {
+                    return '<button id="create_order_' + row.userId + '" class="btn bg-gradient-primary createOrderBtn" ' +
+                        '><i class="fas fa-cart-plus"></i></button>'
+                }
+            }, {
+                class: 'text-center',
+                data: 'userId',
+                render: function (data, type, row, meta) {
                     return '<button id="btn_edit_' + row.userId + '" class="btn bg-gradient-warning edit-btn" ' +
                         'data-toggle="modal" data-target="#modal-xl"><i class="fas fa-marker"></i></button>'
                 }
@@ -489,4 +496,28 @@ firebase.initializeApp(firebaseConfig)
             t.table().container()
         )
     }
+
+    $('table').on('click', '.createOrderBtn', function () {
+
+        let btn_id = this.id.split("_")[2]
+
+        $.ajax({
+            type: "POST",
+            url: url_api_order,
+            data: JSON.stringify({
+                khachHang: {
+                    userId: btn_id
+                }
+            }),
+
+            contentType: "application/json",
+            success: function (res) {
+                window.location.href = '/createOrder/customer/' + btn_id + '/order/' + res.maDDH
+            },
+            error: function (err) {
+                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
+                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+            }
+        })
+    })
 }())

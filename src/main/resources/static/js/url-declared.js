@@ -15,7 +15,7 @@ var Toast = Swal.mixin({
     position: 'top-end',
     showConfirmButton: false,
     timer: 5000
-});
+})
 
 var userId = $('#userId').val()
 
