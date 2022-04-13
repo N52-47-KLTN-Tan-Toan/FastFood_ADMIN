@@ -461,7 +461,8 @@ firebase.initializeApp(firebaseConfig)
                 data: 'avatar',
                 render: function (data, type, row, meta) {
                     return '<img id="img_' + row.userId + '" src="' + data + '" width="50" height="50" />';
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }, {
                 class: 'td_name',
                 data: 'name'
@@ -494,7 +495,8 @@ firebase.initializeApp(firebaseConfig)
                 </select> '
                             break
                     }
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }, {
                 class: 'td_address',
                 data: 'address'
@@ -520,7 +522,8 @@ firebase.initializeApp(firebaseConfig)
                 render: function (data, type, row, meta) {
                     return '<button id="btn_edit_' + row.userId + '" class="btn bg-gradient-warning edit-btn" ' +
                         'data-toggle="modal" data-target="#modal-xl"><i class="fas fa-marker"></i></button>'
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }, {
                 class: 'text-center',
                 data: 'userId',
@@ -533,7 +536,8 @@ firebase.initializeApp(firebaseConfig)
                             '<i class="fas fa-trash-alt"></i>' +
                             '</button>'
                     }
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }]
         })
 

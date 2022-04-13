@@ -181,9 +181,20 @@
     })
 
     $('table').on('click', '.chkDDH', function () {
-        let chkLength = $(':checkbox:checked').length + ''
+        $('#checkAll, #checkAllTab2').prop('checked', false)
         $('.transferTusBtn span').text('Chuyển trạng thái ' +
-            'cho ' + chkLength + ' đơn hàng')
+            'cho ' + $('.chkDDH:checkbox:checked').length + ' đơn hàng')
+    })
+
+    $('#checkAll, #checkAllTab2').click(function () {
+        $('#example2 input:checkbox, #myTable2 input:checkbox').not(this).prop('checked', this.checked)
+
+        $('.transferTusBtn span').text('Chuyển trạng thái ' +
+            'cho ' + $('.chkDDH:checkbox:checked').length + ' đơn hàng')
+
+        // $('.chkDDH:checkbox:checked').each(function (i) {
+        //     console.log($(this).val())
+        // })
     })
 
     //Tab hiển thị bảng hóa đơn theo trạng thái
@@ -259,12 +270,18 @@
                     return d
                 },
             },
+
             columns: [{
                 class: 'text-center',
                 data: 'maDDH',
                 render: function (data, type, row, meta) {
-                    return '<input class="chkDDH" type="checkbox" value="' + row.maDDH + '">'
-                }
+                    if (row.trangThai != 'Đã thanh toán') {
+                        return '<input class="chkDDH" type="checkbox" value="' + row.maDDH + '">'
+                    } else {
+                        return '<input type="checkbox" disabled>'
+                    }
+                },
+                searchable: false, orderable: false, visible: true
             }, {
                 class: 'text-center',
                 data: 'maDDH',
@@ -288,7 +305,6 @@
                         case 'Đang giao':
                             return '<button class="btn btn-block bg-gradient-warning btn-sm text-black">' + row.trangThai + '</button>'
                         case 'Đã thanh toán':
-                            // $('.transferStatus').hide()
                             return '<button class="btn btn-block bg-gradient-success btn-sm text-black">' + row.trangThai + '</button>'
                         default:
                             break
@@ -309,7 +325,8 @@
                 render: function (data, type, row, meta) {
                     return '<button id="btn_edit_' + row.maDDH + '" class="btn bg-gradient-primary btn-sm text-white edit-btn" ' +
                         'data-toggle="modal" data-target="#modal-xl"><i class="fas fa-marker"></i></button>'
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }, {
                 class: 'text-center',
                 data: 'maDDH',
@@ -317,14 +334,16 @@
                     return '  <a href="/order/print?orderId=' + row.maDDH + '" rel="noopener" target="_blank" id="btn_print_' + row.maDDH + '" ' +
                         'class="btn bg-gradient-indigo btn-sm print-btn">' +
                         '<i class="fas fa-print"></i></a>'
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }, {
                 class: 'text-center',
                 data: 'maDDH',
                 render: function (data, type, row, meta) {
                     return '  <button id="btn_delete_' + row.maDDH + '" class="btn bg-gradient-danger btn-sm delete-btn" ' +
                         'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>'
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }]
         })
         new $.fn.dataTable.Buttons(t, {
@@ -334,21 +353,18 @@
                     text: '<i class="fas fa-sync"></i>',
                     action: function (e, dt, node, conf) {
                         t.ajax.reload(null, false)
-                        $(':checkbox:checked').each(function (i) {
-                            console.log($(this).val())
-                        })
                     }
                 },
                 {
                     className: 'mb-2 mr-1 mt-2 btn bg-gradient-info transferTusBtn',
                     text: 'Chuyển trạng thái',
                     action: function (e, dt, node, conf) {
-                        if ($(':checkbox:checked').length == 0) {
+                        if ($('.chkDDH:checkbox:checked').length == 0) {
                             toastr.warning('Vui lòng tích vào 1 đơn để tiếp tục')
                             return false
                         }
 
-                        $(':checkbox:checked').each(function (i) {
+                        $('.chkDDH:checkbox:checked').each(function (i) {
 
                             switch (status) {
                                 case 'Chờ xác nhận':
@@ -407,6 +423,8 @@
                     contentType: "application/json",
                     url: url_api_order + '/' + data.maDDH,
                     success: function (orders) {
+                        $('#checkAll, #checkAllTab2 ').prop('checked', false)
+                        $('.transferTusBtn span').text('Chuyển trạng thái')
                         refreshTableAndStatus()
                         loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
                         toastr.success('Đơn hàng ' + orders.maDDH + ' trong số ' + chkLength + ' đơn hàng đã được chuyển sang trạng thái ' + status)

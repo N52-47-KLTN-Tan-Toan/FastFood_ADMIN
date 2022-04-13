@@ -191,7 +191,8 @@
                 render: function (data, type, row, meta) {
                     return '<button id="btn_edit_' + row.maLMH + '" class="btn bg-gradient-warning edit-btn" ' +
                         'data-toggle="modal" data-target="#modal-lg"><i class="fas fa-marker"></i></button>'
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }, {
                 class: 'text-center',
                 data: 'maLMH',
@@ -199,7 +200,8 @@
                     return '  <button id="btn_delete_' + row.maLMH + '" class="btn bg-gradient-danger delete-btn" ' +
                         'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>'
 
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }]
         })
 

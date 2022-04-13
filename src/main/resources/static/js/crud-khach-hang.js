@@ -369,13 +369,14 @@ firebase.initializeApp(firebaseConfig)
 
             columns: [{
                 class: 'text-center',
-                data: 'userId',
+                data: 'userId'
             }, {
                 class: 'text-center',
                 data: 'avatar',
                 render: function (data, type, row, meta) {
                     return '<img id="img_' + row.userId + '" src="' + data + '" width="50" height="50" />'
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }, {
                 class: 'td_name',
                 data: 'name'
@@ -407,14 +408,16 @@ firebase.initializeApp(firebaseConfig)
                 render: function (data, type, row, meta) {
                     return '<button id="create_order_' + row.userId + '" class="btn bg-gradient-primary createOrderBtn" ' +
                         '><i class="fas fa-cart-plus"></i></button>'
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }, {
                 class: 'text-center',
                 data: 'userId',
                 render: function (data, type, row, meta) {
                     return '<button id="btn_edit_' + row.userId + '" class="btn bg-gradient-warning edit-btn" ' +
                         'data-toggle="modal" data-target="#modal-xl"><i class="fas fa-marker"></i></button>'
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }, {
                 class: 'text-center',
                 data: 'userId',
@@ -427,7 +430,8 @@ firebase.initializeApp(firebaseConfig)
                             '<i class="fas fa-trash-alt"></i>' +
                             '</button>'
                     }
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }]
         })
 

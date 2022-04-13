@@ -158,10 +158,8 @@
 
                             contentType: 'application/json',
                             success: function () {
-                                toastr.success('Tạo đơn hàng thành công. Đợi 2 giây để chuyển tiếp trang')
-                                setTimeout(function () {
-                                    window.location.href = '/order'
-                                }, 2000)
+                                toastr.success('Tạo đơn hàng thành công.')
+                                window.location.href = '/order'
                             },
                             error: function () {
                                 toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
@@ -227,7 +225,8 @@
                 render: function (data, type, row, meta) {
                     return '<button id="btn_choose_' + row.maMH + '" class="btn bg-gradient-primary chooseProduct"' +
                         '>Chọn</button>'
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }]
         })
 
@@ -283,7 +282,8 @@
                         '<i class="fas fa-trash"></i>' +
                         '</button>' +
                         '</div>'
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }],
             footerCallback: function (row, data, start, end, display) {
                 var api = this.api()

@@ -302,7 +302,8 @@ firebase.initializeApp(firebaseConfig)
                 data: 'hinhAnh',
                 render: function (data, type, row, meta) {
                     return '<img id="img_' + row.maGT + '" src="' + data + '" width="50" height="50" />';
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }, {
                 class: 'td_ten',
                 data: 'ten'
@@ -318,14 +319,16 @@ firebase.initializeApp(firebaseConfig)
                 render: function (data, type, row, meta) {
                     return '<button id="btn_edit_' + row.maGT + '" class="btn bg-gradient-warning edit-btn" ' +
                         'data-toggle="modal" data-target="#modal-xl"><i class="fas fa-marker"></i></button>'
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }, {
                 class: 'text-center',
                 data: 'maGT',
                 render: function (data, type, row, meta) {
                     return '  <button id="btn_delete_' + row.maGT + '" class="btn bg-gradient-danger delete-btn" ' +
                         'data-toggle="modal" data-target="#modal-overlay"><i class="fas fa-trash-alt"></i></button>'
-                }
+                },
+                searchable: false, orderable: false, visible: true
             }]
         })
 
