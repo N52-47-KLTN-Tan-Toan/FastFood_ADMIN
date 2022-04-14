@@ -42,15 +42,15 @@ firebase.initializeApp(firebaseConfig)
             required: true,
             digits: true,
             pattern: /^(84|0[2|3|5|7|8|9])+([0-9]{8})$/,
-            remote: {
-                url: url_api_client + '/checkExistsByPhone',
-                type: 'POST',
-                data: {
-                    p: function () {
-                        return $("#sdt").val()
-                    }
-                }
-            }
+            // remote: {
+            //     url: url_api_client + '/checkExistsByPhone',
+            //     type: 'POST',
+            //     data: {
+            //         p: function () {
+            //             return $("#sdt").val()
+            //         }
+            //     }
+            // }
         },
         email: {
             required: true,
@@ -77,7 +77,7 @@ firebase.initializeApp(firebaseConfig)
             required: 'Vui lòng điền số điện thoại',
             digits: 'Chỉ được nhập số',
             pattern: 'Gồm 0(3|5|7|8|9) đầu và 8 số theo sau',
-            remote: 'Số điện thoại này đã tồn tại'
+            // remote: 'Số điện thoại này đã tồn tại'
         },
         email: {
             required: 'Vui lòng điền email',

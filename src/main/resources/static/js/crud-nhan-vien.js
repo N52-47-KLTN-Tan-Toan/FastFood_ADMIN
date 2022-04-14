@@ -77,15 +77,15 @@ firebase.initializeApp(firebaseConfig)
         tenDangNhap: {
             required: true,
             pattern: /^[a-z0-9_-]{5,15}$/,
-            remote: {
-                url: url_api_staff + '/checkExistsByUsername',
-                type: 'POST',
-                data: {
-                    u: function () {
-                        return $("#ten-dang-nhap").val()
-                    }
-                }
-            }
+            // remote: {
+            //     url: url_api_staff + '/checkExistsByUsername',
+            //     type: 'POST',
+            //     data: {
+            //         u: function () {
+            //             return $("#ten-dang-nhap").val()
+            //         }
+            //     }
+            // }
         }
     }
 
@@ -119,7 +119,7 @@ firebase.initializeApp(firebaseConfig)
         tenDangNhap: {
             required: 'Vui lòng điền tên đăng nhập',
             pattern: 'Tên đăng nhập từ 5 đến 15 ký tự, bao gồm cả chữ và số',
-            remote: 'Tên đăng nhập đã tồn tại'
+            // remote: 'Tên đăng nhập đã tồn tại'
         }
     }
 
@@ -164,8 +164,8 @@ firebase.initializeApp(firebaseConfig)
                 $("#image-upload-firebase").attr('src', data.avatar)
                 $("#email").val(data.email)
                 $("#dia-chi").val(data.address)
-                $('#ten-dang-nhap').val('hidden404' + data.username.substring(3, 5))
-                $('#ten-dang-nhap').prop('readonly', true)
+                $('#ten-dang-nhap').val(data.username)
+                // $('#ten-dang-nhap').prop('readonly', true)
                 if (data.gender == true) {
                     $('#gender-male').prop("checked", true)
                 } else {
