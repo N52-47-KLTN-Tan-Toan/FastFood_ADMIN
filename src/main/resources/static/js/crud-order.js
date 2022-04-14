@@ -152,32 +152,33 @@
         }
     })
 
-    // Hiển thị modal thông báo xóa loại mặt hàng
+    // Hiển thị modal thông báo xóa đơn hàng
     $('table').on('click', '.delete-btn', function () {
-        let btn_id = this.id.split("_")[2]
+        let btn_id = this.id
+        orderId = btn_id.split("_")[2]
+        $("#modal-overlay .modal-body").text('Xóa đơn hàng "' + orderId + '" ra khỏi danh sách?')
+    })
 
-        $("#modal-overlay .modal-body").text('Xóa đơn hàng "' + btn_id + '" ra khỏi danh sách?')
+    // Xóa đơn hàng theo thông báo của modal và reload bảng
+    $('#modal-accept-btn').click(function () {
 
-        // Xóa loại mặt hàng theo id và xóa dòng liên quan trên bảng
-        $('#modal-accept-btn').click(function () {
+        $('#loading-event-order').show()
 
-            $('#loading-event-order').show()
-
-            // Delete Object by id
-            $.ajax({
-                type: "DELETE",
-                url: url_api_order + '/' + btn_id,
-                success: function (data) {
-                    refreshTableAndStatus()
-                    loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
-                    toastr.success('Đơn hàng "' + btn_id + '" đã xóa ra khỏi danh sách.')
-                },
-                error: function (err) {
-                    loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
-                }
-            })
-
+        // Delete Object by id
+        $.ajax({
+            type: "DELETE",
+            url: url_api_order + '/' + orderId,
+            success: function (data) {
+                refreshTableAndStatus()
+                loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
+                toastr.success('Đơn hàng "' + orderId + '" đã xóa ra khỏi danh sách.')
+            },
+            error: function (err) {
+                loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
+                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+            }
         })
+
     })
 
     $('table').on('click', '.chkDDH', function () {

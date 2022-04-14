@@ -215,41 +215,32 @@ firebase.initializeApp(firebaseConfig)
     //Hiển thị modal thông báo xóa giới thiệu
     $('table').on('click', '.delete-btn', function () {
 
-        let btn_id = this.id.split("_")[2]
+        let btn_id = this.id
+        introId = btn_id.split("_")[2]
 
+        $('#modal-overlay .modal-body').text('Xóa phần giới thiệu "' + introId + '" ra khỏi danh sách?')
+
+    })
+
+    //Xóa giới thiệu theo id hiển thị trên modal thông báo
+    $('#modal-accept-btn').click(function () {
+
+        $('#loading-event-introduce').show()
+
+        deleteImageToStorageById(introId, url_api_introduce)
+
+        //Delete Object by id
         $.ajax({
-            type: 'GET',
-            contentType: "application/json",
-            url: url_api_introduce + '/' + btn_id,
+            type: "DELETE",
+            url: url_api_introduce + '/' + introId,
             success: function (data) {
-                $("#modal-overlay .modal-body").text("Xóa phần giới thiệu \"" + btn_id + "\" ra khỏi danh sách?")
+                loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
+                toastr.success('Phần giới thiệu \"' + introId + '\" đã xóa ra khỏi danh sách.')
             },
             error: function (err) {
-                alert("Error -> " + err)
+                loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
+                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
             }
-        })
-
-        //Xóa giới thiệu theo id
-        $('#modal-accept-btn').click(function () {
-
-            $('#loading-event-introduce').show()
-
-            deleteImageToStorageById(btn_id, url_api_introduce)
-
-            //Delete Object by id
-            $.ajax({
-                type: "DELETE",
-                url: url_api_introduce + '/' + btn_id,
-                success: function (data) {
-                    loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
-                    toastr.success('Phần giới thiệu \"' + btn_id + '\" đã xóa ra khỏi danh sách.')
-                },
-                error: function (err) {
-                    loadingModalAndRefreshTable($('#loading-event-introduce'), $('#example2'))
-                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                }
-            })
-
         })
 
     })

@@ -231,30 +231,33 @@ firebase.initializeApp(firebaseConfig)
 
     //Hiển thị modal thông báo xóa mặt hàng
     $('table').on('click', '.delete-btn', function () {
-        let btn_id = this.id.split("_")[2]
 
-        $("#modal-overlay .modal-body").text("Xóa mặt hàng \"" + btn_id + "\" ra khỏi danh sách?")
+        let btn_id = this.id
+        productId = btn_id.split("_")[2]
 
-        //Xóa mặt hàng theo id và xóa dòng liên quan trên bảng
-        $('#modal-accept-btn').click(function () {
+        $('#modal-overlay .modal-body').text('Xóa mặt hàng "' + productId + '" ra khỏi danh sách?')
 
-            $('#loading-notification').show()
+    })
 
-            deleteImageToStorageById(btn_id, url_api_product)
+    //Xóa mặt hàng theo id và xóa dòng liên quan trên bảng
+    $('#modal-accept-btn').click(function () {
 
-            //Delete Object by id
-            $.ajax({
-                type: "DELETE",
-                url: url_api_product + '/' + btn_id,
-                success: function (data) {
-                    loadingModalAndRefreshTable($('#loading-notification'), $('#example2'))
-                    toastr.success('Mặt hàng \"' + btn_id + '\" đã xóa ra khỏi danh sách.')
-                },
-                error: function (err) {
-                    loadingModalAndRefreshTable($('#loading-notification'), $('#example2'))
-                    toastr.error('Mặt hàng này đang được bán. Không thể xóa')
-                }
-            })
+        $('#loading-notification').show()
+
+        deleteImageToStorageById(productId, url_api_product)
+
+        //Delete Object by id
+        $.ajax({
+            type: "DELETE",
+            url: url_api_product + '/' + productId,
+            success: function (data) {
+                loadingModalAndRefreshTable($('#loading-notification'), $('#example2'))
+                toastr.success('Mặt hàng \"' + productId + '\" đã xóa ra khỏi danh sách.')
+            },
+            error: function (err) {
+                loadingModalAndRefreshTable($('#loading-notification'), $('#example2'))
+                toastr.error('Mặt hàng này đang được bán. Không thể xóa')
+            }
         })
     })
 

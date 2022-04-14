@@ -2,6 +2,7 @@
 
     renderTableProduct()
 
+    //Chọn mặt hàng để thêm vào chi tiết
     $('#tbl-product').on('click', '.chooseProduct', function () {
         let maMH = this.id.split("_")[2]
         $('#btn_choose_' + maMH).prop('disabled', true).text('Đã chọn').removeClass('chooseProduct')
@@ -41,6 +42,7 @@
         })
     })
 
+    //Xóa mặt hàng trong chi tiết đơn hàng
     $('#tbl-order-detail').on('click', '.removeBtn', function () {
         let maMH = this.id.split("_")[3]
         let maCTDDH = this.id.split("_")[2]
@@ -65,6 +67,7 @@
         })
     })
 
+    //Thay đổi số lượng và cập nhật lại bảng (thành tiền, tổng tiền)
     $('#tbl-order-detail').on('keyup change', '.qtyBtn', function () {
         let maMH = this.id.split("_")[3]
         let maCTDDH = this.id.split("_")[2]
@@ -74,37 +77,39 @@
             qty = 1
         }
 
-        $.ajax({
-            type: 'GET',
-            url: url_api_product + '/' + maMH,
-            contentType: 'application/json',
-            success: function (matHang) {
-                $.ajax({
-                    type: 'PUT',
-                    url: url_api_orderdetail + '/' + maCTDDH,
-                    data: JSON.stringify({
-                        soLuongDat: qty,
-                        matHang: {
-                            maMH: maMH
+        setTimeout(function changeQuantity() {
+            $.ajax({
+                type: 'GET',
+                url: url_api_product + '/' + maMH,
+                contentType: 'application/json',
+                success: function (matHang) {
+                    $.ajax({
+                        type: 'PUT',
+                        url: url_api_orderdetail + '/' + maCTDDH,
+                        data: JSON.stringify({
+                            soLuongDat: qty,
+                            matHang: {
+                                maMH: maMH
+                            },
+                            donDatHang: {
+                                maDDH: $('#orderID').text()
+                            },
+                            donGia: matHang.donGia * qty
+                        }),
+                        contentType: 'application/json',
+                        success: function () {
+                            $('#tbl-order-detail').DataTable().ajax.reload(null, false)
                         },
-                        donDatHang: {
-                            maDDH: $('#orderID').text()
-                        },
-                        donGia: matHang.donGia * qty
-                    }),
-                    contentType: 'application/json',
-                    success: function () {
-                        $('#tbl-order-detail').DataTable().ajax.reload(null, false)
-                    },
-                    error: function () {
-                        toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                    }
-                })
-            },
-            error: function (err) {
-                alert(err)
-            }
-        })
+                        error: function () {
+                            toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                        }
+                    })
+                },
+                error: function (err) {
+                    alert(err)
+                }
+            })
+        }, 1000)
     })
 
     $('.cancelBtn').click(function () {

@@ -290,39 +290,31 @@ firebase.initializeApp(firebaseConfig)
     //Hiển thị modal thông báo xóa khách hàng
     $('table').on('click', '.delete-btn', function () {
 
-        let btn_id = this.id.split("_")[2]
+        let btn_id = this.id
+        customerId = btn_id.split("_")[2]
 
+        $('#modal-overlay .modal-body').text('Xóa khách hàng "' + customerId + '" ra khỏi danh sách?')
+
+    })
+
+    //Xóa khách hàng theo id hiển thị trên modal thông báo
+    $('#modal-accept-btn').click(function () {
+        $('#loading-event-khach-hang').show()
+
+        deleteImageToStorageByIdForPerson(customerId, url_api_client)
+
+        //Delete Object by id
         $.ajax({
-            type: 'GET',
-            contentType: "application/json",
-            url: url_api_client + '/' + btn_id,
+            type: "DELETE",
+            url: url_api_client + '/' + customerId,
             success: function (data) {
-                $("#modal-overlay .modal-body").text("Xóa khách hàng \"" + data.name + "\" ra khỏi danh sách?")
+                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
+                toastr.success('Khách hàng "' + customerId + '" đã xóa ra khỏi danh sách.')
             },
             error: function (err) {
-                alert("Error -> " + err)
+                loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
+                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
             }
-        })
-
-        //Xóa khách hàng theo id
-        $('#modal-accept-btn').click(function () {
-            $('#loading-event-khach-hang').show()
-
-            deleteImageToStorageByIdForPerson(btn_id, url_api_client)
-
-            //Delete Object by id
-            $.ajax({
-                type: "DELETE",
-                url: url_api_client + '/' + btn_id,
-                success: function (data) {
-                    loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
-                    toastr.success('Khách hàng \"' + btn_id + '\" đã xóa ra khỏi danh sách.')
-                },
-                error: function (err) {
-                    loadingModalAndRefreshTable($('#loading-event-khach-hang'), $('#example2'))
-                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                }
-            })
         })
     })
 

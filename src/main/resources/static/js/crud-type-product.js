@@ -112,29 +112,30 @@
     // Hiển thị modal thông báo xóa loại mặt hàng
     $('table').on('click', '.delete-btn', function () {
 
-        let btn_id = this.id.split("_")[2]
+        let btn_id = this.id
+        categorieId = btn_id.split('_')[2]
 
-        $("#modal-overlay .modal-body").text("Xóa loại mặt hàng \"" + btn_id + "\" ra khỏi danh sách?")
+        $('#modal-overlay .modal-body').text('Xóa loại mặt hàng "' + categorieId + '" ra khỏi danh sách?')
 
-        // Xóa loại mặt hàng theo id và xóa dòng liên quan trên bảng
-        $('#modal-accept-btn').click(function () {
+    })
 
-            $('#loading-notification').show()
+    // Xóa loại mặt hàng theo id và xóa dòng liên quan trên bảng
+    $('#modal-accept-btn').click(function () {
 
-            // Delete Object by id
-            $.ajax({
-                type: "DELETE",
-                url: "http://localhost:8000/api/v1/loai-mat-hang/" + btn_id,
-                success: function (data) {
-                    loadingModalAndRefreshTable($('#loading-notification'), $('#example2'));
-                    toastr.success('Loại mặt hàng \"' + btn_id + '\" đã xóa ra khỏi danh sách.');
-                },
-                error: function (err) {
-                    loadingModalAndRefreshTable($('#loading-notification'), $('#example2'));
-                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                }
-            })
+        $('#loading-notification').show()
 
+        // Delete Object by id
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:8000/api/v1/loai-mat-hang/' + categorieId,
+            success: function (data) {
+                loadingModalAndRefreshTable($('#loading-notification'), $('#example2'));
+                toastr.success('Loại mặt hàng "' + categorieId + '" đã xóa ra khỏi danh sách.');
+            },
+            error: function (err) {
+                loadingModalAndRefreshTable($('#loading-notification'), $('#example2'));
+                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+            }
         })
 
     })

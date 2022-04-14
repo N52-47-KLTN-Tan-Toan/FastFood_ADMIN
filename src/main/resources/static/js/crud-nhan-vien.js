@@ -333,40 +333,32 @@ firebase.initializeApp(firebaseConfig)
     //Hiển thị modal thông báo xóa nhân viên
     $('table').on('click', '.delete-btn', function () {
 
-        let btn_id = this.id.split("_")[2]
+        let btn_id = this.id
+        staffId = btn_id.split("_")[2]
 
+        $('#modal-overlay .modal-body').text('Xóa nhân viên "' + staffId + '" ra khỏi danh sách?')
+
+    })
+
+    //Xóa nhân viên theo id
+    $('#modal-accept-btn').click(function () {
+
+        $('#loading-event-nhan-vien').show()
+
+        deleteImageToStorageByIdForPerson(staffId, url_api_staff)
+
+        //Delete Object by id
         $.ajax({
-            type: 'GET',
-            contentType: "application/json",
-            url: url_api_staff + '/' + btn_id,
+            type: "DELETE",
+            url: url_api_staff + '/' + staffId,
             success: function (data) {
-                $("#modal-overlay .modal-body").text("Xóa nhân viên \"" + data.name + "\" ra khỏi danh sách?")
+                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                toastr.success('Nhân viên "' + staffId + '" đã xóa ra khỏi danh sách.')
             },
             error: function (err) {
-                alert("Error -> " + err)
+                loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
+                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
             }
-        })
-
-        //Xóa nhân viên theo id
-        $('#modal-accept-btn').click(function () {
-
-            $('#loading-event-nhan-vien').show()
-
-            deleteImageToStorageByIdForPerson(btn_id, url_api_staff)
-
-            //Delete Object by id
-            $.ajax({
-                type: "DELETE",
-                url: url_api_staff + '/' + btn_id,
-                success: function (data) {
-                    loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
-                    toastr.success('Nhân viên \"' + btn_id + '\" đã xóa ra khỏi danh sách.')
-                },
-                error: function (err) {
-                    loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
-                    toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
-                }
-            })
         })
     })
 
