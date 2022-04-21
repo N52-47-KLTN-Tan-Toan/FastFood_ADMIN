@@ -389,7 +389,7 @@ firebase.initializeApp(firebaseConfig)
                     url: url_api_staff + '/' + btn_id,
                     success: function (data) {
                         loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
-                        toastr.success('Quyền cũa nhân viên ' + data.name + ' đã được thay đổi.')
+                        toastr.success('Quyền của nhân viên ' + data.name + ' đã được thay đổi.')
                     },
                     error: function (err) {
                         loadingModalAndRefreshTable($('#loading-event-nhan-vien'), $('#example2'))
