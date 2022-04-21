@@ -188,7 +188,7 @@ firebase.initializeApp(firebaseConfig)
                                 gender: $(".rad-gender:checked").val() == 1 ? true : false,
                                 avatar: url,
                                 roleName: 'ROLE_CLIENT',
-                                password: '1234',
+                                password: '$2a$10$1yXEWvGsKPYbh7uvoMzjt.O1MZ.wqcuroA9c4t8.X5aBR5GEgWK4W',
                                 diemTichLuy: 0
                             }),
 
