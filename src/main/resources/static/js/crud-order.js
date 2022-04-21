@@ -379,6 +379,8 @@
                             }
 
                         })
+
+                        toastr.success('Chuyển trạng thái cho ' + $('.chkDDH:checkbox:checked').length + ' đơn hàng thành công')
                     }
                 },
                 {
@@ -428,7 +430,7 @@
                         $('.transferTusBtn span').text('Chuyển trạng thái')
                         refreshTableAndStatus()
                         loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
-                        toastr.success('Đơn hàng ' + orders.maDDH + ' trong số ' + chkLength + ' đơn hàng đã được chuyển sang trạng thái ' + status)
+                        // toastr.success('Đơn hàng ' + orders.maDDH + ' trong số ' + chkLength + ' đơn hàng đã được chuyển sang trạng thái ' + status)
                         if (orders.trangThai == 'Đã thanh toán') {
                             $.ajax({
                                 type: 'GET',
@@ -480,10 +482,10 @@
                         loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
                         toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
                     }
-                });
+                })
             },
             error: function (err) {
-                alert("Error -> " + err);
+                alert("Error -> " + err)
             }
         })
     }
