@@ -87,7 +87,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'GET',
             contentType: 'application/json',
-            url: url_api_orderdetail + '/' + tail,
+            url: url_api_product + '/' + tail,
             success: function (data) {
 
                 if (data.length == 0) {
@@ -104,8 +104,8 @@ $(document).ready(function () {
                     let values = []
                     let colors = []
                     for (var i in data) {
-                        labels.push(data[i].matHang.tenMH)
-                        values.push(data[i].soLuongDat)
+                        labels.push(data[i].tenMH)
+                        values.push(data[i].donGia)
                     }
                     for(var i = 0; i < data.length; i++){
                         const randomColor = Math.floor(Math.random() * 16777215).toString(16)
