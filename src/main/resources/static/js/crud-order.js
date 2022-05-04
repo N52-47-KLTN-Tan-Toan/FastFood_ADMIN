@@ -1,5 +1,4 @@
 ;(function () {
-
     let d = new Date()
 
     let month = d.getMonth() + 1
@@ -56,7 +55,7 @@
     })
 
     //Tạo mới loại mặt hàng và cập nhật loại mặt hàng
-    $("#create-update-order").submit(function (evt) {
+    $('#create-update-order').submit(function (evt) {
         evt.preventDefault()
 
         var id = $("#ma-don-dat-hang").val()
@@ -81,6 +80,7 @@
                                 hinhThuc: $('#hinh-thuc').val(),
                                 soDienThoai: data.soDienThoai,
                                 tongTien: data.tongTien,
+                                maGiamGia: data.maGiamGia,
                                 khachHang: {
                                     userId: data.khachHang.userId
                                 }
@@ -411,7 +411,7 @@
             url: url_api_order + '/' + orderID,
             success: function (data) {
                 $.ajax({
-                    type: "PUT",
+                    type: 'PUT',
                     data: JSON.stringify({
                         ngayDatHang: data.ngayDatHang,
                         trangThai: status,
@@ -419,11 +419,12 @@
                         hinhThuc: data.hinhThuc,
                         soDienThoai: data.soDienThoai,
                         tongTien: data.tongTien,
+                        maGiamGia: data.maGiamGia,
                         khachHang: {
                             userId: data.khachHang.userId
                         }
                     }),
-                    contentType: "application/json",
+                    contentType: 'application/json',
                     url: url_api_order + '/' + data.maDDH,
                     success: function (orders) {
                         $('#checkAll, #checkAllTab2 ').prop('checked', false)
@@ -489,5 +490,4 @@
             }
         })
     }
-
 }())
