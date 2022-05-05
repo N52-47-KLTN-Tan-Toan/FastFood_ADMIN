@@ -41,17 +41,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/static/**").permitAll()
 
                 //Trang thuộc về role
-                .antMatchers("/profile", "/product", "/type-product", "/introduce", "/dashboard")
-                .access("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF_WAREHOUSE')")
+                .antMatchers("/product", "/type-product", "/introduce", "/dashboard")
+                .access("hasRole('ROLE_STAFF_WAREHOUSE')")
 
-                .antMatchers("/profile", "/order/**", "/khach-hang", "/createOrder/**")
-                .access("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF_SALES')")
+                .antMatchers("/order/**", "/createOrder/**")
+                .access("hasRole('ROLE_STAFF_SALES')")
 
                 .antMatchers("/profile", "/")
                 .access("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF_SALES', 'ROLE_STAFF_WAREHOUSE')")
 
                 .antMatchers("/nhan-vien")
                 .access("hasRole('ROLE_ADMIN')")
+
+                .antMatchers("/khach-hang")
+                .access("hasAnyRole('ROLE_STAFF_SALES', 'ROLE_ADMin')")
 
                 //Trang không đúng role sẽ bắt lỗi
                 .and()

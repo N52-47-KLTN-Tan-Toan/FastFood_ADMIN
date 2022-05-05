@@ -255,7 +255,7 @@
             autoWidth: false,
             responsive: true,
             processing: true,
-            order: [[5, 'desc']],
+            order: [[1, 'desc']],
             //Tạo id cho mỗi thẻ tr
             fnCreatedRow: function (nRow, aData, iDataIndex) {
                 $(nRow).attr('id', 'tr_' + aData.maDDH); // or whatever you choose to set as the id
