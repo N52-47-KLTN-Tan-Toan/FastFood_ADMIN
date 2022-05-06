@@ -54,7 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .access("hasRole('ROLE_ADMIN')")
 
                 .antMatchers("/khach-hang")
-                .access("hasAnyRole('ROLE_STAFF_SALES', 'ROLE_ADMin')")
+                .access("hasAnyRole('ROLE_STAFF_SALES', 'ROLE_ADMIN')")
 
                 //Trang không đúng role sẽ bắt lỗi
                 .and()
