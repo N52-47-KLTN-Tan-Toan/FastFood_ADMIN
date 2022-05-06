@@ -26,9 +26,9 @@
                         <div class="card card-primary card-outline">
                             <div class="card-body box-profile">
                                 <div class="text-center">
-                                    <img class="profile-user-img img-fluid img-circle elevation-2"
+                                    <img class="profile-user-img img-circle elevation-2"
                                          th:src="${#authentication.principal.image}"
-                                         alt="User profile picture">
+                                         alt="User profile picture" width="100" height="100">
                                 </div>
 
                                 <h3 class="profile-username text-center" sec:authentication="principal.fullName"></h3>

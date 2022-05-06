@@ -459,6 +459,7 @@ firebase.initializeApp(firebaseConfig)
                 class: 'td_name',
                 data: 'name'
             }, {
+                width: '20%',
                 class: 'td_tenLNV',
                 data: 'roleName',
                 render: function (data, type, row, meta) {
