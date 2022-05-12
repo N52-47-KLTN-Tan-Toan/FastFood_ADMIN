@@ -158,7 +158,8 @@
                                     userId: res.khachHang.userId
                                 },
                                 tongTien: totalCost,
-                                hinhThuc: $('#deliveryMethod').val()
+                                hinhThuc: $('#deliveryMethod').val(),
+                                diaChiGiaoHang: $('#address').val()
                             }),
 
                             contentType: 'application/json',
