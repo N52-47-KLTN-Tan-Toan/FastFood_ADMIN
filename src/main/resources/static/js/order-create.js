@@ -1,6 +1,33 @@
 ;(function () {
 
+    const ADDRESS = '12 Nguyễn Văn Bảo, Phường 4, Gò Vấp, Thành phố Hồ Chí Minh'
+    $('#address').val(ADDRESS)
+
     renderTableProduct()
+
+    $('#deliveryMethod').change(function () {
+        switch ($(this).val()) {
+            case 'Giao tận nơi':
+                $.ajax({
+                    type: 'GET',
+                    url: url_api_client + '/' + window.location.pathname.split('/')[3],
+                    contentType: 'application/json',
+                    success: function (client) {
+                        $('#address').val(client.address)
+                    },
+                    error: function (err) {
+                        alert(err)
+                    }
+                })
+                break
+            case 'Dùng tại chỗ':
+                $('#address').val(ADDRESS)
+                break
+            default:
+                $('#address').val('')
+                break
+        }
+    })
 
     //Chọn mặt hàng để thêm vào chi tiết
     $('#tbl-product').on('click', '.chooseProduct', function () {
@@ -134,7 +161,7 @@
             url: url_api_orderdetail + '/donDatHang=' + $('#orderID').text(),
             contentType: 'application/json',
             success: function (res) {
-                if(res.length == 0){
+                if (res.length == 0) {
                     toastr.warning('Chi tiết đơn đặt rỗng. Vui lòng chọn món để tiếp tục')
                     return false
                 }
@@ -294,19 +321,19 @@
             footerCallback: function (row, data, start, end, display) {
                 var api = this.api()
 
-                var intVal = function ( i ) {
+                var intVal = function (i) {
                     return typeof i === 'string' ?
-                        i.replace(/[\, VND]/g, '')*1 : typeof i === 'number' ? i : 0
+                        i.replace(/[\, VND]/g, '') * 1 : typeof i === 'number' ? i : 0
                 }
 
                 // Total over all pages
                 var total = api.column(2).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b)
-                    }, 0)
+                    return intVal(a) + intVal(b)
+                }, 0)
 
                 // Update footer
                 $(api.column(2).footer()).html('<span id="totalCost">' + total.toLocaleString('it-IT',
-                                {style: 'currency', currency: 'VND'}) + '</span>')
+                    {style: 'currency', currency: 'VND'}) + '</span>')
 
             }
         })
