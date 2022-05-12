@@ -8,8 +8,6 @@
         (month < 10 ? '0' : '') + month + '-' +
         (day < 10 ? '0' : '') + day
 
-    var totalCost = 0.0
-
     $('#loading-event-order').hide()
     $('#loading-notification').hide()
 
@@ -62,93 +60,45 @@
 
         if (id > 0) {
             $('#loading-event-order').show()
-            updateTypeProduct()
-
-            //Hàm cập nhật hóa đơn
-            function updateTypeProduct() {
-                $.ajax({
-                    type: 'GET',
-                    contentType: 'application/json',
-                    url: url_api_order + '/' + id,
-                    success: function (data) {
-                        $.ajax({
-                            type: "PUT",
-                            data: JSON.stringify({
-                                ngayDatHang: data.ngayDatHang,
-                                trangThai: $('#trang-thai').val(),
-                                diaChiGiaoHang: data.diaChiGiaoHang,
-                                hinhThuc: $('#hinh-thuc').val(),
-                                soDienThoai: data.soDienThoai,
-                                tongTien: data.tongTien,
-                                maGiamGia: data.maGiamGia,
-                                khachHang: {
-                                    userId: data.khachHang.userId
-                                }
-                            }),
-                            contentType: "application/json",
-                            url: url_api_order + '/' + id,
-                            success: function (orders) {
-                                refreshTableAndStatus()
-                                loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
-                                toastr.success('Đơn đặt hàng ' + orders.maDDH + ' đã được chỉnh sửa.')
-                                if (orders.trangThai == 'Đã thanh toán') {
-                                    $.ajax({
-                                        type: 'GET',
-                                        contentType: "application/json",
-                                        url: url_api_orderdetail + '/donDatHang=' + orders.maDDH,
-                                        success: function (ods) {
-                                            $.each(ods, (i, obj) => {
-                                                totalCost += obj.matHang.donGia * obj.soLuongDat
-                                            })
-                                            $.ajax({
-                                                type: 'GET',
-                                                contentType: "application/json",
-                                                url: url_api_client + '/' + orders.khachHang.userId,
-                                                success: function (user) {
-                                                    $.ajax({
-                                                        type: "PUT",
-                                                        data: JSON.stringify({
-                                                            name: user.name,
-                                                            birthDate: user.birthDate,
-                                                            phone: user.phone,
-                                                            email: user.email,
-                                                            address: user.address,
-                                                            gender: user.gender,
-                                                            avatar: user.avatar,
-                                                            roleName: user.roleName,
-                                                            password: user.password,
-                                                            diemTichLuy: parseInt(totalCost / 10000)
-                                                        }),
-                                                        contentType: "application/json",
-                                                        url: url_api_client + '/' + orders.khachHang.userId,
-                                                        success: function (data) {
-                                                        },
-                                                        error: function (err) {
-                                                        }
-                                                    })
-                                                },
-                                                error: function (err) {
-                                                    alert("Error -> " + err)
-                                                }
-                                            })
-                                        },
-                                        error: function (err) {
-                                            alert("Error -> " + err)
-                                        }
-                                    });
-                                }
-                            },
-                            error: function (err) {
-                                loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
-                                toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+            $.ajax({
+                type: 'GET',
+                contentType: 'application/json',
+                url: url_api_order + '/' + id,
+                success: function (data) {
+                    $.ajax({
+                        type: 'PUT',
+                        data: JSON.stringify({
+                            ngayDatHang: data.ngayDatHang,
+                            trangThai: $('#trang-thai').val(),
+                            diaChiGiaoHang: data.diaChiGiaoHang,
+                            hinhThuc: $('#hinh-thuc').val(),
+                            soDienThoai: data.soDienThoai,
+                            tongTien: data.tongTien,
+                            maGiamGia: data.maGiamGia,
+                            khachHang: {
+                                userId: data.khachHang.userId
                             }
-                        });
-                    },
-                    error: function (err) {
-                        alert("Error -> " + err);
-                    }
-                })
-            }
+                        }),
+                        contentType: 'application/json',
+                        url: url_api_order + '/' + id,
+                        success: function (order) {
+                            if (order.trangThai == 'Đã thanh toán') {
+                                updateCustomer(order)
+                            }
+                            refreshTableAndStatus()
+                            loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
+                            toastr.success('Đơn đặt hàng ' + order.maDDH + ' đã được chỉnh sửa.')
+                        },
+                        error: function (err) {
+                            loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
+                            toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                        }
+                    });
+                },
+                error: function (err) {
+                    alert("Error -> " + err)
+                }
+            })
         }
     })
 
@@ -192,10 +142,6 @@
 
         $('.transferTusBtn span').text('Chuyển trạng thái ' +
             'cho ' + $('.chkDDH:checkbox:checked').length + ' đơn hàng')
-
-        // $('.chkDDH:checkbox:checked').each(function (i) {
-        //     console.log($(this).val())
-        // })
     })
 
     //Tab hiển thị bảng hóa đơn theo trạng thái
@@ -263,7 +209,7 @@
             ajax: {
                 url: url_api_order + '/trangThai',
                 type: "GET",
-                contentType: "application/json",
+                contentType: 'application/json',
                 data: {
                     status: status
                 },
@@ -271,7 +217,6 @@
                     return d
                 },
             },
-
             columns: [{
                 class: 'text-center',
                 data: 'maDDH',
@@ -297,6 +242,7 @@
                 data: 'ngayDatHang',
                 render: $.fn.dataTable.render.moment('YYYY-MM-DD', 'DD/MM/YYYY')
             }, {
+                width: '12%',
                 class: 'td_trangThai',
                 data: 'trangThai',
                 render: function (data, type, row, meta) {
@@ -366,20 +312,18 @@
                         }
 
                         $('.chkDDH:checkbox:checked').each(function (i) {
-
                             switch (status) {
                                 case 'Chờ xác nhận':
-                                    updateOrderStatus($(this).val(), 'Đang giao', $(':checkbox:checked').length)
+                                    updateOrderStatus($(this).val(), 'Đang giao')
                                     break
                                 case 'Đang giao':
-                                    updateOrderStatus($(this).val(), 'Đã thanh toán', $(':checkbox:checked').length)
+                                    updateOrderStatus($(this).val(), 'Đã thanh toán')
                                     break
                                 default:
                                     break
                             }
 
                         })
-
                         toastr.success('Chuyển trạng thái cho ' + $('.chkDDH:checkbox:checked').length + ' đơn hàng thành công')
                     }
                 },
@@ -404,7 +348,7 @@
         $('#myTable3').DataTable().ajax.reload(null, false)
     }
 
-    function updateOrderStatus(orderID, status, chkLength) {
+    function updateOrderStatus(orderID, status) {
         $.ajax({
             type: 'GET',
             contentType: 'application/json',
@@ -426,62 +370,54 @@
                     }),
                     contentType: 'application/json',
                     url: url_api_order + '/' + data.maDDH,
-                    success: function (orders) {
+                    success: function (order) {
+                        if (order.trangThai == 'Đã thanh toán') {
+                            updateCustomer(order)
+                        }
                         $('#checkAll, #checkAllTab2 ').prop('checked', false)
                         $('.transferTusBtn span').text('Chuyển trạng thái')
                         refreshTableAndStatus()
                         loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
-                        // toastr.success('Đơn hàng ' + orders.maDDH + ' trong số ' + chkLength + ' đơn hàng đã được chuyển sang trạng thái ' + status)
-                        if (orders.trangThai == 'Đã thanh toán') {
-                            $.ajax({
-                                type: 'GET',
-                                contentType: "application/json",
-                                url: url_api_orderdetail + '/donDatHang=' + orders.maDDH,
-                                success: function (ods) {
-                                    $.each(ods, (i, obj) => {
-                                        totalCost += obj.matHang.donGia * obj.soLuongDat
-                                    })
-                                    $.ajax({
-                                        type: 'GET',
-                                        contentType: "application/json",
-                                        url: url_api_client + '/' + orders.khachHang.userId,
-                                        success: function (user) {
-                                            $.ajax({
-                                                type: "PUT",
-                                                data: JSON.stringify({
-                                                    name: user.name,
-                                                    birthDate: user.birthDate,
-                                                    phone: user.phone,
-                                                    email: user.email,
-                                                    address: user.address,
-                                                    gender: user.gender,
-                                                    avatar: user.avatar,
-                                                    roleName: user.roleName,
-                                                    password: user.password,
-                                                    diemTichLuy: parseInt(totalCost / 10000)
-                                                }),
-                                                contentType: "application/json",
-                                                url: url_api_client + '/' + orders.khachHang.userId,
-                                                success: function (data) {
-                                                },
-                                                error: function (err) {
-                                                }
-                                            })
-                                        },
-                                        error: function (err) {
-                                            alert("Error -> " + err)
-                                        }
-                                    })
-                                },
-                                error: function (err) {
-                                    alert("Error -> " + err)
-                                }
-                            });
-                        }
                     },
                     error: function (err) {
                         loadingModalAndRefreshTable($('#loading-event-order'), $('#example2'))
                         toastr.error('Quá nhiều yêu cầu. Vui lòng thử lại sau')
+                    }
+                })
+            },
+            error: function (err) {
+                alert("Error -> " + err)
+            }
+        })
+    }
+
+    function updateCustomer(order) {
+        $.ajax({
+            type: 'GET',
+            contentType: 'application/json',
+            async: false,
+            url: url_api_client + '/' + order.khachHang.userId,
+            success: function (user) {
+                console.log(user.diemTichLuy)
+                $.ajax({
+                    type: 'PUT',
+                    data: JSON.stringify({
+                        name: user.name,
+                        birthDate: user.birthDate,
+                        phone: user.phone,
+                        email: user.email,
+                        address: user.address,
+                        gender: user.gender,
+                        avatar: user.avatar,
+                        roleName: user.roleName,
+                        password: user.password,
+                        diemTichLuy: parseInt(order.tongTien / 10000) + user.diemTichLuy
+                    }),
+                    contentType: 'application/json',
+                    url: url_api_client + '/' + order.khachHang.userId,
+                    success: function (data) {
+                    },
+                    error: function (err) {
                     }
                 })
             },
