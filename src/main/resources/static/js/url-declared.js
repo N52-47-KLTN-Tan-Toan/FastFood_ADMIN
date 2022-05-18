@@ -19,13 +19,13 @@ var Toast = Swal.mixin({
 
 var userId = $('#userId').val()
 
-const url_api_product = 'http://localhost:8000/api/v1/mat-hang'
-const url_api_categories = 'http://localhost:8000/api/v1/loai-mat-hang'
-const url_api_client = 'http://localhost:8000/api/v1/khach-hang'
-const url_api_order = 'http://localhost:8000/api/v1/don-dat-hang'
-const url_api_introduce = 'http://localhost:8000/api/v1/gioi-thieu'
-const url_api_orderdetail = 'http://localhost:8000/api/v1/chi-tiet-don-dat-hang'
-const url_api_staff = 'http://localhost:8000/api/v1/nhan-vien'
+const url_api_product = 'https://ffapi.azurewebsites.net/api/v1/mat-hang'
+const url_api_categories = 'https://ffapi.azurewebsites.net/api/v1/loai-mat-hang'
+const url_api_client = 'https://ffapi.azurewebsites.net/api/v1/khach-hang'
+const url_api_order = 'https://ffapi.azurewebsites.net/api/v1/don-dat-hang'
+const url_api_introduce = 'https://ffapi.azurewebsites.net/api/v1/gioi-thieu'
+const url_api_orderdetail = 'https://ffapi.azurewebsites.net/api/v1/chi-tiet-don-dat-hang'
+const url_api_staff = 'https://ffapi.azurewebsites.net/api/v1/nhan-vien'
 
 //Hàm xóa hình ảnh trên firebase storage dựa trên tìm kiếm id của đối tượng
 function deleteImageToStorageById(id_object, url_object) {
